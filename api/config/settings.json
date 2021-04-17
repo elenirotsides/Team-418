@@ -1,0 +1,12 @@
+{
+    "api": {
+        "port": 5000
+    },
+    "mongo": {
+        "serverUrl": "mongodb://localhost:27017/",
+        "database": "Team-418-Final-Project"
+    },
+    "igdb": {
+        "apiKey": ""
+    }
+}
