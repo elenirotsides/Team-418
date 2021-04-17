@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "CS-554 Team 418 Final Project Api",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "seed": "node scripts/seed.js",
+    "test": "node scripts/test.js"
+  },
+  "author": "Team 418",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.6.6"
+  }
+}
