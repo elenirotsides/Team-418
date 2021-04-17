@@ -1,14 +1,14 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "",
+  "description": "CS-554 Team 418 Final Project Api",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "seed": "node seed.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "seed": "node scripts/seed.js",
+    "test": "node scripts/test.js"
   },
-  "author": "",
+  "author": "Team 418",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",

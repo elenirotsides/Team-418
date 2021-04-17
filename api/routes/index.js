@@ -9,7 +9,7 @@ const constructorMethod = (app) => {
     app.use('/ratings', ratingsRoutes);
     app.use('/games', gamesRoutes);
     app.all('*', (req, res) => {
-        res.status(404).json({ title: 'Route Not Found' });
+        res.status(404).json({ error: 'Route Not Found' });
     });
 };
 
