@@ -3,7 +3,7 @@ import React from 'react';
 const AdvancedSearch = (props) => {
     return (
         <div>
-            <p>Advanced Search</p>
+            <p>Login</p>
         </div>
     );
 };

@@ -15,12 +15,8 @@
 
 .App-header {
     background-color: #282c34;
-    min-height: 20vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
+    height: 150px;
+    padding: 120px;
     color: white;
 }
 
@@ -35,4 +31,65 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+.navigation {
+    background: #282c34;
+}
+
+/* .navigation ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+} */
+
+.navigation a:link,
+.navigation a:visited {
+    color: white;
+    text-decoration: none;
+}
+
+.active {
+    font-weight: bold;
+}
+
+.error {
+    font-weight: bold;
+    color: red !important;
+}
+
+.navlink {
+    padding: 0.4rem 0.8rem;
+    background-color: #535c6e;
+    border-radius: 3px;
+    color: #535c6e;
+    text-decoration: none !important;
+    margin: 5px;
+}
+
+.navlink:hover {
+    background-color: transparent;
+    color: #535c6e;
+    border: 2px solid #535c6e;
+}
+
+.google {
+    cursor: pointer;
+}
+
+button {
+    padding: 0.23rem 0.5rem;
+    background-color: #535c6e;
+    border-radius: 3px;
+    color: white;
+    text-decoration: none !important;
+    margin: 5px;
+    border-style: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #282c34;
+    color: white;
+    border: 2px solid #535c6e;
 }

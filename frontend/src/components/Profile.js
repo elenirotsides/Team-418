@@ -1,9 +1,13 @@
 import React from 'react';
+import SignOutButton from './LogOut';
+import ChangePassword from './ChangePassword';
 
 const Profile = (props) => {
     return (
         <div>
-            <p>Profile</p>
+            <h2>Profile Page</h2>
+            <ChangePassword />
+            <SignOutButton />
         </div>
     );
 };
