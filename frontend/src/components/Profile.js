@@ -4,7 +4,7 @@ import ChangePassword from './ChangePassword';
 
 const Profile = (props) => {
     return (
-        <div>
+        <div className="text-center">
             <h2>Profile Page</h2>
             <ChangePassword />
             <SignOutButton />
