@@ -1,5 +1,1 @@
-const authentication = require('./authentication');
-
-module.exports = {
-    authentication,
-};
+// TODO: middleware
