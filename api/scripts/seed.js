@@ -52,6 +52,13 @@ const main = async () => {
     } catch (e) {
         console.log(e);
     }
+
+    try {
+        console.log('Done seeding database');
+        await db.serverConfig.close();
+    } catch (e) {
+        console.log(e);
+    }
 };
 
 main().catch(console.log);
