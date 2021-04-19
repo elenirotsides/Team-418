@@ -3,15 +3,17 @@ const mongoCollections = require('../config/mongoCollections');
 const express = require("express");
 
 const ratings = mongoCollections.ratings;
+const users = mongoCollections.users;
+const games = mongoCollections.games;
 const { ObjectId } = require('mongodb');
 
-const data = require('../data');
+//const data = require('../data');
 const userMethods = require('../data/users.js');
 const gameMethods = require('../data/games');
-const commentMethods = require('../data/comments');
+//const commentMethods = require('../data/comments');
 
 
-const exportedMethods = {
+module.exports = {
     // return an array of all ratings
     // no ratings returns an empty array
     async getAllRatings() {
@@ -34,9 +36,9 @@ const exportedMethods = {
     // meh, just adds a rating, also returns it
     // i don't think these comments are actually helping anyone
     // date is a date object passed in
-    async addRating(userId, gameId, rating, dName, date) {
+    async addRating(userId, gameId, rating, date) {
         // error handling
-        if (arguments.length != 5) throw "Usage: User ID, Game ID, Rating, Display Name, Date";
+        if (arguments.length != 4) throw "Usage: User ID, Game ID, Rating, Date";
         //if (!ObjectId.isValid(userId)) throw "User ID needs to be a string";
         //if (typeof gameId !== "string") throw "Game ID needs to be a string";
 
@@ -44,7 +46,7 @@ const exportedMethods = {
         // but it doesn't really break the program so i'm not checking for it
         if (!Number.isInteger(rating) || rating < 1 || rating > 10)
             throw "Rating needs to be a positive integer from 1-10";
-        if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
+        //if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
         // TODO: check date, pretty stupid that the date object doesnt deal with this tbh 
         
         // check that the userId and gameId actually belong to corresponding objects
@@ -63,7 +65,7 @@ const exportedMethods = {
             userId: userId,
             gameId: gameId,
             rating: rating,
-            displayName: dName,
+            displayName: user.displayName,
             datePosted: date
         };
 
@@ -78,12 +80,36 @@ const exportedMethods = {
         let gameRatings = game.ratings;
         userRatings.push(newRating._id);
         gameRatings.push(newRating._id);
-        user.ratings = userRatings;
-        game.ratings = gameRatings;
+
+        const newUser = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName,
+            email: user.email,
+            favoriteGames: user.favoriteGames,
+            ratings: userRatings,
+            comments: user.comments,
+            profilePic: user.profilePic
+        };
+
+        const userCollection = await users();
+        const gameCollection = await games();
+        
+        const userUpdate = await userCollection.updateOne({_id: userId}, {$set: newUser});
+        if (userUpdate.modifiedCount === 0)
+            throw "Could not modify user with new rating";
+
+        const newGame = {
+            ratings: gameRatings,
+            comments: game.comments,
+            endpointId: game.endpointId
+        };
+        const gameUpdate = await gameCollection.updateOne({_id: gameId}, {$set: newGame});
+        if (gameUpdate.modifiedCount === 0)
+            throw "Could not modify game with new rating";
 
         const finalRating = await this.getRatingById(newRating._id);
         return finalRating;
     }
 };
 
-module.exports = exportedMethods;
