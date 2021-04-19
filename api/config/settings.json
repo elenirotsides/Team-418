@@ -7,6 +7,7 @@
         "database": "Team-418-Final-Project"
     },
     "igdb": {
-        "apiKey": ""
+        "clientID": "7b6i3fov29moepqtcrycv6lxj3lp3w",
+        "clientSecret" : "zn4urlan40nufj561ferpugr8w49ln"
     }
 }
