@@ -1,7 +1,7 @@
 // TODO: db methods for users
+const { ObjectId } = require("mongodb");
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
-const { ObjectId } = require("mongodb");
 
 const ratingMethods = require('../data/ratings');
 const commentMethods = require('../data/comments');
@@ -18,6 +18,12 @@ const exportedMethods = {
 
     // gets a user by id, pretty self explanatory
     async getUserById(id) {
+        /*
+        console.log(ratingMethods);
+        console.log(commentMethods);
+        console.log(gameMethods);
+        console.log(this);
+        */
         if (arguments.length != 1) throw "Usage: id";
         if (!ObjectId.isValid(id)) throw "User Id needs to be a valid ObjectId";
 
@@ -91,6 +97,5 @@ const exportedMethods = {
         return user;
     }
 };
-
 
 module.exports = exportedMethods;

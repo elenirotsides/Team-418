@@ -5,6 +5,8 @@ const comments = mongoCollections.comments;
 
 const userMethods = require('../data/users');
 const gameMethods = require('../data/games');
+const ratingMethods = require('../data/ratings');
+
 
 const exportedMethods = {
     // returns an array of all comments
@@ -31,8 +33,8 @@ const exportedMethods = {
     async addComment(userId, gameId, comment, dName, date) {
         // error handling
         if (arguments.length != 5) throw "Usage: User ID, Game ID, Comment, Display Name, Date";
-        if (typeof userId !== "string") throw "User ID needs to be a string";
-        if (typeof gameId !== "string") throw "Game ID needs to be a string";
+        //if (typeof userId !== "string") throw "User ID needs to be a string";
+        //if (typeof gameId !== "string") throw "Game ID needs to be a string";
         if (typeof comment !== "string") throw "Comment needs to be a string";
         if (!comment.trim()) throw "Comment needs to be a non empty string";
         if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";

@@ -16,7 +16,7 @@ const exportedMethods = {
     },
 
     // get a game by its id, also returns it
-    async getGameById() {
+    async getGameById(id) {
         if (arguments.length !== 1) throw "Usage: Game Id";
         if (!ObjectId.isValid(id)) throw "Game Id needs to be a valid ObjectId";
 
@@ -51,7 +51,7 @@ const exportedMethods = {
             }
         }
 
-        if (typeof endpointId !== "string") throw "Endpoint Id needs to be a string";
+        if (!Number.isInteger(endpointId)) throw "Endpoint Id needs to be a number";
         //TODO: validate endpointId by calling the API and checking that 
         // it corresponds to an actual game
 

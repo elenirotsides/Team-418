@@ -1,10 +1,15 @@
 // TODO: db methods for ratings
 const mongoCollections = require('../config/mongoCollections');
+const express = require("express");
+
 const ratings = mongoCollections.ratings;
 const { ObjectId } = require('mongodb');
 
-const userMethods = require('../data/users');
-const gameMethods = require('../data/games')
+const data = require('../data');
+const userMethods = require('../data/users.js');
+const gameMethods = require('../data/games');
+const commentMethods = require('../data/comments');
+
 
 const exportedMethods = {
     // return an array of all ratings
@@ -32,14 +37,13 @@ const exportedMethods = {
     async addRating(userId, gameId, rating, dName, date) {
         // error handling
         if (arguments.length != 5) throw "Usage: User ID, Game ID, Rating, Display Name, Date";
-        if (typeof userId !== "string") throw "User ID needs to be a string";
-        if (typeof gameId !== "string") throw "Game ID needs to be a string";
+        //if (!ObjectId.isValid(userId)) throw "User ID needs to be a string";
+        //if (typeof gameId !== "string") throw "Game ID needs to be a string";
 
         // yea i know this doesn't cover the case where it has a 0 as a decimal value
         // but it doesn't really break the program so i'm not checking for it
         if (!Number.isInteger(rating) || rating < 1 || rating > 10)
             throw "Rating needs to be a positive integer from 1-10";
-        if (!comment.trim()) throw "Comment needs to be a non empty string";
         if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
         // TODO: check date, pretty stupid that the date object doesnt deal with this tbh 
         
