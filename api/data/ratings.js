@@ -1,17 +1,13 @@
 // TODO: db methods for ratings
 const mongoCollections = require('../config/mongoCollections');
-const express = require("express");
 
 const ratings = mongoCollections.ratings;
 const users = mongoCollections.users;
 const games = mongoCollections.games;
 const { ObjectId } = require('mongodb');
 
-//const data = require('../data');
 const userMethods = require('../data/users.js');
 const gameMethods = require('../data/games');
-//const commentMethods = require('../data/comments');
-
 
 module.exports = {
     // return an array of all ratings

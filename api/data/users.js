@@ -3,12 +3,6 @@ const { ObjectId } = require("mongodb");
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 
-//const ratingMethods = require('../data/ratings');
-//const commentMethods = require('../data/comments');
-const gameMethods = require('../data/games');
-//const data = require('../data');
-
-
     // returns an array of all the users
     // if there are no users, return an empty array
     async function getAllUsers() {
@@ -19,12 +13,6 @@ const gameMethods = require('../data/games');
 
     // gets a user by id, pretty self explanatory
     async function getUserById(id) {
-        /*
-        console.log(ratingMethods);
-        console.log(commentMethods);
-        console.log(gameMethods);
-        console.log(this);
-        */
         if (arguments.length != 1) throw "Usage: id";
         if (!ObjectId.isValid(id)) throw "User Id needs to be a valid ObjectId";
 
@@ -98,6 +86,5 @@ const gameMethods = require('../data/games');
         const user = await this.getUserById(newUser._id);
         return user;
     };
-
 
 module.exports = {getAllUsers, getUserById, addUser};

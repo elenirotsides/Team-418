@@ -7,8 +7,6 @@ const games = mongoCollections.games;
 
 const userMethods = require('../data/users');
 const gameMethods = require('../data/games');
-//const ratingMethods = require('../data/ratings');
-
 
 module.exports = {
     // returns an array of all comments

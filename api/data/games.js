@@ -3,10 +3,6 @@ const mongoCollections = require('../config/mongoCollections');
 const games = mongoCollections.games;
 const { ObjectId } = require('mongodb');
 
-//const userMethods = require('../data/users');
-//const ratingMethods = require('../data/ratings');
-//const commentMethods = require('../data/comments');
-
 module.exports = {
     // you know what this does
     async getAllGames() {
