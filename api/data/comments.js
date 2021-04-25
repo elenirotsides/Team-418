@@ -7,6 +7,7 @@ const games = mongoCollections.games;
 
 const userMethods = require('../data/users');
 const gameMethods = require('../data/games');
+const validate = require('./validation');
 
 module.exports = {
     // returns an array of all comments
@@ -35,8 +36,7 @@ module.exports = {
         if (arguments.length != 4) throw "Usage: User ID, Game ID, Comment, Date";
         //if (typeof userId !== "string") throw "User ID needs to be a string";
         //if (typeof gameId !== "string") throw "Game ID needs to be a string";
-        if (typeof comment !== "string") throw "Comment needs to be a string";
-        if (!comment.trim()) throw "Comment needs to be a non empty string";
+        if (!validate.validateString(comment)) throw "Comment needs to be a non empty string";
         //if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
         // TODO: check date, pretty stupid that the date object doesnt deal with this tbh
 
@@ -101,5 +101,40 @@ module.exports = {
         
         const finalComment = await this.getCommentById(newComment._id);
         return finalComment;
+    },
+
+    //updates a comment
+    async updateComment(commentId, newComment, date=undefined) {
+        if (arguments.length != 2 && arguments.length != 3) 
+            throw "Usage: Rating Id, New Rating, OPTIONAL PARAMTER: Date";
+
+        //retrive the comment object
+        let comment;
+        try {
+            comment = await this.getCommentById(commentId);
+        } catch (e) { throw e; }
+
+        if (!validate.validateString(newComment)) 
+            throw "New Comment needs to be a non-empty string";
+
+        let newDate = comment.datePosted;
+        if (date)
+            newDate = date;
+
+        const changedComment = {
+            _id: comment._id,
+            userId: comment.userId,
+            gameId: comment.gameId,
+            rating: newComment,
+            displayName: comment.displayName,
+            datePosted: newDate
+        };
+
+        const commentCollection = await comments();
+        const updateInfo = await commentCollection.updateOne({_id: changedComment._id}, {$set: changedComment});
+        if (updateInfo.insertedCount === 0)
+            throw "Could not update comment object"; 
+        return changedComment;
+
     }
 };

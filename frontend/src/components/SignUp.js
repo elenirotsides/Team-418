@@ -1,12 +1,12 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import '../App.css';
 import { Redirect } from 'react-router-dom';
-import { doCreateUserWithEmailAndPassword } from '../firebase/FirebaseFunctions';
 import { AuthContext } from '../firebase/Auth';
 import GoogleLogIn from './GoogleLogIn';
 
 function SignUp() {
     const { currentUser } = useContext(AuthContext);
+<<<<<<< HEAD
     const [pwMatch, setPWMatch] = useState('');
 
     const handleSignUp = async (e) => {
@@ -23,57 +23,16 @@ function SignUp() {
             alert(error);
         }
     };
+=======
+>>>>>>> 949c20a8f82dc006437d38df804cd7f8a9753452
 
     if (currentUser) {
-        return <Redirect to="/" />;
+        return <Redirect to='/' />;
     }
 
     return (
-        <div className="text-center">
+        <div className='text-center'>
             <h1>Sign up</h1>
-            {pwMatch && <h4 className="error">{pwMatch}</h4>}
-            <form onSubmit={handleSignUp}>
-                <div className="form-group">
-                    <label>
-                        First Name:
-                        <input className="form-control" required name="firstName" type="text" placeholder="First Name" />
-                    </label>
-                </div>
-                <div className="form-group">
-                    <label>
-                        Last Name:
-                        <input className="form-control" required name="lastName" type="text" placeholder="Last Name" />
-                    </label>
-                </div>
-                <div className="form-group">
-                    <label>
-                        Display Name:
-                        <input className="form-control" required name="displayName" type="text" placeholder="Display Name" />
-                    </label>
-                </div>
-                <div className="form-group">
-                    <label>
-                        Email:
-                        <input className="form-control" required name="email" type="email" placeholder="Email" />
-                    </label>
-                </div>
-                <div className="form-group">
-                    <label>
-                        Password:
-                        <input className="form-control" id="passwordOne" name="passwordOne" type="password" placeholder="Password" required />
-                    </label>
-                </div>
-                <div className="form-group">
-                    <label>
-                        Confirm Password:
-                        <input className="form-control" name="passwordTwo" type="password" placeholder="Confirm Password" required />
-                    </label>
-                </div>
-                <button id="submitButton" name="submitButton" type="submit">
-                    Sign Up
-                </button>
-            </form>
-            <br />
             <GoogleLogIn />
         </div>
     );
