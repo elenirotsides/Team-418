@@ -24,7 +24,7 @@ module.exports = {
         if (!ObjectId.isValid(id)) throw "Rating Id needs to be a valid ObjectId";
 
         const ratingCollection = await ratings();
-        const rating = await ratingCollection.findOne({_id: id});
+        const rating = await ratingCollection.findOne({ _id: id });
         if (!rating) throw "Rating not found with the given id";
         return rating;
     },
@@ -44,7 +44,7 @@ module.exports = {
             throw "Rating needs to be a positive integer from 1-10";
         //if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
         // TODO: check date, pretty stupid that the date object doesnt deal with this tbh 
-        
+
         // check that the userId and gameId actually belong to corresponding objects
         let user;
         let game;
@@ -90,8 +90,8 @@ module.exports = {
 
         const userCollection = await users();
         const gameCollection = await games();
-        
-        const userUpdate = await userCollection.updateOne({_id: userId}, {$set: newUser});
+
+        const userUpdate = await userCollection.updateOne({ _id: userId }, { $set: newUser });
         if (userUpdate.modifiedCount === 0)
             throw "Could not modify user with new rating";
 
@@ -100,12 +100,47 @@ module.exports = {
             comments: game.comments,
             endpointId: game.endpointId
         };
-        const gameUpdate = await gameCollection.updateOne({_id: gameId}, {$set: newGame});
+        const gameUpdate = await gameCollection.updateOne({ _id: gameId }, { $set: newGame });
         if (gameUpdate.modifiedCount === 0)
             throw "Could not modify game with new rating";
 
         const finalRating = await this.getRatingById(newRating._id);
         return finalRating;
+    },
+
+    // updates a rating with say a new rating
+    async updateRating(ratingId, newRating, date=undefined) {
+        if (arguments.length != 2 && arguments.length != 3) 
+            throw "Usage: Rating Id, New Rating, OPTIONAL PARAMTER: Date";
+
+        //retrive the rating object
+        let rating;
+        try {
+            rating = await this.getRatingById(ratingId);
+        } catch (e) { throw e; }
+
+        if (!Number.isInteger(newRating) || newRating < 1 || newRating > 10)
+            throw "Rating needs to be a positive integer from 1-10";
+
+        let newDate = rating.datePosted;
+        if (date)
+            newDate = date;
+
+        const changedRating = {
+            _id: rating._id,
+            userId: rating.userId,
+            gameId: rating.gameId,
+            rating: newRating,
+            displayName: rating.displayName,
+            datePosted: newDate
+        };
+
+        // insert the updated rating into the rating collection, replacing the old one
+        const ratingCollection = await ratings();
+        const updateInfo = await ratingCollection.updateOne({_id: changedRating._id}, {$set: changedRating});
+        if (updateInfo.insertedCount === 0)
+            throw "Could not update rating object"; 
+        return changedRating;
     }
 };
 
