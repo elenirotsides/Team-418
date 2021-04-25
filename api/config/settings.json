@@ -3,11 +3,12 @@
         "port": 5000
     },
     "mongo": {
-        "serverUrl": "mongodb://localhost:27017/",
+        "localServerUrl": "mongodb://localhost:27017/",
+        "dockerServerUrl": "mongodb://db:27017/",
         "database": "Team-418-Final-Project"
     },
     "igdb": {
         "clientID": "7b6i3fov29moepqtcrycv6lxj3lp3w",
-        "clientSecret" : "zn4urlan40nufj561ferpugr8w49ln"
+        "clientSecret": "zn4urlan40nufj561ferpugr8w49ln"
     }
 }

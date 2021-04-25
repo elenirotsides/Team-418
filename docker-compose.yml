@@ -4,7 +4,9 @@ services:
         build: ./api/
         ports:
             - '5000:5000'
-        command: npm start
+        depends_on:
+            - db
+        command: npm run dockerStart
 
     frontend:
         build: ./frontend/
@@ -13,3 +15,8 @@ services:
         depends_on:
             - api
         command: npm run dockerStart
+
+    db:
+        expose:
+            - '27017'
+        image: mongo:4.2.13-bionic
