@@ -11,14 +11,14 @@ function SignUp() {
 
     const handleSignUp = async (e) => {
         e.preventDefault();
-        const { displayName, email, passwordOne, passwordTwo } = e.target.elements;
+        const { firstName, lastName, displayName, email, passwordOne, passwordTwo } = e.target.elements;
         if (passwordOne.value !== passwordTwo.value) {
             setPWMatch('Passwords do not match');
             return false;
         }
 
         try {
-            await doCreateUserWithEmailAndPassword(email.value, passwordOne.value, displayName);
+            await doCreateUserWithEmailAndPassword(email.value, passwordOne.value, firstName.value, lastName.value, displayName.value);
         } catch (error) {
             alert(error);
         }
@@ -35,8 +35,20 @@ function SignUp() {
             <form onSubmit={handleSignUp}>
                 <div className="form-group">
                     <label>
-                        Name:
-                        <input className="form-control" required name="displayName" type="text" placeholder="Name" />
+                        First Name:
+                        <input className="form-control" required name="firstName" type="text" placeholder="First Name" />
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label>
+                        Last Name:
+                        <input className="form-control" required name="lastName" type="text" placeholder="Last Name" />
+                    </label>
+                </div>
+                <div className="form-group">
+                    <label>
+                        Display Name:
+                        <input className="form-control" required name="displayName" type="text" placeholder="Display Name" />
                     </label>
                 </div>
                 <div className="form-group">
