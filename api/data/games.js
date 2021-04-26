@@ -3,11 +3,7 @@ const mongoCollections = require('../config/mongoCollections');
 const games = mongoCollections.games;
 const { ObjectId } = require('mongodb');
 
-const userMethods = require('../data/users');
-const ratingMethods = require('../data/ratings');
-const commentMethods = require('../data/comments');
-
-const exportedMethods = {
+module.exports = {
     // you know what this does
     async getAllGames() {
         const gameCollection = await games();
@@ -28,9 +24,11 @@ const exportedMethods = {
 
     // adds a game
     // so a game can have no ratings or comments, so those arrays can be empty i think
-    async addGame(ratings, comments, endpointId) {
-        if (arguments.length != 3) throw "Usage: Ratings, Comments, Endpoint Id";
+    async addGame(endpointId) {
+        if (arguments.length != 1) throw "Usage: Endpoint Id";
+        /*
         if (!Array.isArray(ratings)) throw "Ratings needs to be an array of rating ids";
+        
         if (ratings.length > 0) {
             for (let i=0; i<ratings.length; i++) {
                 try {
@@ -49,7 +47,7 @@ const exportedMethods = {
                     throw e;
                 }
             }
-        }
+        } */
 
         if (!Number.isInteger(endpointId)) throw "Endpoint Id needs to be a number";
         //TODO: validate endpointId by calling the API and checking that 
@@ -58,8 +56,8 @@ const exportedMethods = {
         // make the new game object
         const newGame = {
             _id: ObjectId(),
-            ratings: ratings,
-            comments: comments,
+            ratings: [],
+            comments: [],
             endpointId: endpointId
         };
 
@@ -72,5 +70,3 @@ const exportedMethods = {
         return game;
     }
 };
-
-module.exports = exportedMethods;

@@ -1,17 +1,15 @@
 // TODO: db methods for ratings
 const mongoCollections = require('../config/mongoCollections');
-const express = require("express");
 
 const ratings = mongoCollections.ratings;
+const users = mongoCollections.users;
+const games = mongoCollections.games;
 const { ObjectId } = require('mongodb');
 
-const data = require('../data');
-const userMethods = data.users;
-const gameMethods = data.games;
-const commentMethods = data.comments;
+const userMethods = require('../data/users.js');
+const gameMethods = require('../data/games');
 
-
-const exportedMethods = {
+module.exports = {
     // return an array of all ratings
     // no ratings returns an empty array
     async getAllRatings() {
@@ -26,7 +24,7 @@ const exportedMethods = {
         if (!ObjectId.isValid(id)) throw "Rating Id needs to be a valid ObjectId";
 
         const ratingCollection = await ratings();
-        const rating = await ratingCollection.findOne({_id: id});
+        const rating = await ratingCollection.findOne({ _id: id });
         if (!rating) throw "Rating not found with the given id";
         return rating;
     },
@@ -34,9 +32,9 @@ const exportedMethods = {
     // meh, just adds a rating, also returns it
     // i don't think these comments are actually helping anyone
     // date is a date object passed in
-    async addRating(userId, gameId, rating, dName, date) {
+    async addRating(userId, gameId, rating, date) {
         // error handling
-        if (arguments.length != 5) throw "Usage: User ID, Game ID, Rating, Display Name, Date";
+        if (arguments.length != 4) throw "Usage: User ID, Game ID, Rating, Date";
         //if (!ObjectId.isValid(userId)) throw "User ID needs to be a string";
         //if (typeof gameId !== "string") throw "Game ID needs to be a string";
 
@@ -44,9 +42,9 @@ const exportedMethods = {
         // but it doesn't really break the program so i'm not checking for it
         if (!Number.isInteger(rating) || rating < 1 || rating > 10)
             throw "Rating needs to be a positive integer from 1-10";
-        if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
+        //if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
         // TODO: check date, pretty stupid that the date object doesnt deal with this tbh 
-        
+
         // check that the userId and gameId actually belong to corresponding objects
         let user;
         let game;
@@ -63,7 +61,7 @@ const exportedMethods = {
             userId: userId,
             gameId: gameId,
             rating: rating,
-            displayName: dName,
+            displayName: user.displayName,
             datePosted: date
         };
 
@@ -78,12 +76,71 @@ const exportedMethods = {
         let gameRatings = game.ratings;
         userRatings.push(newRating._id);
         gameRatings.push(newRating._id);
-        user.ratings = userRatings;
-        game.ratings = gameRatings;
+
+        const newUser = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName,
+            email: user.email,
+            favoriteGames: user.favoriteGames,
+            ratings: userRatings,
+            comments: user.comments,
+            profilePic: user.profilePic
+        };
+
+        const userCollection = await users();
+        const gameCollection = await games();
+
+        const userUpdate = await userCollection.updateOne({ _id: userId }, { $set: newUser });
+        if (userUpdate.modifiedCount === 0)
+            throw "Could not modify user with new rating";
+
+        const newGame = {
+            ratings: gameRatings,
+            comments: game.comments,
+            endpointId: game.endpointId
+        };
+        const gameUpdate = await gameCollection.updateOne({ _id: gameId }, { $set: newGame });
+        if (gameUpdate.modifiedCount === 0)
+            throw "Could not modify game with new rating";
 
         const finalRating = await this.getRatingById(newRating._id);
         return finalRating;
+    },
+
+    // updates a rating with say a new rating
+    async updateRating(ratingId, newRating, date=undefined) {
+        if (arguments.length != 2 && arguments.length != 3) 
+            throw "Usage: Rating Id, New Rating, OPTIONAL PARAMTER: Date";
+
+        //retrive the rating object
+        let rating;
+        try {
+            rating = await this.getRatingById(ratingId);
+        } catch (e) { throw e; }
+
+        if (!Number.isInteger(newRating) || newRating < 1 || newRating > 10)
+            throw "Rating needs to be a positive integer from 1-10";
+
+        let newDate = rating.datePosted;
+        if (date)
+            newDate = date;
+
+        const changedRating = {
+            _id: rating._id,
+            userId: rating.userId,
+            gameId: rating.gameId,
+            rating: newRating,
+            displayName: rating.displayName,
+            datePosted: newDate
+        };
+
+        // insert the updated rating into the rating collection, replacing the old one
+        const ratingCollection = await ratings();
+        const updateInfo = await ratingCollection.updateOne({_id: changedRating._id}, {$set: changedRating});
+        if (updateInfo.insertedCount === 0)
+            throw "Could not update rating object"; 
+        return changedRating;
     }
 };
 
-module.exports = exportedMethods;

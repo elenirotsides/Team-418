@@ -2,13 +2,14 @@
 const { ObjectId } = require('mongodb');
 const mongoCollections = require('../config/mongoCollections');
 const comments = mongoCollections.comments;
+const users = mongoCollections.users;
+const games = mongoCollections.games;
 
 const userMethods = require('../data/users');
 const gameMethods = require('../data/games');
-const ratingMethods = require('../data/ratings');
+const validate = require('./validation');
 
-
-const exportedMethods = {
+module.exports = {
     // returns an array of all comments
     // if there are no comments, return an empty array
     async getAllComments() {
@@ -30,14 +31,13 @@ const exportedMethods = {
 
     // a comment is added, woah, also returns the comment too for conveniance
     // date is a date object passed in
-    async addComment(userId, gameId, comment, dName, date) {
+    async addComment(userId, gameId, comment, date) {
         // error handling
-        if (arguments.length != 5) throw "Usage: User ID, Game ID, Comment, Display Name, Date";
+        if (arguments.length != 4) throw "Usage: User ID, Game ID, Comment, Date";
         //if (typeof userId !== "string") throw "User ID needs to be a string";
         //if (typeof gameId !== "string") throw "Game ID needs to be a string";
-        if (typeof comment !== "string") throw "Comment needs to be a string";
-        if (!comment.trim()) throw "Comment needs to be a non empty string";
-        if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
+        if (!validate.validateString(comment)) throw "Comment needs to be a non empty string";
+        //if (typeof dName !== "string" || !dName.trim()) throw "Display name needs to be a non empty string";
         // TODO: check date, pretty stupid that the date object doesnt deal with this tbh
 
         let user;
@@ -56,7 +56,7 @@ const exportedMethods = {
             userId: userId,
             gameId: gameId,
             comment: comment,
-            displayName: dName,
+            displayName: user.displayName,
             datePosted: date
         };
 
@@ -70,12 +70,71 @@ const exportedMethods = {
         let gameComments = game.comments;
         userComments.push(newComment._id);
         gameComments.push(newComment._id);
-        user.comments = userComments;
-        game.comments = gameComments;
+
+        const newUser = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName,
+            email: user.email,
+            favoriteGames: user.favoriteGames,
+            ratings: user.ratings,
+            comments: userComments,
+            profilePic: user.profilePic
+        };
+
+        const userCollection = await users();
+        const gameCollection = await games();
+        
+        const userUpdate = await userCollection.updateOne({_id: userId}, {$set: newUser});
+        if (userUpdate.modifiedCount === 0)
+            throw "Could not modify user with new comment";
+
+        const newGame = {
+            ratings: game.ratings,
+            comments: gameComments,
+            endpointId: game.endpointId
+        };
+        const gameUpdate = await gameCollection.updateOne({_id: gameId}, {$set: newGame});
+        if (gameUpdate.modifiedCount === 0)
+            throw "Could not modify game with new comment";
+
         
         const finalComment = await this.getCommentById(newComment._id);
         return finalComment;
+    },
+
+    //updates a comment
+    async updateComment(commentId, newComment, date=undefined) {
+        if (arguments.length != 2 && arguments.length != 3) 
+            throw "Usage: Rating Id, New Rating, OPTIONAL PARAMTER: Date";
+
+        //retrive the comment object
+        let comment;
+        try {
+            comment = await this.getCommentById(commentId);
+        } catch (e) { throw e; }
+
+        if (!validate.validateString(newComment)) 
+            throw "New Comment needs to be a non-empty string";
+
+        let newDate = comment.datePosted;
+        if (date)
+            newDate = date;
+
+        const changedComment = {
+            _id: comment._id,
+            userId: comment.userId,
+            gameId: comment.gameId,
+            rating: newComment,
+            displayName: comment.displayName,
+            datePosted: newDate
+        };
+
+        const commentCollection = await comments();
+        const updateInfo = await commentCollection.updateOne({_id: changedComment._id}, {$set: changedComment});
+        if (updateInfo.insertedCount === 0)
+            throw "Could not update comment object"; 
+        return changedComment;
+
     }
 };
-
-module.exports = exportedMethods;
