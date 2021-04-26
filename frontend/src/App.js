@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './components/Home';
+import Home from './components/Home/Home';
 import Navigation from './components/Navigation';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
@@ -11,17 +11,21 @@ import Profile from './components/Profile';
 import NotFound from './components/NotFound';
 import { AuthProvider } from './firebase/Auth';
 import PrivateRoute from './components/PrivateRoute';
+import AppBar from '@material-ui/core/AppBar';
+import { Grid } from '@material-ui/core';
+
 
 function App() {
     return (
         <AuthProvider>
             <Router>
-                <div className="App">
-                    <header className="App-header">
-                        <h1 className="App-title">Team 418 Final Project</h1>
-                        <Navigation />
-                    </header>
-                </div>
+                <AppBar position='sticky'>
+                    <div className="App">
+                        <header className="App-header">
+                            <Navigation/>
+                        </header>
+                    </div>
+                </AppBar>
                 <Switch>
                     <PrivateRoute exact path="/" component={Home} />
                     <Route exact path="/login" component={Login} />
@@ -29,7 +33,7 @@ function App() {
                     <PrivateRoute exact path="/profile" component={Profile} />
                     <PrivateRoute exact path="/results/:searchTerm" component={Results} />
                     <PrivateRoute exact path="/advancedsearch" component={AdvancedSearch} />
-                    <PrivateRoute exact path="/game/:gameId" component={Game} />
+                    <PrivateRoute exact path="/game/:id" component={Game} />
                     <Route path="*" component={NotFound} />
                 </Switch>
             </Router>

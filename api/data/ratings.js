@@ -6,9 +6,9 @@ const ratings = mongoCollections.ratings;
 const { ObjectId } = require('mongodb');
 
 const data = require('../data');
-const userMethods = require('../data/users.js');
-const gameMethods = require('../data/games');
-const commentMethods = require('../data/comments');
+const userMethods = data.users;
+const gameMethods = data.games;
+const commentMethods = data.comments;
 
 
 const exportedMethods = {

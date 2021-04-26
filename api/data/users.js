@@ -3,9 +3,10 @@ const { ObjectId } = require("mongodb");
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 
-const ratingMethods = require('../data/ratings');
-const commentMethods = require('../data/comments');
-const gameMethods = require('../data/games');
+const data = require('../data');
+const userMethods = data.users;
+const gameMethods = data.games;
+const commentMethods = data.comments;
 
 const exportedMethods = {
     // returns an array of all the users

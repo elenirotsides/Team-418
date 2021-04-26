@@ -24,3 +24,57 @@ router.get('/',
             });
     }
 );
+
+router.get('/popular',
+    IGDBSessionHandler.instance.validateSession(),
+    async function (req, res) {
+        await axios(
+            IGDBSessionHandler.instance.igdbAxiosConfig(
+                'games',
+                null,
+                "limit 10; offset 0; fields screenshots.*,name,category; sort rating desc;"))
+            .then(response => {
+                res.json(response.data);
+                console.log(response);
+            }).catch(error => {
+                res.json(error);
+                console.log(error);
+            });
+    }
+);
+
+router.get('/new',
+    IGDBSessionHandler.instance.validateSession(),
+    async function (req, res) {
+        await axios(
+            IGDBSessionHandler.instance.igdbAxiosConfig(
+                'games',
+                null,
+                "limit 10; offset 0; fields cover,name,category; sort first_release_date desc;"))
+            .then(response => {
+                res.json(response.data);
+                console.log(response);
+            }).catch(error => {
+                res.json(error);
+                console.log(error);
+            });
+    }
+);
+
+router.get('/game/:id',
+    IGDBSessionHandler.instance.validateSession(),
+    async function (req, res) {
+        await axios(
+            IGDBSessionHandler.instance.igdbAxiosConfig(
+                'games',
+                null,
+                `fields *; where id = ${req.params.id};`))
+            .then(response => {
+                res.json(response.data);
+                console.log(response);
+            }).catch(error => {
+                res.json(error);
+                console.log(error);
+            });
+    }
+);
