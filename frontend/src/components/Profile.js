@@ -6,16 +6,24 @@ const Profile = (props) => {
     const [pageData, setPageData] = useState(undefined);
     const loaded = false;
     const email = 'bsanders@gmail.com';
-    const url = 'http://localhost:5000/users/profile/' + email;
+    const url = 'http://localhost:5000/users/profile';
+
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+    };
+
+
     useEffect(() => {
-        fetch(url, {
-           
-          }).then(res => res.json())
+        fetch(url, requestOptions)
+        .then(res => res.json())
             .then(
                 (result) => {
                     setPageData(result);
                 },
                 (error) => {
+                    console.log(error);
                     setPageData(error);
                 }
             )
@@ -25,7 +33,8 @@ const Profile = (props) => {
     return (
         <div className='text-center'>
             <h2>Profile Page</h2>
-            <h2>Name: </h2>{pageData.firstName}
+            <h2>Name: </h2>
+            <p>{pageData && pageData.firstName} {pageData && pageData.lastName}</p>
             <SignOutButton />
         </div>
     );
