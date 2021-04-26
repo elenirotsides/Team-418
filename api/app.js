@@ -3,9 +3,14 @@ const app = express();
 const cors = require('cors');
 const session = require('express-session')
 const configRoutes = require('./routes');
+const bodyParser = require('body-parser')
 const { authentication } = require('./middleware');
 const PORT = require('./config/settings.json').api.port;
 
+
+app.use(bodyParser.urlencoded({ extended: false }))
+
+app.use(bodyParser.json())
 // Enable cors with authentication
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 

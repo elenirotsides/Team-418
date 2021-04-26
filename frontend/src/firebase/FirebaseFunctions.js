@@ -12,4 +12,6 @@ async function doLogOut() {
     await firebase.auth().signOut();
 }
 
-export { doSocialSignIn, doLogOut };
+
+
+export {doSocialSignIn, doLogOut};
