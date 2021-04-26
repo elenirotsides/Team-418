@@ -4,7 +4,9 @@
   "description": "CS-554 Team 418 Final Project Api",
   "main": "app.js",
   "scripts": {
+    "dockerStart": "npm run dockerSeed && DOCKER_MODE=true node app.js",
     "start": "node app.js",
+    "dockerSeed": "DOCKER_MODE=true node scripts/seed.js",
     "seed": "node scripts/seed.js",
     "test": "node scripts/test.js"
   },
