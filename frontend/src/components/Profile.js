@@ -25,11 +25,7 @@ const Profile = (props) => {
     return (
         <div className='text-center'>
             <h2>Profile Page</h2>
-<<<<<<< HEAD
-            <h2>Name: </h2>
-            <ChangePassword />
-=======
->>>>>>> 949c20a8f82dc006437d38df804cd7f8a9753452
+            <h2>Name: </h2>{pageData.firstName}
             <SignOutButton />
         </div>
     );

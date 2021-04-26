@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import '../App.css';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
@@ -6,7 +6,6 @@ import GoogleLogIn from './GoogleLogIn';
 
 function SignUp() {
     const { currentUser } = useContext(AuthContext);
-<<<<<<< HEAD
     const [pwMatch, setPWMatch] = useState('');
 
     const handleSignUp = async (e) => {
@@ -16,15 +15,13 @@ function SignUp() {
             setPWMatch('Passwords do not match');
             return false;
         }
-
+/*
         try {
             await doCreateUserWithEmailAndPassword(email.value, passwordOne.value, firstName.value, lastName.value, displayName.value);
         } catch (error) {
             alert(error);
-        }
+        }*/
     };
-=======
->>>>>>> 949c20a8f82dc006437d38df804cd7f8a9753452
 
     if (currentUser) {
         return <Redirect to='/' />;
