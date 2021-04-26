@@ -19,8 +19,10 @@ const usersData = require('../data').users;
 
 });*/
 
-router.get('/profile/:email', async function(req, res){
-    let email = req.params.email;
+router.post('/profile', async function(req, res){
+    let email = req.body.email;
+    console.log(email);
+    email = "bsanders@gmail.com";
     try{
         const user = await usersData.getUserByEmail(email);
         res.send(user);
