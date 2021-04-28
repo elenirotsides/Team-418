@@ -1,63 +1,31 @@
-.App {
-    text-align: center;
-}
-
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
 .App-header {
     background-color: #282c34;
-    height: 150px;
-    padding: 120px;
     color: white;
 }
 
-.App-link {
-    color: #61dafb;
+.profileBtn:hover ~ .dropdownContent {
+    display: block;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.dropdownContent:hover {
+    display: block;
 }
 
-.navigation {
-    background: #282c34;
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color:black;
+    min-width: 150px;
+    right: 0;
+    top: 60px;
+    padding: 10px 
 }
-
-/* .navigation ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-} */
 
 .navigation a:link,
 .navigation a:visited {
     color: white;
     text-decoration: none;
 }
-
-.active {
-    font-weight: bold;
-}
-
-.error {
-    font-weight: bold;
-    color: red !important;
-}
-
 .navlink {
     padding: 0.4rem 0.8rem;
     background-color: #535c6e;
@@ -73,23 +41,12 @@
     border: 2px solid #535c6e;
 }
 
-.google {
-    cursor: pointer;
-}
-
-button {
-    padding: 0.23rem 0.5rem;
-    background-color: #535c6e;
-    border-radius: 3px;
-    color: white;
-    text-decoration: none !important;
-    margin: 5px;
-    border-style: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #282c34;
-    color: white;
-    border: 2px solid #535c6e;
-}
+.popularGamesScroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .popularGamesScroll {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }

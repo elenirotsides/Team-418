@@ -3,6 +3,52 @@ import { NavLink } from 'react-router-dom';
 import LogOutButton from './LogOut';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
+import { Grid, makeStyles } from '@material-ui/core';
+
+
+const styles = makeStyles({
+
+    navIconButton: {
+        width: 60,
+        height: 60,
+        margin: '0px 30px 0px 20px',
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+        border: 0,
+    },
+
+    navIconSize: {
+        height: '100%',
+        width: 'auto',
+        padding: '5px 0px 5px 0px'
+    },
+
+    navSearchParent: {
+        marginTop: 15
+    },
+
+    navSearchBox: {
+        display: 'inline',
+        marginRight: 10,
+        marginLeft: 10
+    },
+
+    advancedSearchLink: {
+        display: 'inline',
+        marginTop: 25,
+        marginLeft: 10
+    },
+
+    dropdown: {
+        position: 'relative',
+        display: 'inline-block'
+    },
+
+    dropdownLink: {
+        marginBottom:10,
+    }
+
+
+})
 
 const Navigation = () => {
     const { currentUser } = useContext(AuthContext);
@@ -10,29 +56,44 @@ const Navigation = () => {
 };
 
 const NavigationAuth = () => {
+    const classes = styles();
     return (
-        <nav className="navigation">
-            <NavLink exact to="/" activeClassName="active" className="navlink">
-                Home
-            </NavLink>
-
-            <NavLink exact to="/profile" activeClassName="active" className="navlink">
-                Profile
-            </NavLink>
-
-            <NavLink exact to="/advancedsearch" activeClassName="active" className="navlink">
-                Advanced Search
-            </NavLink>
-
-            <NavLink exact to="/results/test" activeClassName="active" className="navlink">
-                Results
-            </NavLink>
-
-            <NavLink exact to="/game/1" activeClassName="active" className="navlink">
-                Game
-            </NavLink>
-
-            <LogOutButton />
+        <nav className={classes.navgitation}>
+            <Grid container>
+                <Grid item md={1} sm={2} xs={12}>
+                    <button className={classes.navIconButton}>
+                        <img className={classes.navIconSize} src='imgs/logo.png' alt='home' />
+                    </button>
+                </Grid>
+                <Grid item md={10} sm={8} xs={10}>
+                    <div className={classes.navSearchParent}>
+                        <form className={classes.navSearchBox}>
+                            <label>
+                                <input type="text" placeholder='Search games...' onChange={(e) => {
+                                    // on change here
+                                }} onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        // hit enter
+                                    }
+                                }} />
+                            </label>
+                        </form>
+                        <a className={classes.advancedSearchLink} href='/advancedsearch'>Advanced Search</a>
+                    </div>
+                </Grid>
+                <Grid item md={1} sm={2} xs={2}>
+                    <div className={classes.dropdown}>
+                        <button className={`${classes.navIconButton} profileBtn`}>
+                            <img className={classes.navIconSize} src='imgs/profile.png' alt='profile' />
+                        </button>
+                        <div className='dropdownContent'>
+                            <div className={classes.dropdownLink}><a href='/profile'>Profile</a></div>
+                            <div className={classes.dropdownLink}><a href='/logout'>Logout</a></div>
+                        </div>
+                    </div>
+                </Grid>
+            </Grid>
         </nav>
     );
 };
