@@ -20,6 +20,7 @@ const Profile = (props) => {
         .then(res => res.json())
             .then(
                 (result) => {
+                    console.log(result);
                     setPageData(result);
                 },
                 (error) => {
@@ -33,8 +34,12 @@ const Profile = (props) => {
     return (
         <div className='text-center'>
             <h2>Profile Page</h2>
-            <h2>Name: </h2>
+            <h3>Name: </h3>
             <p>{pageData && pageData.firstName} {pageData && pageData.lastName}</p>
+            <h3>Email: </h3>
+            <p>{pageData && pageData.email}</p>
+            <h3>Username: </h3>
+            <p>{pageData && pageData.displayName}</p>
             <SignOutButton />
         </div>
     );
