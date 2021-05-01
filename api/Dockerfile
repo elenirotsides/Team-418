@@ -4,3 +4,4 @@ WORKDIR /app
 RUN npm install
 RUN apk update
 RUN apk add imagemagick
+RUN apk add redis
