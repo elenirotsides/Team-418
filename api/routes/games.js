@@ -9,6 +9,7 @@ const { getCachedData, setCachedData, dataKeys } = require('../redis');
 router.get(
     '/',
     IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
             const cacheData = await getCachedData(dataKeys.games);
@@ -25,7 +26,7 @@ router.get(
                     )
                 );
                 res.json(response.data);
-                setCachedData(dataKeys.games, response.data);
+                setCachedData(dataKeys.games, response.data, 3600);
             }
         } catch (e) {
             console.log(`Error occured in /games/ route`, e);
@@ -37,6 +38,7 @@ router.get(
 router.get(
     '/popular',
     IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
             const cacheData = await getCachedData(dataKeys.gamesPopular);
@@ -49,12 +51,14 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields cover,name,category,total_rating,rating,rating_count; sort total_rating desc;'
+                        'limit 10; offset 0; fields cover,name,category,total_rating,rating,rating_count; sort rating desc; w cover != null;'
                     )
                 );
+                
+                await getCoversForData(response.data);
 
                 res.json(response.data);
-                setCachedData(dataKeys.gamesPopular, response.data);
+                setCachedData(dataKeys.gamesPopular, response.data, 3600);
             }
         } catch (e) {
             console.log(`Error occured in /games/popular route`, e);
@@ -66,6 +70,7 @@ router.get(
 router.get(
     '/new',
     IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
             const cacheData = await getCachedData(dataKeys.gamesNew);
@@ -78,11 +83,14 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields cover,name,category; sort first_release_date desc;'
+                        'limit 10; offset 0; fields cover,name,category,total_rating,rating,rating_count; sort release_dates.date desc; w cover != null;'
                     )
                 );
+
+                await getCoversForData(response.data);
+
                 res.json(response.data);
-                setCachedData(dataKeys.gamesNew, response.data);
+                setCachedData(dataKeys.gamesNew, response.data, 3600);
             }
         } catch (e) {
             console.log(`Error occured in /games/new route`, e);
@@ -94,6 +102,7 @@ router.get(
 router.get(
     '/game/:id',
     IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         const id = req.params.id;
         try {
@@ -111,7 +120,7 @@ router.get(
                     )
                 );
                 res.json(response.data);
-                setCachedData(dataKeys.gamesId(id), response.data);
+                setCachedData(dataKeys.gamesId(id), response.data, 3600);
             }
         } catch (e) {
             console.log(`Error occured in /games/:id route`, e);
@@ -121,8 +130,54 @@ router.get(
 );
 
 router.get(
+    '/featured',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        const id = req.params.id;
+        try {
+            const cacheData = await getCachedData(dataKeys.featuredGame);
+            if (cacheData) {
+                console.log('returning cached data for /games/:id');
+                res.json(cacheData);
+            } else {
+                console.log('no cached data for /featured');
+                const response = await axios(
+                    IGDBSessionHandler.instance.igdbAxiosConfig(
+                        'games',
+                        null,
+                        `fields *; search "Black Ops Cold War - Season 3";`
+                    )
+                );
+
+                const responseWithBanner = {
+                    igdbData: response.data,
+                    banner: '/imgs/featuredCover.png'
+                };
+
+                res.json(responseWithBanner);
+                setCachedData(dataKeys.featuredGame, responseWithBanner, 3600);
+            }
+        } catch (e) {
+            console.log(`Error occured in /featured`, e);
+            res.sendStatus(500);
+        }
+    }
+);
+
+const checkCoverCache = async (req, res, next) => {
+    const cacheData = await getCachedData(dataKeys.coverId(req.params.id));
+    if (cacheData) {
+        res.json({ url: cacheData });
+    } else {
+        return IGDBSessionHandler.instance.addToRateLimit(req, res, next);
+    }
+}
+
+router.get(
     '/game/cover/:id',
     IGDBSessionHandler.instance.validateSession(),
+    checkCoverCache,
     async function (req, res) {
         const id = req.params.id;
         try {
@@ -135,7 +190,7 @@ router.get(
                     )
                 );
 
-                res.json({ url: `https://images.igdb.com/igdb/image/upload/t_cover_big/${response.data[0].image_id}.jpg` });
+                res.json({ url: `https://images.igdb.com/igdb/image/upload/t_720p/${response.data[0].image_id}.jpg` });
             }
         } catch (e) {
             console.log(`Error occured in /games/cover/:id route`, e);
@@ -143,5 +198,33 @@ router.get(
         }
     }
 );
+
+async function getCoversForData(data) {
+    let coverIdString = '';
+    for(let i = 0; i < data.length; i++) {
+        coverIdString += `${data[i].cover}`;
+        if (i < data.length-1) {
+            coverIdString += ', '
+        }
+    };
+
+    const covers = await axios(
+        IGDBSessionHandler.instance.igdbAxiosConfig(
+            'covers',
+            null,
+            `fields *; where id = (${coverIdString});`
+        )
+    );
+
+    for (let i = 0; i < data.length; i++) {
+        
+        await setCachedData(
+             dataKeys.coverId(covers.data[i].id),
+            `https://images.igdb.com/igdb/image/upload/t_720p/${covers.data[i].image_id}.jpg`,
+            86400);
+    }
+}
+
+
 
 module.exports = router;

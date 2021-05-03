@@ -23,11 +23,26 @@ const Home = (props) => {
 
     const classes = styles();
 
+    const [featuredData, setFeaturedData] = useState(undefined);
     const [popularData, setPopularData] = useState(undefined);
     const [newGamesData, setNewGamesData] = useState(undefined);
 
 
     useEffect(() => {
+
+         // get featured games
+         fetch('http://localhost:5000/games/featured', {
+            credentials: 'include'
+        }).then(res => res.json())
+            .then(
+                (result) => {
+                    setFeaturedData(result);
+                },
+                (error) => {
+                    setFeaturedData(null);
+                }
+            )
+
         // get popular games
         fetch('http://localhost:5000/games/popular', {
             credentials: 'include'
@@ -58,16 +73,16 @@ const Home = (props) => {
     return (
         <div>
             <div className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}>
-                <FeaturedGame />
+                <FeaturedGame data={featuredData} />
             </div>
 
             <div className={`${classes.defaultSectionMargin}`}>
                 <PopularGames data={popularData} />
             </div>
 
-            {newGamesData && <div className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}>
+            <div className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}>
                 <NewGames data={newGamesData} />
-            </div>}
+            </div>
 
             <div className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}></div>
         </div>

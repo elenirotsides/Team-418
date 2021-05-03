@@ -12,8 +12,6 @@ import NotFound from './components/NotFound';
 import { AuthProvider } from './firebase/Auth';
 import PrivateRoute from './components/PrivateRoute';
 import AppBar from '@material-ui/core/AppBar';
-import { Grid } from '@material-ui/core';
-
 
 function App() {
     return (

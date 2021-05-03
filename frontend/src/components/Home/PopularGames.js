@@ -3,7 +3,7 @@ import {makeStyles } from '@material-ui/core';
 import SectionTitle from './SectionTitle';
 import ViewAllLink from './ViewAllLink';
 import { useEffect, useState } from 'react';
-import PopularCard from './PopularCard';
+import GameSizableCard from './GameSizableCard';
 
 
 const styles = makeStyles({
@@ -42,7 +42,7 @@ const PopularGames = (props) => {
     let loading = false;
 
     cards = props && props.data && props.data.map((data) => {
-        return <PopularCard key={data.id} data={data} />
+        return <GameSizableCard key={data.id} data={data} cardWidth={200} cardHeight={300} cardMarginRight={10} />
     });
 
     loading = cards == null;

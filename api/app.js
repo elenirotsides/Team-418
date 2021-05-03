@@ -6,6 +6,7 @@ const configRoutes = require('./routes');
 const bodyParser = require('body-parser')
 const { authentication } = require('./middleware');
 const PORT = require('./config/settings.json').api.port;
+const IGDBSessionHandler = require('./IGDB/IGDBSessionHandler');
 
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -27,6 +28,8 @@ app.use(
         saveUninitialized: true,
     })
 );
+
+IGDBSessionHandler.instance.checkRateLimit();
 
 
 // TODO: uncomment when authentication middleware is implemented
