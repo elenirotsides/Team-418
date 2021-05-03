@@ -4,7 +4,7 @@ const mongoUrl = process.env.DOCKER_MODE
     ? settings.mongo.dockerServerUrl
     : settings.mongo.localServerUrl;
 const mongoDatabase = settings.mongo.database;
-console.log(`Connecting to datbase (${mongoDatabase}) at (${mongoUrl})`);
+console.log(`Connecting to database (${mongoDatabase}) at (${mongoUrl})`);
 let _connection = undefined;
 let _db = undefined;
 

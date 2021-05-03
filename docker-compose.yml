@@ -6,6 +6,7 @@ services:
             - '5000:5000'
         depends_on:
             - db
+            - redis
         command: npm run dockerStart
 
     frontend:
@@ -20,3 +21,8 @@ services:
         expose:
             - '27017'
         image: mongo:4.2.13-bionic
+
+    redis:
+        expose:
+            - '6379'
+        image: redis:6.2.2-alpine3.13
