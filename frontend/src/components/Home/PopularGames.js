@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import {makeStyles } from '@material-ui/core';
 import SectionTitle from './SectionTitle';
 import ViewAllLink from './ViewAllLink';
+import { useEffect, useState } from 'react';
+import PopularCard from './PopularCard';
 
 
 const styles = makeStyles({
@@ -14,44 +16,21 @@ const styles = makeStyles({
         overflowX: 'auto',
         whiteSpace: 'nowrap',
         height: 320,
-        width: '100%',
         paddingLeft: 60,
         paddingRight: 60
-    },
-
-    card: {
-        width: 200,
-        height: 300,
-        marginLeft: 0,
-        marginRight: 10,
-        backgroundColor: 'lightgray',
-        display: 'inline-block',
-        position:'relative',
-        cursor:'pointer',
-        '&:hover': {
-            boxShadow: '0px 2px 3px 3px rgba(0,0,0,.2)'
-        }
-    },
-
-    cardNameContainer: {
-        position:'absolute',
-        bottom:0,
-        color:'white',
-        width:'100%',
-        backgroundColor:'rgba(0,0,0,0.3)',
-        maxHeight:300,
-        whiteSpace: 'normal'
-
-    },
-
-    cardName: {
-        margin:10,
-        marginBottom:20
     },
 
     viewAllLink: {
         position:'absolute',
         right:60
+    },
+
+    loading: {
+        textAlign:'center'
+    },
+
+    endPadding: {
+        display:'inline',
     }
 
 });
@@ -60,38 +39,13 @@ const PopularGames = (props) => {
 
     const classes = styles();
     let cards = null;
+    let loading = false;
 
-    const buildCard = (data) => {
-        return (
-            <Link to={`/game/${data.id}`} key={data.id}>
-                <div className={classes.card} >
-                    <div className={classes.cardNameContainer}>
-                        <p className={classes.cardName}>
-                            {data.name}
-                        </p>
-                    </div>
-                </div>
-            </Link>
-        )
-    };
+    cards = props && props.data && props.data.map((data) => {
+        return <PopularCard key={data.id} data={data} />
+    });
 
-    function cardClick(id) {
-        fetch(`http://localhost:5000/game/${id}`, {
-            credentials: 'include'
-        }).then(res => res.json())
-            .then(
-                (result) => {
-                    console.log(result);
-                },
-                (error) => {
-                    console.log(error);
-                }
-            )
-    }
-
-    cards = props && props.data.map((data) => {
-        return buildCard(data);
-    })
+    loading = cards == null;
 
     return (
         <div>
@@ -99,11 +53,14 @@ const PopularGames = (props) => {
                 <SectionTitle title='Popular Games' />
             </div>
             <div className={`${classes.grid} popularGamesScroll`}>
-                {cards}
+                {cards && cards}
+                <div className={classes.endPadding}></div>
+                {loading && 
+                <h2 className={classes.loading}>Loading...</h2>}
             </div>
             
             <div className={classes.viewAllLink}>
-                    <ViewAllLink text='View all new games'/>
+                    <ViewAllLink text='View all popular games'/>
                 </div>
         </div>
     );

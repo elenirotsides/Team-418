@@ -61,9 +61,9 @@ const Home = (props) => {
                 <FeaturedGame />
             </div>
 
-            {popularData && <div className={`${classes.defaultSectionMargin}`}>
+            <div className={`${classes.defaultSectionMargin}`}>
                 <PopularGames data={popularData} />
-            </div>}
+            </div>
 
             {newGamesData && <div className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}>
                 <NewGames data={newGamesData} />
