@@ -49,9 +49,10 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields screenshots.*,name,category; sort rating desc;'
+                        'limit 10; offset 0; fields cover,name,category,total_rating,rating,rating_count; sort total_rating desc;'
                     )
                 );
+
                 res.json(response.data);
                 setCachedData(dataKeys.gamesPopular, response.data);
             }
@@ -114,6 +115,30 @@ router.get(
             }
         } catch (e) {
             console.log(`Error occured in /games/:id route`, e);
+            res.sendStatus(500);
+        }
+    }
+);
+
+router.get(
+    '/game/cover/:id',
+    IGDBSessionHandler.instance.validateSession(),
+    async function (req, res) {
+        const id = req.params.id;
+        try {
+            if (id != null) {
+                const response = await axios(
+                    IGDBSessionHandler.instance.igdbAxiosConfig(
+                        'covers',
+                        null,
+                        `fields *; where id = ${id};`
+                    )
+                );
+
+                res.json({ url: `https://images.igdb.com/igdb/image/upload/t_cover_big/${response.data[0].image_id}.jpg` });
+            }
+        } catch (e) {
+            console.log(`Error occured in /games/cover/:id route`, e);
             res.sendStatus(500);
         }
     }
