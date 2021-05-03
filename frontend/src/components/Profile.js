@@ -2,33 +2,63 @@ import React, { useEffect, useState } from 'react';
 import SignOutButton from './LogOut';
 
 const Profile = (props) => {
-    //call backend route and retrieve response
-    const [pageData, setPageData] = useState(undefined);
-    const loaded = false;
-    const email = 'bsanders@gmail.com';
-    const url = 'http://localhost:5000/users/profile';
 
-    const requestOptions = {
+    const [pageData, setPageData] = useState(undefined);
+    const [ratingData, setRatingData] = useState(undefined);
+    const [ratingIdData, setRatingIdData] = useState(undefined);
+    const loaded = false;
+    const email = 'donotpassgo@gmail.com';
+    const infoUrl = 'http://localhost:5000/users/profile';
+    const ratingsUrl = 'http://localhost:5000/ratings/retrieve';
+    const infoRequestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
     };
 
+   
+
 
     useEffect(() => {
-        fetch(url, requestOptions)
+        fetch(infoUrl, infoRequestOptions)
         .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result);
                     setPageData(result);
+                    setRatingIdData(result._id);
                 },
                 (error) => {
-                    console.log(error);
                     setPageData(error);
                 }
             )
     }, []);
+   
+    useEffect(() => {
+        if (ratingIdData){
+            const ratingRequestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: ratingIdData.toString()})
+            };
+
+
+            fetch(ratingsUrl, ratingRequestOptions)
+            .then(res => res.json())
+                .then(
+                    (result) => {
+                        setRatingData(result);
+                    },
+                    (error) => {
+                        setRatingData(error);
+                    }
+                )
+        }
+       
+    }, [ratingIdData]);
+
+   
+
+   
 
     //TO-DO: add stuff to profile later
     return (
@@ -40,6 +70,7 @@ const Profile = (props) => {
             <p>{pageData && pageData.email}</p>
             <h3>Username: </h3>
             <p>{pageData && pageData.displayName}</p>
+            
             <SignOutButton />
         </div>
     );
