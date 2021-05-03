@@ -19,10 +19,10 @@ module.exports = {
     },
     async getAllRatingsByUserId(id){
         if (arguments.length !== 1) throw "Usage: User Id";
-        if (typeof id !== "string") throw "ID format invalid!";
+        if (!ObjectId.isValid(id)) throw "Rating Id needs to be a valid ObjectId";
+
         const ratingCollection = await ratings();
-        let objId = new ObjectId(id);
-        const rating = await ratingCollection.find({userId: objId}).toArray();
+        const rating = await ratingCollection.find({userId: id}).toArray();
 
         if (!rating) throw "Rating not found with the given userId";
         return rating;
