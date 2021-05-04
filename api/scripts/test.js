@@ -62,12 +62,14 @@ const main = async () => {
         gaming1 = await gameData.addGame(game1.endpointId);
         rating1 = await ratingData.addRating(name1._id, gaming1._id, 10, "4/19/2021");
         comment1 = await commentData.addComment(name1._id, gaming1._id, "It really makes you feel like Batman", "4/19/2021");
-        console.log(rating1);
         rating1 = await ratingData.updateRating(rating1._id, 2);
-        console.log(rating1);
-        console.log(comment1);
         comment1 = await commentData.updateComment(comment1._id, "This game sucks", "1/1/1999");
-        console.log(comment1);
+        
+        await userData.addFavorites(name1._id, [game1.endpointId, game2.endpointId, game3.endpointId, game1.endpointId]);
+        
+        console.log(await userData.getUserByEmail("bsanders@gmail.com"));
+        await userData.removeFavorites(name1._id, [game2.endpointId, game2.endpointId]);
+
         console.log(await userData.getUserByEmail("bsanders@gmail.com"));
 
     } catch (e) { console.log(e) }
