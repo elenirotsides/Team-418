@@ -13,6 +13,7 @@
   "author": "Team 418",
   "license": "ISC",
   "dependencies": {
+    "async-redis": "^1.1.7",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
