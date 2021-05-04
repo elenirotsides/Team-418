@@ -1,5 +1,11 @@
 var admin = require('firebase-admin');
-var serviceAccount = require('./googleInfo.json');
+let serviceAccount;
+try {
+    serviceAccount = require('./googleInfo.json');
+} catch {
+    throw 'You must have the Google service account info at api/middleware/googleInfo.json';
+}
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
