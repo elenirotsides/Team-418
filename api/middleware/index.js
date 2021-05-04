@@ -1,5 +1,5 @@
-const { authenticateWithGoogle } = require('./authentication');
+const googleAuthentication = require('./googleAuthentication');
 
 module.exports = {
-    authenticateWithGoogle,
+    googleAuthentication,
 };

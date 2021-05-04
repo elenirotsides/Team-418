@@ -17,7 +17,7 @@ const Profile = (props) => {
 
     useEffect(() => {
         async function fetchMyApi() {
-            requestOptions.body.token = await getUserIdToken();
+            requestOptions.body.idToken = await getUserIdToken();
             requestOptions.body = JSON.stringify(requestOptions.body);
             fetch(url, requestOptions)
                 .then((res) => res.json())

@@ -1,18 +1,17 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const session = require('express-session')
+const session = require('express-session');
 const configRoutes = require('./routes');
-const bodyParser = require('body-parser')
-const { authentication } = require('./middleware');
+const bodyParser = require('body-parser');
+const { googleAuthentication } = require('./middleware');
 const PORT = require('./config/settings.json').api.port;
 
-
-app.use(bodyParser.urlencoded({ extended: false }))
-
-app.use(bodyParser.json())
 // Enable cors with authentication
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+
+// Add Google authentication middleware
+app.use(googleAuthentication);
 
 //express config
 app.use(express.json());
@@ -27,10 +26,6 @@ app.use(
         saveUninitialized: true,
     })
 );
-
-
-// TODO: uncomment when authentication middleware is implemented
-// app.use(authentication);
 
 configRoutes(app);
 
