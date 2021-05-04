@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LogOutButton from './LogOut';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
@@ -76,9 +77,11 @@ const NavigationAuth = () => {
         <nav className={classes.navgitation}>
             <Grid container>
                 <Grid item md={1} sm={2} xs={12}>
-                    <button className={classes.navIconButton}>
-                        <img className={classes.navIconSize} src='imgs/logo.png' alt='home' />
-                    </button>
+                    <div className={classes.navIconButton}>
+                        <Link to='/'>
+                            <img className={classes.navIconSize} src='imgs/logo.png' alt='home' />
+                        </Link>
+                    </div>
                 </Grid>
                 <Grid item md={10} sm={8} xs={10}>
                     <div className={classes.navSearchParent}>
