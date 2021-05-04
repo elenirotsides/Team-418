@@ -1,4 +1,5 @@
 import firebase from 'firebase/app';
+import firebaseApp from './Firebase';
 
 async function doSocialSignIn(provider) {
     let socialProvider = null;
@@ -12,6 +13,12 @@ async function doLogOut() {
     await firebase.auth().signOut();
 }
 
+async function getUserIdToken() {
+    try {
+        return await firebaseApp.auth().currentUser.getIdToken();
+    } catch {
+        return null;
+    }
+}
 
-
-export {doSocialSignIn, doLogOut};
+export { doSocialSignIn, doLogOut, getUserIdToken };
