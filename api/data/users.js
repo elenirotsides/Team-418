@@ -1,7 +1,6 @@
 // TODO: db methods for users
 const { ObjectId } = require("mongodb");
 const mongoCollections = require('../config/mongoCollections');
-const { validateString } = require("./validation");
 const users = mongoCollections.users;
 const validate = require('./validation');
 
@@ -45,6 +44,13 @@ module.exports = {
         if (!validate.validateString(dName)) throw "Display name must be a non empty string";
         if (!validate.isGoodEmail(email)) throw "Email must be a non empty string and valid";
         if (!validate.validateString(ppic)) throw "Profile picture storage path must be a non empty string";
+
+        // check that the display name is unique and doesn't already exist in the database
+        let userList = await this.getAllUsers();
+        for (let i=0; i<userList.length; i++) {
+            if (userList[i].displayName == dName)
+                throw "That display name is already taken, how unfortunate for you";
+        }
 
         /*
         if (!Array.isArray(favGames)) throw "Favorite games needs to be an array of games";
@@ -98,5 +104,101 @@ module.exports = {
             throw "Could not create new user object";
         const user = await this.getUserById(newUser._id);
         return user;
+    },
+
+    // add favorite games to the user
+    // gameList is an array of endpoint ids
+    // allows duplicates in the input, but the code will ensure fav games are all unique
+    // returns the favorite games array
+    async addFavorites(userId, gameList) {
+        if (arguments.length != 2) throw "Usage: User Id, Game List";
+        if (!Array.isArray(gameList)) throw "Game List needs to be a non-empty array";
+        if (gameList.length === 0) 
+            throw "Why...why would you pass in an empty array, you're just wasting everyone's time here";
+        
+        // check that every element in the array is at least a non empty string
+        for (let i=0; i<gameList.length; i++) {
+            if (!validate.validateString(gameList[i]))
+                throw "All elements should be non-empty strings";
+        }
+
+        let user;
+        try {
+            user = await this.getUserById(userId);
+        } catch (e) {
+            throw e;
+        }
+
+        let updatedList = user.favoriteGames;
+        for (let i=0; i<gameList.length; i++) {
+            if (!updatedList.includes(gameList[i]))
+                updatedList.push(gameList[i]);
+        }
+
+        const newUser = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName,
+            email: user.email,
+            favoriteGames: updatedList,
+            ratings: user.ratings,
+            comments: user.comments,
+            profilePic: user.profilePic
+        };
+
+        const userCollection = await users();
+        const userUpdate = await userCollection.updateOne({_id: user._id}, {$set: newUser});
+        if (userUpdate.modifiedCount === 0)
+            throw "Could not modify user with new favorite games";
+        return updatedList;
+
+    }, 
+
+    //remove favorite games from a user
+    // can supply any valid endpoint id, code will remove those that exist in fav games
+    // returns the updated favorite games array
+    async removeFavorites(userId, gameList) {
+        if (arguments.length != 2) throw "Usage: User Id, Game List";
+        if (!Array.isArray(gameList)) throw "Game List needs to be a non-empty array";
+        if (gameList.length === 0) 
+            throw "Why...why would you pass in an empty array, you're just wasting everyone's time here";
+        
+        // check that every element in the array is at least a non empty string
+        for (let i=0; i<gameList.length; i++) {
+            if (!validate.validateString(gameList[i]))
+                throw "All elements should be non-empty strings";
+        }
+
+        let user;
+        try {
+            user = await this.getUserById(userId);
+        } catch (e) {
+            throw e;
+        }
+
+        let updatedList = user.favoriteGames;
+        for (let i=0; i<gameList.length; i++) {
+            //https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
+            let index = updatedList.indexOf(gameList[i]);
+            if (index > -1)
+                updatedList.splice(index, 1);
+        }
+
+        const newUser = {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName,
+            email: user.email,
+            favoriteGames: updatedList,
+            ratings: user.ratings,
+            comments: user.comments,
+            profilePic: user.profilePic
+        };
+
+        const userCollection = await users();
+        const userUpdate = await userCollection.updateOne({_id: user._id}, {$set: newUser});
+        if (userUpdate.modifiedCount === 0)
+            throw "Could not modify user with removed favorite games";
+        return updatedList;
     }
 }

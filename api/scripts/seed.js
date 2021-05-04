@@ -193,6 +193,15 @@ const main = async () => {
         await commentData.addComment(name2._id, gaming5._id, "This game creeps me out", "01/01/2000");
     } catch (e) { console.log(e); }
 
+    // the part where i give each user some favorite games
+    try {
+        await userData.addFavorites(bernie._id, [game1.endpointId, game2.endpointId]);
+        await userData.addFavorites(name2._id, [game3.endpointId, game4.endpointId]);
+        await userData.addFavorites(name3._id, [game5.endpointId, game6.endpointId]);
+        await userData.addFavorites(name4._id, [game7.endpointId, game8.endpointId]);
+        await userData.addFavorites(name5._id, [game9.endpointId, game10.endpointId]);
+    } catch (e) { console.log(e); }
+
     // close the database and call it a day
     try {
         console.log('Done seeding database');
