@@ -71,6 +71,13 @@ const main = async () => {
         await userData.removeFavorites(name1._id, [game2.endpointId, game2.endpointId]);
 
         console.log(await userData.getUserByEmail("bsanders@gmail.com"));
+        await userData.addUser(
+            "poop",
+            "butt",
+            "bsanders15",
+            "anemail@gmail.com",
+            "null"
+        );
 
     } catch (e) { console.log(e) }
 
