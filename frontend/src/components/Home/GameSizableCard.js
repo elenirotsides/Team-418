@@ -2,16 +2,18 @@ import { makeStyles } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
-const styles = makeStyles({
+
+const styles = makeStyles(props => ({
     inline: {
         display: 'inline',
     },
 
     card: {
-        width: 200,
-        height: 300,
+        width: ({cardWidth}) => cardWidth == null ? 'auto' : cardWidth,
+        height: ({cardHeight}) => cardHeight == null ? 'auto' : cardHeight,
+        paddingTop:({cardPaddingTop}) => cardPaddingTop == null ? 'auto' : cardPaddingTop,
         marginLeft: 0,
-        marginRight: 10,
+        marginRight: ({cardMarginRight}) => cardMarginRight ? cardMarginRight : 'auto',
         backgroundColor: 'lightgray',
         display: 'inline-block',
         position: 'relative',
@@ -42,11 +44,19 @@ const styles = makeStyles({
 
     cardName: {
         margin: 10,
-        marginBottom: 20,
-    },
-});
+        marginBottom: 20
+    }
 
-const PopularCard = (props) => {
+}));
+
+
+const GameSizableCard = (props) => {
+    const classes = styles({
+        cardWidth: props.cardWidth,
+        cardHeight: props.cardHeight,
+        cardPaddingTop: props.cardPaddingTop,
+        cardMarginRight: props.cardMarginRight
+    });
     const [coverURL, setCoverURL] = useState('');
     let idToken;
     async function fetchData() {
@@ -74,7 +84,6 @@ const PopularCard = (props) => {
         fetchData();
     }, []);
 
-    const classes = styles();
     return (
         <div className={classes.inline}>
             <Link to={`/game/${props.data.id}`} key={props.data.id}>
@@ -95,4 +104,4 @@ const PopularCard = (props) => {
     );
 };
 
-export default PopularCard;
+export default GameSizableCard;

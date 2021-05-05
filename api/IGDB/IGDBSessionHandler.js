@@ -7,8 +7,11 @@ var token;
 // Expiration date of the token
 var tokenExperation;
 
+var nextQueue = [];
+
 // Singleton class
 class IGDBSessionHandler {
+
     constructor() {
         if (!IGDBSessionHandler.instance) {
             token = null;
@@ -48,7 +51,7 @@ class IGDBSessionHandler {
                     console.log(error);
                 });
             }
-            
+
             // next please!
             next();
         };
@@ -83,11 +86,30 @@ class IGDBSessionHandler {
             data: data
         }
     }
+
+    addToRateLimit = async (req, res, next) => {
+        nextQueue.push(next);
+    } 
+
+    checkRateLimit() {
+        setTimeout(() => { this.checkRateLimit() }, 250);
+
+        if (nextQueue.length === 0) {
+            return;
+        }
+
+        const nextNext = nextQueue[0];
+        nextQueue.shift();
+
+        nextNext();
+    }
+
 }
 
 // singleton instance
 const instance = new IGDBSessionHandler();
 Object.freeze(instance);
+
 
 // module export 
 module.exports = { instance };

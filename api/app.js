@@ -6,6 +6,7 @@ const configRoutes = require('./routes');
 const bodyParser = require('body-parser');
 const { googleAuthentication } = require('./middleware');
 const PORT = require('./config/settings.json').api.port;
+const IGDBSessionHandler = require('./IGDB/IGDBSessionHandler');
 
 // Enable cors with authentication
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
@@ -26,6 +27,11 @@ app.use(
         saveUninitialized: true,
     })
 );
+
+IGDBSessionHandler.instance.checkRateLimit();
+
+// TODO: uncomment when authentication middleware is implemented
+// app.use(authentication);
 
 configRoutes(app);
 

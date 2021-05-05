@@ -19,12 +19,28 @@ const styles = makeStyles({
 const Home = (props) => {
     const classes = styles();
 
+    const [featuredData, setFeaturedData] = useState(undefined);
     const [popularData, setPopularData] = useState(undefined);
     const [newGamesData, setNewGamesData] = useState(undefined);
     let idToken;
 
+
     async function fetchData() {
         if (!idToken) idToken = await getUserIdToken();
+
+        // get featured games
+        fetch(`http://localhost:5000/games/featured?idToken=${idToken}`, {
+            credentials: 'include'
+        }).then(res => res.json())
+            .then(
+                (result) => {
+                    setFeaturedData(result);
+                },
+                (error) => {
+                    setFeaturedData(null);
+                }
+            );
+
         // get popular games
         fetch(`http://localhost:5000/games/popular?idToken=${idToken}`, {
             credentials: 'include',
@@ -41,10 +57,7 @@ const Home = (props) => {
 
         // get new games
         fetch(`http://localhost:5000/games/new?idToken=${idToken}`, {
-            credentials: 'include',
-            body: {
-                idToken,
-            },
+            credentials: 'include'
         })
             .then((res) => res.json())
             .then(
@@ -66,20 +79,22 @@ const Home = (props) => {
             <div
                 className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}
             >
-                <FeaturedGame />
+                <FeaturedGame data={featuredData} />
             </div>
 
-            <div className={`${classes.defaultSectionMargin}`}>
+            <div
+                className={`${classes.defaultSectionMargin}`}
+            >
                 <PopularGames data={popularData} />
             </div>
 
-            {newGamesData && (
-                <div
-                    className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}
-                >
-                    <NewGames data={newGamesData} />
-                </div>
-            )}
+
+            <div
+                className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}
+            >
+                <NewGames data={newGamesData} />
+            </div>
+
 
             <div
                 className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}
