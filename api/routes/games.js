@@ -225,6 +225,31 @@ async function getCoversForData(data) {
     }
 }
 
+router.post(
+    '/search',
+    IGDBSessionHandler.instance.validateSession(),
+    async function (req, res) {
+        const searchTerm = req.body.searchTerm;
+        if (!searchTerm)
+            return res.status(400).json({ error: 'No search term provided' });
 
+        try {
+            const { data } = await axios(
+                IGDBSessionHandler.instance.igdbAxiosConfig(
+                    'games',
+                    null,
+                    `fields name, cover.url, summary; search "${searchTerm}";`
+                )
+            );
+            res.json(data);
+        } catch (e) {
+            console.log(
+                `Error occured in /games/search route`,
+                e.response.data
+            );
+            res.sendStatus(500);
+        }
+    }
+);
 
 module.exports = router;
