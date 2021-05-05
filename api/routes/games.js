@@ -238,7 +238,7 @@ router.post(
                 IGDBSessionHandler.instance.igdbAxiosConfig(
                     'games',
                     null,
-                    `fields name, cover.url, summary; search "${searchTerm}";`
+                    `fields name, cover, summary; search "${searchTerm}";`
                 )
             );
             res.json(data);
