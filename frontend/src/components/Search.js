@@ -117,7 +117,7 @@ const Search = (props) => {
                 aria-labelledby="headingOne"
                 data-parent="#accordionExample"
             >
-                <div class="card-body">
+                <div class="card-body text-center">
                     <label class="m-1">Genre</label>
                     <select onChange={(e) => setGenre(e.target.value)}>
                         <option value="-1">All</option>
@@ -176,7 +176,7 @@ const Search = (props) => {
                                 Search
                             </button>
                         </div>
-                        <div class="accordion" id="accordionExample">
+                        <div class="accordion text-center">
                             <h5 class="mb-0">
                                 <button
                                     class="btn"
