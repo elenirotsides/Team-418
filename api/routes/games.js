@@ -222,23 +222,65 @@ router.post(
         const searchTerm = req.body.searchTerm;
         if (!searchTerm)
             return res.status(400).json({ error: 'No search term provided' });
-
         try {
+            let fieldString = `fields name, cover, genres; search "${searchTerm}";`;
+            let advancedFields = '';
+            for (const key of ['genres']) {
+                if (req.body.hasOwnProperty(key))
+                    advancedFields += ` ${key}=${req.body[key]}`;
+            }
+            if (advancedFields) fieldString += `where ${advancedFields};`;
+            console.log(fieldString);
             const cacheData = await getCachedData(
-                dataKeys.gamesSearch(searchTerm)
+                dataKeys.gamesSearch(fieldString)
             );
             if (cacheData) return res.json(cacheData);
             const { data } = await axios(
                 IGDBSessionHandler.instance.igdbAxiosConfig(
                     'games',
                     null,
-                    `fields name, cover, summary; search "${searchTerm}";`
+                    fieldString
                 )
             );
             res.json(data);
-            setCachedData(dataKeys.gamesSearch(searchTerm), data);
+            console.log(data);
+            setCachedData(dataKeys.gamesSearch(fieldString), data);
         } catch (e) {
-            console.log(`Error occured in /games/search route`, e);
+            console.log(e.response);
+            console.log(`Error occured in /games/search route`);
+            res.sendStatus(500);
+        }
+    }
+);
+
+async function getGameGenres() {
+    const cacheData = await getCachedData(dataKeys.gamesGenres);
+    if (cacheData) return cacheData;
+    const { data } = await axios(
+        IGDBSessionHandler.instance.igdbAxiosConfig(
+            'genres',
+            null,
+            `fields name;`
+        )
+    );
+    return data;
+}
+
+router.get(
+    '/search/info',
+    IGDBSessionHandler.instance.validateSession(),
+    async function (req, res) {
+        try {
+            const cacheData = await getCachedData(dataKeys.gamesSearchInfo);
+            if (cacheData) return res.json(cacheData);
+            const data = {
+                genres: await getGameGenres(),
+            };
+            res.json(data);
+            console.log(data);
+            setCachedData(dataKeys.gamesSearchInfo, data);
+        } catch (e) {
+            console.log(`Error occured in /games/search/info route`, e);
             res.sendStatus(500);
         }
     }

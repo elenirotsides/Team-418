@@ -10,7 +10,10 @@ const dataKeys = {
         return `games/${id}`;
     },
     gamesSearch: (searchTerm) => {
-        return `gamesSearch#${searchTerm}`
-    }
+        return `gamesSearch#${searchTerm}`;
+    },
+    gamesGenres: 'games/genres',
+    gamesSearchInfo: 'games/search/info',
 };
+
 module.exports = dataKeys;

@@ -5,8 +5,11 @@ const Search = (props) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [pageData, setPageData] = useState(undefined);
+    const [searchInfo, setSearchInfo] = useState(undefined);
+    const [genre, setGenre] = useState(undefined);
     let idToken;
     const searchUrl = 'http://localhost:5000/games/search';
+    const searchInfoUrl = 'http://localhost:5000/games/search/info';
 
     async function search(e, redirectedSearchTerm) {
         let searchTerm;
@@ -22,21 +25,45 @@ const Search = (props) => {
         try {
             setLoading(true);
             setPageData(undefined);
+            let body = {
+                searchTerm: searchTerm,
+                idToken: idToken,
+            };
+            if (genre && genre !== '-1') body['genres'] = genre;
             const requestInfo = {
                 credentials: 'include',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    searchTerm: searchTerm,
-                    idToken: idToken,
-                }),
+                body: JSON.stringify(body),
             };
             const response = await fetch(searchUrl, requestInfo);
             setPageData(await response.json());
         } catch (err) {
-            setError(err);
+            console.log('search error', err);
+            setError(true);
+        }
+        setLoading(false);
+    }
+
+    async function getSearchInfo() {
+        try {
+            if (!idToken) idToken = await getUserIdToken();
+            setLoading(true);
+            const requestInfo = {
+                credentials: 'include',
+                method: 'GET',
+            };
+            const response = await fetch(
+                `${searchInfoUrl}?idToken=${idToken}`,
+                requestInfo
+            );
+            setSearchInfo(await response.json());
+            console.log('searchInfo', searchInfo);
+        } catch (err) {
+            console.log('setting error', err);
+            setError(true);
         }
         setLoading(false);
     }
@@ -70,7 +97,30 @@ const Search = (props) => {
                 props.location.state.searchTerm;
             search(null, props.location.state.searchTerm);
         }
+        getSearchInfo();
     }, [props]);
+
+    function getAdvancedOptions() {
+        return (
+            <div
+                id="collapseOne"
+                class="collapse"
+                aria-labelledby="headingOne"
+                data-parent="#accordionExample"
+            >
+                <div class="card-body">
+                    <label class="m-1">Genre</label>
+                    <select onChange={(e) => setGenre(e.target.value)}>
+                        <option value="-1">All</option>
+                        {searchInfo.genres &&
+                            searchInfo.genres.map((g) => {
+                                return <option value={g.id}>{g.name}</option>;
+                            })}
+                    </select>
+                </div>
+            </div>
+        );
+    }
 
     if (error) {
         return (
@@ -82,13 +132,8 @@ const Search = (props) => {
                 </p>
             </div>
         );
-    } else if (loading) {
-        return (
-            <div class="text-center">
-                <h2>Loading...</h2>
-            </div>
-        );
     } else {
+        console.log('error', error);
         return (
             <div>
                 <div class="container">
@@ -115,10 +160,26 @@ const Search = (props) => {
                                 Search
                             </button>
                         </div>
+                        <div class="accordion" id="accordionExample">
+                            <h5 class="mb-0">
+                                <button
+                                    class="btn"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#collapseOne"
+                                    aria-expanded="true"
+                                    aria-controls="collapseOne"
+                                >
+                                    Advanced Search Options
+                                </button>
+                            </h5>
+                        </div>
+                        {searchInfo && getAdvancedOptions()}
                     </form>
                 </div>
                 <div id="errorDiv">{error && <p>{error}</p>}</div>
-                {pageData && createGameCards()}
+                {loading && <h2>Loading...</h2>}
+                {!loading && pageData && createGameCards()}
             </div>
         );
     }
