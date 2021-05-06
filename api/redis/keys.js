@@ -9,5 +9,8 @@ const dataKeys = {
     coverId: (id) => {
         return `games/${id}`;
     },
+    gamesSearch: (searchTerm) => {
+        return `gamesSearch#${searchTerm}`
+    }
 };
 module.exports = dataKeys;

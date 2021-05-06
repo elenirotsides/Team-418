@@ -11,7 +11,6 @@ const Search = (props) => {
     async function search(e, redirectedSearchTerm) {
         let searchTerm;
         if(redirectedSearchTerm){
-            console.log(`Searching for: ${redirectedSearchTerm}`)
             searchTerm = redirectedSearchTerm;
         } else {
             e.preventDefault();
@@ -21,6 +20,7 @@ const Search = (props) => {
         if (!searchTerm) return setError('Search term cannot be empty.');
         if (!idToken) idToken = await getUserIdToken();
         try {
+            setLoading(true);
             setPageData(undefined);
             const requestInfo = {
                 credentials: 'include',
@@ -35,9 +35,8 @@ const Search = (props) => {
             };
             const response = await fetch(searchUrl, requestInfo);
             setPageData(await response.json());
-            console.log(pageData);
-        } catch (e) {
-            console.log(e);
+        } catch (err) {
+            setError(err);
         }
         setLoading(false);
     }
@@ -67,7 +66,16 @@ const Search = (props) => {
         }
     }, [props])
 
-    if (loading) {
+    if (error) {
+        return (
+            <div>
+                <p>
+                    500 Error: An error occurred while communicating with the
+                    server.
+                </p>
+            </div>
+        );
+    } else if (loading) {
         return <p>Loading.....</p>;
     } else {
         return (

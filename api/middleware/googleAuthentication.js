@@ -18,7 +18,6 @@ async function authenticateWithGoogle(req, res, next) {
             (req.query && req.query.idToken) || (req.body && req.body.idToken);
         if (idToken) {
             const decodedToken = await admin.auth().verifyIdToken(idToken);
-            console.log(`Authenticated user: ${decodedToken.email}`);
             req.googleInfo = decodedToken;
             next();
         } else {

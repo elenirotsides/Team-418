@@ -14,10 +14,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.games);
             if (cacheData) {
-                console.log('returning cached data for /games');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /games');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -43,10 +41,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.gamesPopular);
             if (cacheData) {
-                console.log('returning cached data for /games/popular');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /games/popular');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -75,10 +71,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.gamesNew);
             if (cacheData) {
-                console.log('returning cached data for /games/new');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /games/new');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -108,10 +102,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.gamesId(id));
             if (cacheData) {
-                console.log('returning cached data for /games/:id');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /games/:id');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -138,10 +130,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.featuredGame);
             if (cacheData) {
-                console.log('returning cached data for /games/:id');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /featured');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -234,6 +224,10 @@ router.post(
             return res.status(400).json({ error: 'No search term provided' });
 
         try {
+            const cacheData = await getCachedData(
+                dataKeys.gamesSearch(searchTerm)
+            );
+            if (cacheData) return res.json(cacheData);
             const { data } = await axios(
                 IGDBSessionHandler.instance.igdbAxiosConfig(
                     'games',
@@ -242,11 +236,9 @@ router.post(
                 )
             );
             res.json(data);
+            setCachedData(dataKeys.gamesSearch(searchTerm), data);
         } catch (e) {
-            console.log(
-                `Error occured in /games/search route`,
-                e.response.data
-            );
+            console.log(`Error occured in /games/search route`, e);
             res.sendStatus(500);
         }
     }
