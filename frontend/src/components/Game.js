@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
+import Button from '@material-ui/core/Button';
+
 
 const Game = (props) => {
     const [loading, setLoading] = useState(true);
     const [pageData, setPageData] = useState(undefined);
+    const [favText, setFavText] = useState("Add to Favorites");
     let idToken;
+     
+
+    async function addRemoveFavorites(){
+        if (favText == "Add to Favorites"){
+            setFavText("Remove From Favorites");
+        }else{
+            setFavText("Add to Favorites");
+        }
+    }
+
+
+
 
     async function fetchData() {
         if (!idToken) idToken = await getUserIdToken();
@@ -38,7 +53,10 @@ const Game = (props) => {
             <div>
                 <p>Game Details!!</p>
                 {pageData && `${pageData[0].name}`}
+                <br></br>
+                <Button variant="contained" color="primary" onClick={async () => {await addRemoveFavorites();}}>{favText}</Button>
             </div>
+            
         );
     }
 };
