@@ -9,5 +9,12 @@ const dataKeys = {
     coverId: (id) => {
         return `games/${id}`;
     },
+    gamesSearch: (searchTerm) => {
+        return `gamesSearch#${searchTerm}`;
+    },
+    gamesGenres: 'games/genres',
+    gamesPlatforms: 'games/platforms',
+    gamesSearchInfo: 'games/search/info',
 };
+
 module.exports = dataKeys;

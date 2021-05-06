@@ -2,6 +2,7 @@ const redisClient = require('./client');
 
 async function getCachedData(dataKey) {
     const stringifyData = await redisClient.get(dataKey);
+    if(stringifyData) console.log(`Found cached data for: ${dataKey}`)
     return JSON.parse(stringifyData);
 }
 
