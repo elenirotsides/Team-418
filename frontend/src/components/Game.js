@@ -19,7 +19,7 @@ const Game = (props) => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: { userId: userData.toString(), gameList: [pageData._id]}
+            body: { userId: userData.toString(), gameList: [pageData[0].id] }
         };
         requestOptions.body.idToken = await getUserIdToken();
         requestOptions.idToken = await getUserIdToken();
@@ -52,7 +52,7 @@ const Game = (props) => {
         const userRequestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: { email: email},
+            body: { email: email },
         };
        userRequestOptions.body.idToken = await getUserIdToken();
        userRequestOptions.idToken = await getUserIdToken();

@@ -25,13 +25,14 @@ router.post('/profile', async function(req, res){
 router.post('/addfavorites', async function(req, res){
     let userId = req.body.userId;
     let gameList = req.body.gameList;
+    console.log(gameList);
+    let objId = new ObjectId(userId);
 
-    let objId = new ObjectId(userId)
     if (!ObjectId.isValid(objId)){
         res.status(400).send("Invalid Object ID!");
     }
     try{
-        let favorites = await usersData.addFavorites(userId, gameList);
+        let favorites = await usersData.addFavorites(objId, gameList);
         res.send(favorites);
 
     }catch(error){

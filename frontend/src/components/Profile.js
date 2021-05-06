@@ -11,18 +11,19 @@ const Profile = (props) => {
     const email = 'donotpassgo@gmail.com';
     const infoUrl = 'http://localhost:5000/users/profile';
     const ratingsUrl = 'http://localhost:5000/ratings/retrieve';
-    const infoRequestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: { email: email },
-    };
+   
 
     useEffect(() => {
         async function fetchMyApi() {
-            infoRequestOptions.body.idToken = await getUserIdToken();
-            infoRequestOptions.idToken = await getUserIdToken();
-            infoRequestOptions.body = JSON.stringify(infoRequestOptions.body);
-            fetch(infoUrl, infoRequestOptions)
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: { email: email },
+            };
+            requestOptions.body.idToken = await getUserIdToken();
+            requestOptions.idToken = await getUserIdToken();
+            requestOptions.body = JSON.stringify(requestOptions.body);
+            fetch(infoUrl, requestOptions)
                 .then((res) => res.json())
                 .then(
                     (result) => {

@@ -115,7 +115,6 @@ module.exports = {
         if (!Array.isArray(gameList)) throw "Game List needs to be a non-empty array";
         if (gameList.length === 0) 
             throw "Why...why would you pass in an empty array, you're just wasting everyone's time here";
-        
         // check that every element in the array is at least a non empty string
         for (let i=0; i<gameList.length; i++) {
             if (!validate.validateString(gameList[i]))
