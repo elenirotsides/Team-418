@@ -15,7 +15,7 @@ router.post('/retrieve', async function(req, res){
 
     }catch(error){
         console.log(error);
-        res.send(error);
+        res.status(400).send(error);
     }
     
 });

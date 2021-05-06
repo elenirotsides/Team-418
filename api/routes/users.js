@@ -14,7 +14,7 @@ router.post('/profile', async function(req, res){
             res.send(user);
     
         }catch(error){
-            res.send(error);
+            res.status(500).send(error);
         }
     }
 
