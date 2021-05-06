@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LogOutButton from './LogOut';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
@@ -8,9 +9,13 @@ import { Grid, makeStyles } from '@material-ui/core';
 
 const styles = makeStyles({
 
+    navgitation: {
+        backgroundColor:'rgb(50,50,50)'
+    },
+
     navIconButton: {
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         margin: '0px 30px 0px 20px',
         backgroundColor: 'rgba(0, 0, 0, 0)',
         border: 0,
@@ -23,13 +28,19 @@ const styles = makeStyles({
     },
 
     navSearchParent: {
-        marginTop: 15
+        marginTop: 10,
     },
 
     navSearchBox: {
         display: 'inline',
         marginRight: 10,
         marginLeft: 10
+    },
+    
+    advancedSearchContainer: {
+        display:'inline',
+        position: 'absolute',
+        bottom:8,
     },
 
     advancedSearchLink: {
@@ -44,7 +55,12 @@ const styles = makeStyles({
     },
 
     dropdownLink: {
-        marginBottom:10,
+        marginBottom:10
+    },
+
+    link: {
+        color:'white',
+        textDecoration:'none'
     }
 
 
@@ -61,9 +77,11 @@ const NavigationAuth = () => {
         <nav className={classes.navgitation}>
             <Grid container>
                 <Grid item md={1} sm={2} xs={12}>
-                    <button className={classes.navIconButton}>
-                        <img className={classes.navIconSize} src='imgs/logo.png' alt='home' />
-                    </button>
+                    <div className={classes.navIconButton}>
+                        <Link to='/'>
+                            <img className={classes.navIconSize} src='imgs/logo.png' alt='home' />
+                        </Link>
+                    </div>
                 </Grid>
                 <Grid item md={10} sm={8} xs={10}>
                     <div className={classes.navSearchParent}>
@@ -79,7 +97,9 @@ const NavigationAuth = () => {
                                 }} />
                             </label>
                         </form>
-                        <a className={classes.advancedSearchLink} href='/advancedsearch'>Advanced Search</a>
+                        <div className={classes.advancedSearchContainer}>
+                            <a className={`${classes.advancedSearchLink} ${classes.link}`} href='/advancedsearch'>Advanced Search</a>
+                        </div>
                     </div>
                 </Grid>
                 <Grid item md={1} sm={2} xs={2}>
@@ -88,8 +108,8 @@ const NavigationAuth = () => {
                             <img className={classes.navIconSize} src='imgs/profile.png' alt='profile' />
                         </button>
                         <div className='dropdownContent'>
-                            <div className={classes.dropdownLink}><a href='/profile'>Profile</a></div>
-                            <div className={classes.dropdownLink}><a href='/logout'>Logout</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} href='/profile'>Profile</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} href='/logout'>Logout</a></div>
                         </div>
                     </div>
                 </Grid>

@@ -1,4 +1,3 @@
-// TODO: add users routes
 const express = require('express');
 const router = express.Router();
 const validation = require('../data/').validation;
@@ -23,6 +22,5 @@ router.post('/profile', async function(req, res){
    
 
 });
-
 
 module.exports = router;

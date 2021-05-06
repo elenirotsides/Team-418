@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { getUserIdToken } from '../firebase/FirebaseFunctions';
 
 const Game = (props) => {
-
     const [loading, setLoading] = useState(true);
     const [pageData, setPageData] = useState(undefined);
+    let idToken;
 
-    useEffect(() => {
-        // get popular games
-        fetch(`http://localhost:5000/games/game/${props.match.params.id}`, {
-            credentials: 'include'
-        }).then(res => res.json())
+    async function fetchData() {
+        if (!idToken) idToken = await getUserIdToken();
+
+        fetch(
+            `http://localhost:5000/games/game/${props.match.params.id}?idToken=${idToken}`,
+            {
+                credentials: 'include',
+            }
+        )
+            .then((res) => res.json())
             .then(
                 (result) => {
                     setPageData(result);
@@ -17,14 +23,16 @@ const Game = (props) => {
                 (error) => {
                     setPageData(null);
                 }
-            )
-            setLoading(false);
+            );
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        fetchData();
     }, []);
 
     if (loading) {
-        return (
-            <p>Loading.....</p>
-        )
+        return <p>Loading.....</p>;
     } else {
         return (
             <div>

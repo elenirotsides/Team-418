@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SignOutButton from './LogOut';
+import { getUserIdToken } from '../firebase/FirebaseFunctions';
 
 const Profile = (props) => {
 
@@ -13,24 +14,27 @@ const Profile = (props) => {
     const infoRequestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
+        body: { email: email },
     };
 
-   
-
-
     useEffect(() => {
-        fetch(infoUrl, infoRequestOptions)
-        .then(res => res.json())
-            .then(
-                (result) => {
-                    setPageData(result);
-                    setRatingIdData(result._id);
-                },
-                (error) => {
-                    setPageData(error);
-                }
-            )
+        async function fetchMyApi() {
+            infoRequestOptions.body.idToken = await getUserIdToken();
+            infoRequestOptions.idToken = await getUserIdToken();
+            infoRequestOptions.body = JSON.stringify(infoRequestOptions.body);
+            fetch(infoUrl, infoRequestOptions)
+                .then((res) => res.json())
+                .then(
+                    (result) => {
+                        setPageData(result);
+                    },
+                    (error) => {
+                        console.log(error);
+                        setPageData(error);
+                    }
+                );
+        }
+        fetchMyApi();
     }, []);
    
     useEffect(() => {
@@ -62,7 +66,7 @@ const Profile = (props) => {
 
     //TO-DO: add stuff to profile later
     return (
-        <div className='text-center'>
+        <div className="text-center">
             <h2>Profile Page</h2>
             <h3>Name: </h3>
             <p>{pageData && pageData.firstName} {pageData && pageData.lastName}</p>
@@ -75,6 +79,5 @@ const Profile = (props) => {
         </div>
     );
 };
-
 
 export default Profile;
