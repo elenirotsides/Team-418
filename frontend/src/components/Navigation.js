@@ -1,11 +1,8 @@
 import React, { useContext } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import LogOutButton from './LogOut';
+import { NavLink, Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
 import { Grid, makeStyles } from '@material-ui/core';
-
 
 const styles = makeStyles({
 
@@ -73,6 +70,7 @@ const Navigation = () => {
 
 const NavigationAuth = () => {
     const classes = styles();
+    let history = useHistory();
     return (
         <nav className={classes.navgitation}>
             <Grid container>
@@ -92,6 +90,9 @@ const NavigationAuth = () => {
                                 }} onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
+                                        const searchTerm = e.target.value;
+                                        e.target.value = '';
+                                        history.push('/games/search', {searchTerm: searchTerm})
                                         // hit enter
                                     }
                                 }} />

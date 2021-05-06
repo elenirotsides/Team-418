@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import GameSizableCard from './Home/GameSizableCard';
-
 const Search = (props) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -9,10 +8,16 @@ const Search = (props) => {
     let idToken;
     const searchUrl = 'http://localhost:5000/games/search';
 
-    async function search(e) {
-        e.preventDefault();
-        setError(false);
-        const searchTerm = e.target[0].value;
+    async function search(e, redirectedSearchTerm) {
+        let searchTerm;
+        if(redirectedSearchTerm){
+            console.log(`Searching for: ${redirectedSearchTerm}`)
+            searchTerm = redirectedSearchTerm;
+        } else {
+            e.preventDefault();
+            setError(false);
+            searchTerm = e.target[0].value;
+        }
         if (!searchTerm) return setError('Search term cannot be empty.');
         if (!idToken) idToken = await getUserIdToken();
         try {
@@ -36,6 +41,7 @@ const Search = (props) => {
         }
         setLoading(false);
     }
+
     function createGameCards() {
         return (
             <div class="ml-3 mr-2">
@@ -53,6 +59,13 @@ const Search = (props) => {
             </div>
         );
     }
+
+    useEffect(() => {
+        if(props && props.location && props.location.state && props.location.state.searchTerm){
+            document.getElementById('searchTerm').value = props.location.state.searchTerm;
+            search(null, props.location.state.searchTerm);
+        }
+    }, [props])
 
     if (loading) {
         return <p>Loading.....</p>;
