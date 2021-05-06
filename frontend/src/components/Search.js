@@ -10,7 +10,7 @@ const Search = (props) => {
 
     async function search(e, redirectedSearchTerm) {
         let searchTerm;
-        if(redirectedSearchTerm){
+        if (redirectedSearchTerm) {
             searchTerm = redirectedSearchTerm;
         } else {
             e.preventDefault();
@@ -60,15 +60,22 @@ const Search = (props) => {
     }
 
     useEffect(() => {
-        if(props && props.location && props.location.state && props.location.state.searchTerm){
-            document.getElementById('searchTerm').value = props.location.state.searchTerm;
+        if (
+            props &&
+            props.location &&
+            props.location.state &&
+            props.location.state.searchTerm
+        ) {
+            document.getElementById('searchTerm').value =
+                props.location.state.searchTerm;
             search(null, props.location.state.searchTerm);
         }
-    }, [props])
+    }, [props]);
 
     if (error) {
         return (
-            <div>
+            <div class="text-center">
+                <h2>Error</h2>
                 <p>
                     500 Error: An error occurred while communicating with the
                     server.
@@ -76,7 +83,11 @@ const Search = (props) => {
             </div>
         );
     } else if (loading) {
-        return <p>Loading.....</p>;
+        return (
+            <div class="text-center">
+                <h2>Loading...</h2>
+            </div>
+        );
     } else {
         return (
             <div>
