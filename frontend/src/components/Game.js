@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 const Game = (props) => {
     const [loading, setLoading] = useState(true);
     const [pageData, setPageData] = useState(undefined);
-    const [favText, setFavText] = useState(undefined);
+    const [favText, setFavText] = useState("Add to Favorites");
     let idToken;
      
 
@@ -44,7 +44,6 @@ const Game = (props) => {
 
     useEffect(() => {
         fetchData();
-        setFavText("Add to Favorites");
     }, []);
 
     if (loading) {
