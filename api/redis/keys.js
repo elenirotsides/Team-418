@@ -13,6 +13,7 @@ const dataKeys = {
         return `gamesSearch#${searchTerm}`;
     },
     gamesGenres: 'games/genres',
+    gamesPlatforms: 'games/platforms',
     gamesSearchInfo: 'games/search/info',
 };
 

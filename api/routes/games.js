@@ -225,12 +225,13 @@ router.post(
         try {
             let fieldString = `fields name, cover, genres; search "${searchTerm}";`;
             let advancedFields = '';
-            for (const key of ['genres']) {
+            for (const key of ['genres', 'platforms']) {
                 if (req.body.hasOwnProperty(key))
-                    advancedFields += ` ${key}=${req.body[key]}`;
+                    advancedFields +=
+                        (advancedFields ? ' &' : ' ') +
+                        `${key}=${req.body[key]}`;
             }
             if (advancedFields) fieldString += `where ${advancedFields};`;
-            console.log(fieldString);
             const cacheData = await getCachedData(
                 dataKeys.gamesSearch(fieldString)
             );
@@ -243,11 +244,9 @@ router.post(
                 )
             );
             res.json(data);
-            console.log(data);
             setCachedData(dataKeys.gamesSearch(fieldString), data);
         } catch (e) {
-            console.log(e.response);
-            console.log(`Error occured in /games/search route`);
+            console.log(`Error occured in /games/search route`, e);
             res.sendStatus(500);
         }
     }
@@ -263,7 +262,24 @@ async function getGameGenres() {
             `fields name;`
         )
     );
+    setCachedData(dataKeys.gamesGenres, data);
     return data;
+}
+
+function getGamePlatforms() {
+    // IGBD has a ridiculous set of systems,
+    // this will work for now
+    return [
+        { id: 5, name: 'Wii' },
+        { id: 9, name: 'PlayStation 3' },
+        { id: 12, name: 'Xbox 360' },
+        { id: 41, name: 'Wii U' },
+        { id: 48, name: 'PlayStation 4' },
+        { id: 49, name: 'Xbox One' },
+        { id: 130, name: 'Nintendo Switch' },
+        { id: 167, name: 'PlayStation 5' },
+        { id: 169, name: 'Xbox Series' },
+    ];
 }
 
 router.get(
@@ -275,9 +291,9 @@ router.get(
             if (cacheData) return res.json(cacheData);
             const data = {
                 genres: await getGameGenres(),
+                platforms: getGamePlatforms(),
             };
             res.json(data);
-            console.log(data);
             setCachedData(dataKeys.gamesSearchInfo, data);
         } catch (e) {
             console.log(`Error occured in /games/search/info route`, e);
