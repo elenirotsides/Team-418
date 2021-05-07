@@ -5,9 +5,6 @@ const dataKeys = {
     gamesId: (id) => {
         return `games/${id}`;
     },
-    featuredGame: '/featured',
-    coverId: (id) => {
-        return `games/${id}`;
-    },
+    featuredGame: '/featured'
 };
 module.exports = dataKeys;

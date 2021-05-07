@@ -4,7 +4,7 @@ import Home from './components/Home/Home';
 import Navigation from './components/Navigation';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
-import Game from './components/Game';
+import Game from './components/GameDetails/Game';
 import Results from './components/Results';
 import AdvancedSearch from './components/AdvancedSearch';
 import Profile from './components/Profile';

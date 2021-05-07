@@ -42,7 +42,7 @@
     border: 2px solid #535c6e;
 }
 
-.popularGamesScroll::-webkit-scrollbar {
+.noScrollbar::-webkit-scrollbar {
     display: none;
   }
   
