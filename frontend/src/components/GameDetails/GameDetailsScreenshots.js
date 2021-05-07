@@ -77,7 +77,37 @@ const GameDetailsScreenshots = (props) => {
     const [showScreenshotModal, setShowScreenshotModal] = useState(false);
     const [screenshotUrl, setScreenshotUrl] = useState('');
     const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(true);
+    const [showRightArrow, setShowRightArrow] = useState(false);
+
+
+
+    useEffect(() => {
+        CheckScrollChildren();
+    },[])
+
+    function CheckScrollChildren() {
+        const scrollView = document.getElementById('screenshotScrollView');
+        if (scrollView && scrollView.childElementCount > 0) {
+
+            if (scrollView.scrollWidth > scrollView.offsetWidth) {
+                setShowRightArrow(true);
+                return;
+            }
+
+            for (let i = 0; i < scrollView.childElementCount; i++) {
+                if (scrollView.children[i].offsetWidth <= 20) {
+                    setTimeout(() => {
+                        CheckScrollChildren()
+                    }, 10);
+                    return;
+                }
+            }
+        } else {
+            setTimeout(() => {
+                CheckScrollChildren()
+            },100);
+        }
+    }
 
     const handleClose = () => {
         setShowScreenshotModal(false);
