@@ -57,41 +57,21 @@ const GameSizableCard = (props) => {
         cardPaddingTop: props.cardPaddingTop,
         cardMarginRight: props.cardMarginRight
     });
-    const [coverURL, setCoverURL] = useState('');
-    let idToken;
-    async function fetchData() {
-        if (!idToken) idToken = await getUserIdToken();
-        if (props.data.cover) {
-            fetch(
-                `http://localhost:5000/games/game/cover/${props.data.cover}?idToken=${idToken}`,
-                {
-                    credentials: 'include',
-                }
-            )
-                .then((res) => res.json())
-                .then(
-                    (result) => {
-                        setCoverURL(result.url);
-                    },
-                    (error) => {
-                        setCoverURL('');
-                    }
-                );
-        }
-    }
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    if (props.data.cover && props.data.cover.url) {
+        props.data.cover.url = props.data.cover.url.replace('t_thumb','t_720p');
+    } else {
+        props.data.cover = {url:'/imgs/imageNotFound.png'};
+    }
 
     return (
         <div className={classes.inline}>
             <Link to={`/game/${props.data.id}`} key={props.data.id}>
                 <div className={classes.card}>
-                    {coverURL && (
+                    {props.data.cover.url && (
                         <img
                             className={classes.cardCoverImage}
-                            src={coverURL}
+                            src={props.data.cover.url}
                             alt="game cover"
                         />
                     )}

@@ -47,11 +47,9 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields cover,name,category,total_rating,rating,rating_count; sort rating desc; w cover != null;'
+                        'limit 10; offset 0; fields cover.url, name, screenshots, age_ratings; sort rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
                     )
                 );
-                
-                await getCoversForData(response.data);
 
                 res.json(response.data);
                 setCachedData(dataKeys.gamesPopular, response.data, 3600);
@@ -77,11 +75,9 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields cover,name,category,total_rating,rating,rating_count; sort release_dates.date desc; w cover != null;'
+                        'limit 10; offset 0; fields cover.url, name; sort release_dates.date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
                     )
                 );
-
-                await getCoversForData(response.data);
 
                 res.json(response.data);
                 setCachedData(dataKeys.gamesNew, response.data, 3600);
@@ -92,6 +88,7 @@ router.get(
         }
     }
 );
+
 
 router.get(
     '/game/:id',
@@ -104,15 +101,18 @@ router.get(
             if (cacheData) {
                 res.json(cacheData);
             } else {
+                console.log('no cached data for /games/:id');
+
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        `fields *; where id = ${req.params.id};`
+                        `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${req.params.id};`
                     )
                 );
-                res.json(response.data);
-                setCachedData(dataKeys.gamesId(id), response.data, 3600);
+
+                res.json(response.data[0]);
+                setCachedData(dataKeys.gamesId(id), response.data[0], 3600);
             }
         } catch (e) {
             console.log(`Error occured in /games/:id route`, e);
@@ -155,75 +155,16 @@ router.get(
     }
 );
 
-const checkCoverCache = async (req, res, next) => {
-    const cacheData = await getCachedData(dataKeys.coverId(req.params.id));
-    if (cacheData) {
-        res.json({ url: cacheData });
-    } else {
-        return IGDBSessionHandler.instance.addToRateLimit(req, res, next);
-    }
-}
-
-router.get(
-    '/game/cover/:id',
-    IGDBSessionHandler.instance.validateSession(),
-    checkCoverCache,
-    async function (req, res) {
-        const id = req.params.id;
-        try {
-            if (id != null) {
-                const response = await axios(
-                    IGDBSessionHandler.instance.igdbAxiosConfig(
-                        'covers',
-                        null,
-                        `fields *; where id = ${id};`
-                    )
-                );
-
-                res.json({ url: `https://images.igdb.com/igdb/image/upload/t_720p/${response.data[0].image_id}.jpg` });
-            }
-        } catch (e) {
-            console.log(`Error occured in /games/cover/:id route`, e);
-            res.sendStatus(500);
-        }
-    }
-);
-
-async function getCoversForData(data) {
-    let coverIdString = '';
-    for(let i = 0; i < data.length; i++) {
-        coverIdString += `${data[i].cover}`;
-        if (i < data.length-1) {
-            coverIdString += ', '
-        }
-    };
-
-    const covers = await axios(
-        IGDBSessionHandler.instance.igdbAxiosConfig(
-            'covers',
-            null,
-            `fields *; where id = (${coverIdString});`
-        )
-    );
-
-    for (let i = 0; i < data.length; i++) {
-        
-        await setCachedData(
-             dataKeys.coverId(covers.data[i].id),
-            `https://images.igdb.com/igdb/image/upload/t_720p/${covers.data[i].image_id}.jpg`,
-            86400);
-    }
-}
-
 router.post(
     '/search',
     IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         const searchTerm = req.body.searchTerm;
         if (!searchTerm)
             return res.status(400).json({ error: 'No search term provided' });
         try {
-            let fieldString = `fields name, cover, genres; search "${searchTerm}";`;
+            let fieldString = `fields name, cover.url, genres; search "${searchTerm}";`;
             let advancedFields = '';
             for (const key of ['genres', 'platforms']) {
                 if (req.body.hasOwnProperty(key))
@@ -285,6 +226,7 @@ function getGamePlatforms() {
 router.get(
     '/search/info',
     IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
             const cacheData = await getCachedData(dataKeys.gamesSearchInfo);
