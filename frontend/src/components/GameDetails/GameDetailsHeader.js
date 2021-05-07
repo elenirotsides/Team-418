@@ -78,10 +78,14 @@ const GameDetailsHeader = (props) => {
     const classes = styles();
     const [coverURL, setCoverURL] = useState('');
     const [ageRatingUrl, setAgeRatingUrl] = useState('');
+    const [gameDeveloper, setGameDeveloper] = useState('');
 
     useEffect(() => {
         if (props.data.age_ratings && props.data.age_ratings.length > 0) {
             setAgeRatingUrl(urlForAgeRating(props.data.age_ratings[0].rating));
+        }
+        if (props.data.involved_companies) {
+            setGameDeveloper(props.data.involved_companies.filter((e) => e.developer == true)[0].company.name);
         }
     }, []);
 
@@ -110,6 +114,8 @@ const GameDetailsHeader = (props) => {
 
     if (props.data.cover && props.data.cover.url) {
         props.data.cover.url = props.data.cover.url.replace('t_thumb', 't_720p');
+    } else {
+        props.data.cover = {url:'/imgs/imageNotFound.png'};
     }
 
     return (
@@ -124,7 +130,7 @@ const GameDetailsHeader = (props) => {
                 <div className={classes.titleDescriptionContainer}>
                     <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
-                        <p className={classes.publisherLabel}>Publishers</p>
+                        <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         <div className={classes.ratingBox}>RatingBox</div>
                     </div>
                     <p>{props.data.summary} </p>

@@ -52,9 +52,11 @@ const Game = (props) => {
                         <div className={classes.defaultSpacing}>
                             <GameDetailsHeader data={pageData} />
                         </div>
-                        <div className={classes.defaultSpacing}>
-                            <GameDetailsScreenshots className={classes.defaultSpacing} data={pageData.screenshots} />
-                        </div>
+                        {pageData.screenshots &&
+                            <div className={classes.defaultSpacing}>
+                                <GameDetailsScreenshots className={classes.defaultSpacing} data={pageData.screenshots} />
+                            </div>
+                        }
                         <div className={classes.defaultSpacing}></div>
                     </div>
                 )}
