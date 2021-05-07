@@ -14,10 +14,10 @@ const noTokenError = 'Request did not contain Google authentication token.';
 
 async function authenticateWithGoogle(req, res, next) {
     try {
-        const idToken = req.query.idToken || req.body.idToken;
+        const idToken =
+            (req.query && req.query.idToken) || (req.body && req.body.idToken);
         if (idToken) {
             const decodedToken = await admin.auth().verifyIdToken(idToken);
-            console.log(`Authenticated user: ${decodedToken.email}`);
             req.googleInfo = decodedToken;
             next();
         } else {

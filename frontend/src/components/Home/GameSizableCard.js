@@ -60,6 +60,8 @@ const GameSizableCard = (props) => {
 
     if (props.data.cover && props.data.cover.url) {
         props.data.cover.url = props.data.cover.url.replace('t_thumb','t_720p');
+    } else {
+        props.data.cover = {url:'/imgs/imageNotFound.png'};
     }
 
     return (

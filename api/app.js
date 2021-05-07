@@ -11,12 +11,12 @@ const IGDBSessionHandler = require('./IGDB/IGDBSessionHandler');
 // Enable cors with authentication
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 
-// Add Google authentication middleware
-app.use(googleAuthentication);
-
 //express config
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Add Google authentication middleware
+app.use(googleAuthentication);
 
 // set up session cookie
 app.use(

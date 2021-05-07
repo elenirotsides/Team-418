@@ -14,10 +14,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.games);
             if (cacheData) {
-                console.log('returning cached data for /games');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /games');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -43,10 +41,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.gamesPopular);
             if (cacheData) {
-                console.log('returning cached data for /games/popular');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /games/popular');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -73,10 +69,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.gamesNew);
             if (cacheData) {
-                console.log('returning cached data for /games/new');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /games/new');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -105,7 +99,6 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.gamesId(id));
             if (cacheData) {
-                console.log('returning cached data for /games/:id');
                 res.json(cacheData);
             } else {
                 console.log('no cached data for /games/:id');
@@ -137,10 +130,8 @@ router.get(
         try {
             const cacheData = await getCachedData(dataKeys.featuredGame);
             if (cacheData) {
-                console.log('returning cached data for /games/:id');
                 res.json(cacheData);
             } else {
-                console.log('no cached data for /featured');
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
@@ -164,5 +155,93 @@ router.get(
     }
 );
 
+router.post(
+    '/search',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        const searchTerm = req.body.searchTerm;
+        if (!searchTerm)
+            return res.status(400).json({ error: 'No search term provided' });
+        try {
+            let fieldString = `fields name, cover.url, genres; search "${searchTerm}";`;
+            let advancedFields = '';
+            for (const key of ['genres', 'platforms']) {
+                if (req.body.hasOwnProperty(key))
+                    advancedFields +=
+                        (advancedFields ? ' &' : ' ') +
+                        `${key}=${req.body[key]}`;
+            }
+            if (advancedFields) fieldString += `where ${advancedFields};`;
+            const cacheData = await getCachedData(
+                dataKeys.gamesSearch(fieldString)
+            );
+            if (cacheData) return res.json(cacheData);
+            const { data } = await axios(
+                IGDBSessionHandler.instance.igdbAxiosConfig(
+                    'games',
+                    null,
+                    fieldString
+                )
+            );
+            res.json(data);
+            setCachedData(dataKeys.gamesSearch(fieldString), data);
+        } catch (e) {
+            console.log(`Error occured in /games/search route`, e);
+            res.sendStatus(500);
+        }
+    }
+);
+
+async function getGameGenres() {
+    const cacheData = await getCachedData(dataKeys.gamesGenres);
+    if (cacheData) return cacheData;
+    const { data } = await axios(
+        IGDBSessionHandler.instance.igdbAxiosConfig(
+            'genres',
+            null,
+            `fields name;`
+        )
+    );
+    setCachedData(dataKeys.gamesGenres, data);
+    return data;
+}
+
+function getGamePlatforms() {
+    // IGBD has a ridiculous set of systems,
+    // this will work for now
+    return [
+        { id: 5, name: 'Wii' },
+        { id: 9, name: 'PlayStation 3' },
+        { id: 12, name: 'Xbox 360' },
+        { id: 41, name: 'Wii U' },
+        { id: 48, name: 'PlayStation 4' },
+        { id: 49, name: 'Xbox One' },
+        { id: 130, name: 'Nintendo Switch' },
+        { id: 167, name: 'PlayStation 5' },
+        { id: 169, name: 'Xbox Series' },
+    ];
+}
+
+router.get(
+    '/search/info',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        try {
+            const cacheData = await getCachedData(dataKeys.gamesSearchInfo);
+            if (cacheData) return res.json(cacheData);
+            const data = {
+                genres: await getGameGenres(),
+                platforms: getGamePlatforms(),
+            };
+            res.json(data);
+            setCachedData(dataKeys.gamesSearchInfo, data);
+        } catch (e) {
+            console.log(`Error occured in /games/search/info route`, e);
+            res.sendStatus(500);
+        }
+    }
+);
 
 module.exports = router;
