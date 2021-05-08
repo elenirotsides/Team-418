@@ -77,7 +77,7 @@ const NavigationAuth = () => {
                 <Grid item md={1} sm={2} xs={12}>
                     <div className={classes.navIconButton}>
                         <Link to='/'>
-                            <img className={classes.navIconSize} src='imgs/logo.png' alt='home' />
+                            <img className={classes.navIconSize} src='/imgs/logo.png' alt='home' />
                         </Link>
                     </div>
                 </Grid>
@@ -106,7 +106,7 @@ const NavigationAuth = () => {
                 <Grid item md={1} sm={2} xs={2}>
                     <div className={classes.dropdown}>
                         <button className={`${classes.navIconButton} profileBtn`}>
-                            <img className={classes.navIconSize} src='imgs/profile.png' alt='profile' />
+                            <img className={classes.navIconSize} src='/imgs/profile.png' alt='profile' />
                         </button>
                         <div className='dropdownContent'>
                             <div className={classes.dropdownLink}><a className={classes.link} href='/profile'>Profile</a></div>
