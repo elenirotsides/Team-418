@@ -83,7 +83,7 @@ module.exports = {
             email: email,
             favoriteGames: [],
             reviews: [],
-            profilePic: "../public/imgs/profile.png"
+            profilePic: "public/imgs/profile.png"
         };
 
         const userCollection = await users();
