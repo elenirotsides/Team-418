@@ -1,5 +1,3 @@
-const { GridFSBucketReadStream } = require("mongodb");
-
 module.exports = {
     // checks if a supplied string is a valid string
     async validateString(str) {

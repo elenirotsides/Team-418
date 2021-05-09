@@ -3,6 +3,7 @@ const { ObjectId } = require("mongodb");
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const validate = require('./validation');
+const fs = require('fs');
 
 module.exports = {
     // returns an array of all the users
@@ -35,56 +36,44 @@ module.exports = {
         return user;
     },
 
+    // checks if user already exists since emails are unique 
+    async userAlreadyExists(email) {
+        if (arguments.length !== 1) throw "Usage: Email";
+        if (!validate.isGoodEmail(email)) throw "Email needs to be legit, that ain't legit";
+        try {
+            await this.getUserByEmail(email);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
+
+    // checks if a disply name is already taken, returns true if so
+    async isDisplayNameTaken(dName) {
+        if (arguments.length !== 1) throw "Usage: Display name";
+        if (!validate.validateString(dName)) throw "Display name must be a non empty string";
+        
+        const userCollection = await users();
+        const user = await userCollection.findOne({displayName: dName});
+        if (!user) return false;
+        return true;
+    },
+
     // it adds a user
-    async addUser(fName, lName, dName, email, ppic) {
-        if (arguments.length !== 5) 
-            throw "Usage: First name, Last name, Display name, Email, Profile Pic";
+    async addUser(fName, lName, dName, email) {
+        if (arguments.length !== 4) 
+            throw "Usage: First name, Last name, Display name, Email";
         if (!validate.validateString(fName)) throw "First name must be a non empty string";
         if (!validate.validateString(lName)) throw "Last name must be a non empty string";
         if (!validate.validateString(dName)) throw "Display name must be a non empty string";
         if (!validate.isGoodEmail(email)) throw "Email must be a non empty string and valid";
-        if (!validate.validateString(ppic)) throw "Profile picture storage path must be a non empty string";
+
+        // check that the user doesn't already exist
+        if (await this.userAlreadyExists(email)) throw "Another user has taken this email";
 
         // check that the display name is unique and doesn't already exist in the database
-        let userList = await this.getAllUsers();
-        for (let i=0; i<userList.length; i++) {
-            if (userList[i].displayName == dName)
-                throw "That display name is already taken, how unfortunate for you";
-        }
-
-        /*
-        if (!Array.isArray(favGames)) throw "Favorite games needs to be an array of games";
-        if (!Array.isArray(ratings)) throw "Ratings needs to be an array...of ratings, duh";
-        if (!Array.isArray(comments)) throw "Comments needs to be an array of comments";
-
-        if (favGames.length > 0) {
-            for (let i=0; i<favGames.length; i++) {
-                try {
-                    await gameMethods.getGameById(favGames[i]);
-                } catch (e) {
-                    throw e;
-                }
-            }
-        }
-        
-        if (ratings.length > 0) {
-            for (let i=0; i<ratings.length; i++) {
-                try {
-                    await ratingMethods.getRatingById(ratings[i]);
-                } catch (e) {
-                    throw e;
-                }
-            }
-        }
-        if (comments.length > 0) {
-            for (let i=0; i<comments.length; i++) {
-                try {
-                    await commentMethods.getCommentById(comments[i]);
-                } catch (e) {
-                    throw e;
-                }
-            }
-        } */
+        if (await this.isDisplayNameTaken(dName)) 
+            throw "That display name is already taken, how unfortunate for you";
 
         const newUser = {
             _id: ObjectId(),
@@ -93,9 +82,8 @@ module.exports = {
             displayName: dName,
             email: email,
             favoriteGames: [],
-            ratings: [],
-            comments: [],
-            profilePic: ppic
+            reviews: [],
+            profilePic: "../public/imgs/profile.png"
         };
 
         const userCollection = await users();
@@ -104,6 +92,46 @@ module.exports = {
             throw "Could not create new user object";
         const user = await this.getUserById(newUser._id);
         return user;
+    },
+    
+    // updates a given users profile pic assuming the image link is valid?
+    // how/where is the image being stored??
+    async updateProfilePic(userId, link) {
+        if (arguments.length !== 2) throw "Usage: User Id, Image link";
+
+        let user;
+        try {
+            user = await this.getUserById(userId);
+        } catch (e) {
+            throw e;
+        }
+
+        if (!validate.validateString(link)) throw "Well the link should be a non empty string";
+
+        //https://flaviocopes.com/how-to-check-if-file-exists-node/
+        fs.access(link, fs.F_OK, (err) => {
+            if (err) {
+              throw (err);
+            }
+        });
+
+        const newUser = {
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName,
+            email: user.email,
+            favoriteGames: user.favoriteGames,
+            reviews: user.reviews,
+            profilePic: link
+        };
+
+        const userCollection = await users();
+        const userUpdate = await userCollection.updateOne({_id: user._id}, {$set: newUser});
+        if (userUpdate.modifiedCount === 0)
+            throw "Could not modify user with new profile pic";
+        return updatedList;
+
     },
 
     // add favorite games to the user
@@ -136,13 +164,13 @@ module.exports = {
         }
 
         const newUser = {
+            _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             displayName: user.displayName,
             email: user.email,
             favoriteGames: updatedList,
-            ratings: user.ratings,
-            comments: user.comments,
+            reviews: user.reviews,
             profilePic: user.profilePic
         };
 
@@ -185,13 +213,13 @@ module.exports = {
         }
 
         const newUser = {
+            _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             displayName: user.displayName,
             email: user.email,
             favoriteGames: updatedList,
-            ratings: user.ratings,
-            comments: user.comments,
+            reviews: user.reviews,
             profilePic: user.profilePic
         };
 
