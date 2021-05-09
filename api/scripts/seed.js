@@ -3,49 +3,78 @@ const dbConnection =  require('../config/mongoConnection');
 const data = require('../data/index');
 const userData = data.users;
 const gameData = data.games;
-const ratingData = data.ratings;
-const commentData = data.comments;
+const reviewData = data.reviews;
 
 const user1 = {
+    firstName: "Jordan",
+    lastName: "Handwerger",
+    displayName: "jHand",
+    email: "jhandwer@stevens.edu",
+};
+
+const user2 = {
+    firstName: "Patrick",
+    lastName: "Sommer",
+    displayName: "Mason",
+    email: "psommer@stevens.edu",
+};
+
+const user3 = {
+    firstName: "Eleni",
+    lastName: "Rotsides",
+    displayName: "eRot",
+    email: "erotside@stevens.edu",
+};
+
+const user4 = {
+    firstName: "Zachary",
+    lastName: "Zwerling",
+    displayName: "tooManyZs",
+    email: "zzwerlin@stevens.edu",
+};
+
+const user5 = {
+    firstName: "Ishaan",
+    lastName: "Patel",
+    displayName: "arandomdude",
+    email: "ipatel9@stevens.edu",
+};
+
+const user6 = {
     firstName: "Bernie",
     lastName: "Sanders",
     displayName: "bsanders15",
     email: "bsanders@gmail.com",
-    profilePic: "null"
 };
 
-const user2 = {
+const user7 = {
     firstName: "Monopoly",
     lastName: "Man",
     displayName: "broadway",
     email: "donotpassgo@gmail.com",
-
-    profilePic: "null"
 };
 
-const user3 = {
+const user8 = {
     firstName: "Adam",
     lastName: "West",
     displayName: "AWest!!!!",
     email: "batman@gmail.com",
-    profilePic: "null"
 };
 
-const user4 = {
+const user9 = {
     firstName: "Barack",
     lastName: "Obama",
     displayName: "exPres",
     email: "america@gmail.com",
-    profilePic: "null"
 };
 
-const user5 = {
+const user10 = {
     firstName: "Jeff",
     lastName: "Bezos",
     displayName: "money010101",
     email: "imreallygreedy@gmail.com",
-    profilePic: "null"
 };
+
 
 // 10 games
 const game1 = {
@@ -88,6 +117,10 @@ const game10 = {
     endpointId: 90512
 };
 
+const featured_game = {
+    endpointId: 146505
+};
+
 const main = async () => {
     //initalize the database, or try to anyway
     let db = {};
@@ -98,32 +131,23 @@ const main = async () => {
         console.log(e);
     }
 
-    // i need the id's of the game and user, so store those
-    let bernie;
-    let captivus;
+    // the part where i add all the games and names
+    let gaming2; let gaming3; let gaming4; let gaming5; let gaming6; let gaming7; let gaming8; let gaming9; let gaming10;
+    let featured;
+    let name2; let name3; let name4; let name5; let name6; let name7; let name8; let name9; let name10;
     try {
-        bernie = await userData.addUser(
+        name1 = await userData.addUser(
             user1.firstName,
             user1.lastName,
             user1.displayName,
             user1.email,
-            user1.profilePic
         );
-        captivus = await gameData.addGame(game1.endpointId);
-        await ratingData.addRating(bernie._id, captivus._id, 10, "4/19/2021");
-        await commentData.addComment(bernie._id, captivus._id, "It really makes you feel like Batman", "4/19/2021");
-    } catch (e) { console.log(e); }
 
-    // the part where i add all the other games and names because inital tests passed
-    let gaming2; let gaming3; let gaming4; let gaming5; let gaming6; let gaming7; let gaming8; let gaming9; let gaming10;
-    let name2; let name3; let name4; let name5;
-    try {
         name2 = await userData.addUser(
             user2.firstName,
             user2.lastName,
             user2.displayName,
             user2.email,
-            user2.profilePic
         );
 
         name3 = await userData.addUser(
@@ -131,7 +155,6 @@ const main = async () => {
             user3.lastName,
             user3.displayName,
             user3.email,
-            user3.profilePic
         );
 
         name4 = await userData.addUser(
@@ -139,7 +162,6 @@ const main = async () => {
             user4.lastName,
             user4.displayName,
             user4.email,
-            user4.profilePic
         );
 
         name5 = await userData.addUser(
@@ -147,7 +169,41 @@ const main = async () => {
             user5.lastName,
             user5.displayName,
             user5.email,
-            user5.profilePic
+        );
+
+        name6 = await userData.addUser(
+            user6.firstName,
+            user6.lastName,
+            user6.displayName,
+            user6.email,
+        );
+
+        name7 = await userData.addUser(
+            user7.firstName,
+            user7.lastName,
+            user7.displayName,
+            user7.email,
+        );
+
+        name8 = await userData.addUser(
+            user8.firstName,
+            user8.lastName,
+            user8.displayName,
+            user8.email,
+        );
+
+        name9 = await userData.addUser(
+            user9.firstName,
+            user9.lastName,
+            user9.displayName,
+            user9.email,
+        );
+
+        name10 = await userData.addUser(
+            user10.firstName,
+            user10.lastName,
+            user10.displayName,
+            user10.email,
         );
 
         gaming2 = await gameData.addGame(game2.endpointId);
@@ -159,47 +215,35 @@ const main = async () => {
         gaming8 = await gameData.addGame(game8.endpointId);
         gaming9 = await gameData.addGame(game9.endpointId);
         gaming10 = await gameData.addGame(game10.endpointId);
+        featured = await gameData.addGame(featured_game.endpointId);
     } catch (e) { console.log(e); }
 
-    // the part where i now add in a crap ton of ratings and comments
+    // the part where i now add in a crap ton of reviews
     try {
-        //await ratingData.addRating(bernie._id, captivus._id, 10, bernie.displayName, "4/19/2021");
-        //await commentData.addComment(bernie._id, captivus._id, "It really makes you feel like Batman", bernie.displayName, "4/19/2021");
-        await ratingData.addRating(name2._id, gaming2._id, 2, "01/01/2000");
-        await ratingData.addRating(name2._id, gaming3._id, 7, "12/10/2012");
-        await ratingData.addRating(name3._id, gaming4._id, 5, "02/20/2001");
-        await ratingData.addRating(name3._id, gaming5._id, 1, "03/05/2009");
-        await ratingData.addRating(name4._id, gaming6._id, 3, "04/12/1999");
-        await ratingData.addRating(name4._id, gaming7._id, 8, "05/04/2005");
-        await ratingData.addRating(name5._id, gaming8._id, 6, "06/24/2002");
-        await ratingData.addRating(name5._id, gaming9._id, 4, "07/18/2003");
-        await ratingData.addRating(name2._id, gaming10._id, 10, "08/28/2020");
-        await ratingData.addRating(name3._id, gaming2._id, 1, "09/25/2021");
-        await ratingData.addRating(name4._id, gaming3._id, 8, "10/02/1984");
-        await ratingData.addRating(name5._id, gaming4._id, 3, "11/10/2008");
-
-        await commentData.addComment(name2._id, gaming2._id, "This comment is pointless", "01/01/2000");
-        await commentData.addComment(name2._id, gaming3._id, "Who am i", "01/01/2000");
-        await commentData.addComment(name3._id, gaming4._id, "This game is too hard", "01/01/2000");
-        await commentData.addComment(name3._id, gaming5._id, "It's like the dark souls of crap", "01/01/2000");
-        await commentData.addComment(name4._id, gaming6._id, "I don't even have this game", "01/01/2000");
-        await commentData.addComment(name4._id, gaming7._id, "Fun but not worth 70 bucks", "01/01/2000");
-        await commentData.addComment(name5._id, gaming8._id, "MTX ruins this game", "01/01/2000");
-        await commentData.addComment(name5._id, gaming9._id, "It has a little something for everyone", "01/01/2000");
-        await commentData.addComment(name2._id, gaming10._id, "I hate this game", "01/01/2000");
-        await commentData.addComment(name3._id, gaming2._id, "This game is a terrible slog of boredom", "01/01/2000");
-        await commentData.addComment(name4._id, gaming3._id, "Best game ever, super fun", "01/01/2000");
-        await commentData.addComment(name5._id, gaming4._id, "Meh, you should wait till this goes on sale", "01/01/2000");
-        await commentData.addComment(name2._id, gaming5._id, "This game creeps me out", "01/01/2000");
+        await reviewData.addReview(name1._id, featured._id, 1, "01/01/2000", "I died so the game sucks");
+        await reviewData.addReview(name2._id, featured._id, 2, "12/10/2012", "I don't even have this game");
+        await reviewData.addReview(name3._id, featured._id, 3, "02/20/2001", "This game is like the dark souls of dark souls");
+        await reviewData.addReview(name4._id, featured._id, 4, "03/05/2009", "Definitely not worth the full price for this game");
+        await reviewData.addReview(name5._id, featured._id, 5, "04/12/1999", "Lots of wasted potential here");
+        await reviewData.addReview(name6._id, featured._id, 6, "05/04/2005", "If you want some dumb fun and nothing else this game works");
+        await reviewData.addReview(name7._id, featured._id, 7, "06/24/2002", "It's a nice game, doesn't blow away my expectations but it's good");
+        await reviewData.addReview(name8._id, featured._id, 8, "07/18/2003", "Had a lot of fun with this game, definitely would reccommend");
+        await reviewData.addReview(name9._id, featured._id, 9, "09/25/2021", "Oh man this game is amazing");
+        await reviewData.addReview(name10._id, featured._id, 10, "10/02/1984", "Is a MASTAPIECE");
     } catch (e) { console.log(e); }
 
     // the part where i give each user some favorite games
     try {
-        await userData.addFavorites(bernie._id, [game1.endpointId, game2.endpointId]);
+        await userData.addFavorites(name1._id, [game1.endpointId, game2.endpointId, featured_game.endpointId]);
         await userData.addFavorites(name2._id, [game3.endpointId, game4.endpointId]);
-        await userData.addFavorites(name3._id, [game5.endpointId, game6.endpointId]);
+        await userData.addFavorites(name3._id, [game5.endpointId, game6.endpointId, featured_game.endpointId]);
         await userData.addFavorites(name4._id, [game7.endpointId, game8.endpointId]);
-        await userData.addFavorites(name5._id, [game9.endpointId, game10.endpointId]);
+        await userData.addFavorites(name5._id, [game9.endpointId, game10.endpointId, featured_game.endpointId]);
+        await userData.addFavorites(name6._id, [game1.endpointId, game2.endpointId]);
+        await userData.addFavorites(name7._id, [game3.endpointId, game4.endpointId, featured_game.endpointId]);
+        await userData.addFavorites(name8._id, [game5.endpointId, game6.endpointId]);
+        await userData.addFavorites(name9._id, [game7.endpointId, game8.endpointId]);
+        await userData.addFavorites(name10._id, [game9.endpointId, game10.endpointId, featured_game.endpointId]);
     } catch (e) { console.log(e); }
 
     // close the database and call it a day
