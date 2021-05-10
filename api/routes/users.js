@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const writeFileSync = fs.writeFileSync;
 const profilePictureDirectory = path.resolve('./public/imgs');
+const font = path.resolve('./fonts/NewYork.ttf');
 const validFileExts = ['.jpg', '.jpeg', '.bmp', '.gif', '.png'];
 const maxFileSize = 2 * 1024 * 1024;
 const maxFileSizeString = '2MB';
@@ -76,7 +77,7 @@ router.post('/picture', async function (req, res) {
         await gm(filePath)
             .resize(240, 240)
             .autoOrient()
-            .font('Helvetica.ttf', 32)
+            .font(font, 32)
             .drawText(50, 50, 'Team 418')
             .write(filePath, function (err) {
                 if (err) {
