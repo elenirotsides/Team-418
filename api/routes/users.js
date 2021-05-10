@@ -3,11 +3,13 @@ const router = express.Router();
 const validation = require('../data/').validation;
 const usersData = require('../data').users;
 const path = require('path');
-const { writeFileSync } = require('fs');
+const fs = require('fs');
+const writeFileSync = fs.writeFileSync;
 const profilePictureDirectory = path.resolve('./public/imgs');
 const validFileExts = ['.jpg', '.jpeg', '.bmp', '.gif', '.png'];
 const maxFileSize = 2 * 1024 * 1024;
 const maxFileSizeString = '2MB';
+const gm = require('gm').subClass({imageMagick: true});
 
 router.post('/profile', async function(req, res){
     let email = req.body.email;
@@ -71,6 +73,19 @@ router.post('/picture', async function (req, res) {
     }
     try {
         await writeFileSync(filePath, profilePicture.data, fileOptions);
+        await gm(filePath)
+            .resize(240, 240)
+            .autoOrient()
+            .font('Helvetica.ttf', 32)
+            .drawText(50, 50, 'Team 418')
+            .write(filePath, function (err) {
+                if (err) {
+                    console.log(
+                        'Error in ImageMagick library, make sure you have it installed.',
+                        err
+                    );
+                }
+            });
         await usersData.updateProfilePic(req.googleInfo.email, newFileName);
     } catch (e) {
         console.log('Error in /users/picture', e);
