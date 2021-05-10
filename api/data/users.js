@@ -83,7 +83,7 @@ module.exports = {
             email: email,
             favoriteGames: [],
             reviews: [],
-            profilePic: "public/imgs/profile.png"
+            profilePic: "profile.png"
         };
 
         const userCollection = await users();
@@ -96,24 +96,20 @@ module.exports = {
     
     // updates a given users profile pic assuming the image link is valid?
     // how/where is the image being stored??
-    async updateProfilePic(userId, link) {
+    async updateProfilePic(email, link) {
         if (arguments.length !== 2) throw "Usage: User Id, Image link";
 
         let user;
         try {
-            user = await this.getUserById(userId);
+            user = await this.getUserByEmail(email);
         } catch (e) {
             throw e;
         }
 
         if (!validate.validateString(link)) throw "Well the link should be a non empty string";
 
-        //https://flaviocopes.com/how-to-check-if-file-exists-node/
-        fs.access(link, fs.F_OK, (err) => {
-            if (err) {
-              throw (err);
-            }
-        });
+        // prevents error if you try to upload a file with the same name
+        if(user.profilePic === link) return true;
 
         const newUser = {
             _id: user._id,
@@ -130,7 +126,7 @@ module.exports = {
         const userUpdate = await userCollection.updateOne({_id: user._id}, {$set: newUser});
         if (userUpdate.modifiedCount === 0)
             throw "Could not modify user with new profile pic";
-        return updatedList;
+        return userUpdate;
 
     },
 

@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const { googleAuthentication } = require('./middleware');
 const PORT = require('./config/settings.json').api.port;
 const IGDBSessionHandler = require('./IGDB/IGDBSessionHandler');
+const fileUpload = require('express-fileupload');
 
 // Enable cors with authentication
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
@@ -14,6 +15,7 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 //express config
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
 
 // Add Google authentication middleware
 app.use(googleAuthentication);
