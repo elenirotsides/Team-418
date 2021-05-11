@@ -15,8 +15,22 @@ const IGDBSessionHandler = require('../IGDB/IGDBSessionHandler');
 const { getCachedData, setCachedData, dataKeys } = require('../redis');
 const axios = require('axios');
 
+router.get('/profile', async function (req, res) {
+    // email comes validated from Google
+    let email = req.googleInfo.email;
+    {
+        try {
+            const user = await usersData.getUserByEmail(email);
+            res.send(user);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send(error);
+        }
+    }
+});
+
 router.get(
-    '/profile',
+    '/profile/favorites',
     IGDBSessionHandler.instance.validateSession(),
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
@@ -55,8 +69,7 @@ router.get(
                         `Failed to load favorite game with id: (${gameId}).`
                     );
                 }
-                user.favoriteGames = favoriteGames;
-                res.send(user);
+                res.send(favoriteGames);
             } catch (error) {
                 console.log(error);
                 res.status(500).send(error);

@@ -32,6 +32,7 @@ const styles = makeStyles({
 
     navigationArrowsContainer: {
         position: 'relative',
+        marginBottom: 10,
     },
 
     leftArrow: {
@@ -68,9 +69,11 @@ const styles = makeStyles({
 
 const Profile = () => {
     const [userData, setUserData] = useState(undefined);
+    const [favoriteGames, setFavoriteGames] = useState(false);
     const [error, setError] = useState(false);
     const [idToken, setIdToken] = useState(false);
     const infoUrl = 'http://localhost:5000/users/profile';
+    const favoriteGamesUrl = 'http://localhost:5000/users/profile/favorites';
     const classes = styles();
     let loading = false;
     const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -94,7 +97,7 @@ const Profile = () => {
         }
     }
 
-    async function fetchMyApi() {
+    async function fetchProfile() {
         let token = idToken;
         if (!idToken) {
             token = await getUserIdToken();
@@ -112,57 +115,45 @@ const Profile = () => {
         }
     }
 
-    useEffect(() => {
-        fetchMyApi();
-    }, []);
+    async function fetchFavoriteGames() {
+        let token = idToken;
+        if (!idToken) {
+            token = await getUserIdToken();
+            setIdToken(token);
+        }
+        try {
+            const response = await fetch(
+                `${favoriteGamesUrl}?idToken=${token}`,
+                {
+                    method: 'GET',
+                }
+            );
+            const data = await response.json();
+            if (data.length < 8) setShowRightArrow(false);
+            setFavoriteGames(data);
+        } catch (e) {
+            console.log(e);
+            setError(true);
+        }
+    }
 
-    if (error) {
-        return (
-            <div class="text-center">
-                <h3>Error</h3>
-                <p>
-                    There was an error loading your profile. Please try
-                    reloading the page.
-                </p>
-            </div>
-        );
-    } else {
-        return (
-            <div className="text-center">
-                <h2>Profile Page</h2>
-                {!idToken && <img src="/imgs/profile.png" alt="profile" />}
-                {idToken && (
-                    <img
-                        crossOrigin="anonymous"
-                        class="my-3 bg-dark"
-                        src={`http://localhost:5000/users/picture?idToken=${idToken}`}
-                        alt="profile"
-                    />
-                )}
-                <br />
-                {idToken && <ProfilePictureModal idToken={idToken} />}
-                <h3>Name: </h3>
-                <p>
-                    {userData && userData.firstName}{' '}
-                    {userData && userData.lastName}
-                </p>
-                <h3>Email: </h3>
-                <p>{userData && userData.email}</p>
-                <h3>Username: </h3>
-                <p>{userData && userData.displayName}</p>
-                <h3>Favorite Games</h3>
-                {userData && !userData.favoriteGames && (
-                    <p>No favorites yet.</p>
-                )}
+    function createFavoriteGames() {
+        if (!favoriteGames || favoriteGames.length === 0) {
+            return (
+                <div>
+                    <p>No favorite games yet.</p>
+                </div>
+            );
+        } else {
+            return (
                 <div className={classes.navigationArrowsContainer}>
                     <div
                         id="favoriteGamesScrollView"
-                        className={`${classes.grid} noScrollbar`}
+                        className={`${classes.grid} noScrollbar bg-dark`}
                         onScroll={OnScroll}
                     >
-                        {userData &&
-                            userData.favoriteGames &&
-                            userData.favoriteGames.map((game) => {
+                        {favoriteGames &&
+                            favoriteGames.map((game) => {
                                 return (
                                     <GameSizableCard
                                         key={game.id}
@@ -210,6 +201,51 @@ const Profile = () => {
                         ></button>
                     )}
                 </div>
+            );
+        }
+    }
+
+    useEffect(() => {
+        fetchProfile();
+        fetchFavoriteGames();
+    }, []);
+
+    if (error) {
+        return (
+            <div class="text-center">
+                <h3>Error</h3>
+                <p>
+                    There was an error loading your profile. Please try
+                    reloading the page.
+                </p>
+            </div>
+        );
+    } else {
+        return (
+            <div className="text-center">
+                <h2>Profile Page</h2>
+                {!idToken && <img src="/imgs/profile.png" alt="profile" />}
+                {idToken && (
+                    <img
+                        crossOrigin="anonymous"
+                        class="my-3 bg-dark"
+                        src={`http://localhost:5000/users/picture?idToken=${idToken}`}
+                        alt="profile"
+                    />
+                )}
+                <br />
+                {idToken && <ProfilePictureModal idToken={idToken} />}
+                <h3>Name: </h3>
+                <p>
+                    {userData && userData.firstName}{' '}
+                    {userData && userData.lastName}
+                </p>
+                <h3>Email: </h3>
+                <p>{userData && userData.email}</p>
+                <h3>Username: </h3>
+                <p>{userData && userData.displayName}</p>
+                <h3>Favorite Games</h3>
+                {createFavoriteGames()}
                 <SignOutButton />
             </div>
         );
