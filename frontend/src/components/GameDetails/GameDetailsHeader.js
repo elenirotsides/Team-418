@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import GameSizableCard from '../Home/GameSizableCard';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
-
+import GameReviewModal from './GameReviewModal';
 
 const styles = makeStyles({
 
@@ -132,6 +132,7 @@ const GameDetailsHeader = (props) => {
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         <div className={classes.ratingBox}>RatingBox</div>
+                        <GameReviewModal/>
                     </div>
                     <p>{props.data.summary} </p>
 
