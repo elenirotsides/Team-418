@@ -1,29 +1,111 @@
+import { makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import SignOutButton from './LogOut';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import ProfilePictureModal from './ProfilePictureModal';
+import GameSizableCard from './Home/GameSizableCard';
+const styles = makeStyles({
+    title: {
+        marginLeft: 60,
+    },
 
-const Profile = (props) => {
-    const [pageData, setPageData] = useState(undefined);
+    grid: {
+        overflowX: 'auto',
+        whiteSpace: 'nowrap',
+        height: 320,
+        paddingLeft: 60,
+        paddingRight: 60,
+    },
+
+    viewAllLink: {
+        position: 'absolute',
+        right: 60,
+    },
+
+    loading: {
+        textAlign: 'center',
+    },
+
+    endPadding: {
+        display: 'inline',
+    },
+
+    navigationArrowsContainer: {
+        position: 'relative',
+    },
+
+    leftArrow: {
+        left: 10,
+        transform: 'rotate(180deg)',
+    },
+
+    rightArrow: {
+        right: 10,
+    },
+
+    navArrow: {
+        position: 'absolute',
+        backgroundColor: 'rgba(255,255,255,.6)',
+        height: 80,
+        width: 60,
+        top: 100,
+        fontSize: 40,
+        color: 'black',
+        margin: 0,
+        padding: 0,
+        lineHeight: 0,
+        outline: 'none !important',
+        backgroundImage: 'url(/imgs/scrollArrow.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center',
+        backgroundSize: '40px 40px',
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: 'rgba(255,255,255,.8)',
+        },
+    },
+});
+
+const Profile = () => {
+    const [userData, setUserData] = useState(undefined);
     const [error, setError] = useState(false);
-    const [ratingData, setRatingData] = useState(undefined);
-    const [ratingIdData, setRatingIdData] = useState(undefined);
     const [idToken, setIdToken] = useState(false);
     const infoUrl = 'http://localhost:5000/users/profile';
-    const ratingsUrl = 'http://localhost:5000/ratings/retrieve';
+    const classes = styles();
+    let loading = false;
+    const [showLeftArrow, setShowLeftArrow] = useState(false);
+    const [showRightArrow, setShowRightArrow] = useState(true);
+
+    function OnScroll() {
+        const scrollView = document.getElementById('favoriteGamesScrollView');
+        if (scrollView.scrollLeft <= 70) {
+            setShowLeftArrow(false);
+        } else {
+            setShowLeftArrow(true);
+        }
+
+        if (
+            Math.round(scrollView.scrollWidth - scrollView.scrollLeft) <=
+            scrollView.clientWidth + 70
+        ) {
+            setShowRightArrow(false);
+        } else {
+            setShowRightArrow(true);
+        }
+    }
 
     async function fetchMyApi() {
         let token = idToken;
         if (!idToken) {
             token = await getUserIdToken();
-            await setIdToken(token);
+            setIdToken(token);
         }
         try {
             const response = await fetch(`${infoUrl}?idToken=${token}`, {
                 method: 'GET',
             });
             const data = await response.json();
-            setPageData(data);
+            setUserData(data);
         } catch (e) {
             console.log(e);
             setError(true);
@@ -34,53 +116,104 @@ const Profile = (props) => {
         fetchMyApi();
     }, []);
 
-    useEffect(() => {
-        if (ratingIdData) {
-            const ratingRequestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: ratingIdData.toString() }),
-            };
+    if (error) {
+        return (
+            <div class="text-center">
+                <h3>Error</h3>
+                <p>
+                    There was an error loading your profile. Please try
+                    reloading the page.
+                </p>
+            </div>
+        );
+    } else {
+        return (
+            <div className="text-center">
+                <h2>Profile Page</h2>
+                {!idToken && <img src="/imgs/profile.png" alt="profile" />}
+                {idToken && (
+                    <img
+                        crossOrigin="anonymous"
+                        class="my-3 bg-dark"
+                        src={`http://localhost:5000/users/picture?idToken=${idToken}`}
+                        alt="profile"
+                    />
+                )}
+                <br />
+                {idToken && <ProfilePictureModal idToken={idToken} />}
+                <h3>Name: </h3>
+                <p>
+                    {userData && userData.firstName}{' '}
+                    {userData && userData.lastName}
+                </p>
+                <h3>Email: </h3>
+                <p>{userData && userData.email}</p>
+                <h3>Username: </h3>
+                <p>{userData && userData.displayName}</p>
+                <h3>Favorite Games</h3>
+                {userData && !userData.favoriteGames && (
+                    <p>No favorites yet.</p>
+                )}
+                <div className={classes.navigationArrowsContainer}>
+                    <div
+                        id="favoriteGamesScrollView"
+                        className={`${classes.grid} noScrollbar`}
+                        onScroll={OnScroll}
+                    >
+                        {userData &&
+                            userData.favoriteGames &&
+                            userData.favoriteGames.map((game) => {
+                                return (
+                                    <GameSizableCard
+                                        key={game.id}
+                                        data={game}
+                                        cardWidth={200}
+                                        cardHeight={300}
+                                        cardMarginRight={10}
+                                    />
+                                );
+                            })}
+                        <div className={classes.endPadding}></div>
+                        {loading && (
+                            <h2 className={classes.loading}>Loading...</h2>
+                        )}
+                    </div>
+                    {showLeftArrow && (
+                        <button
+                            className={`${classes.leftArrow} ${classes.navArrow}`}
+                            onClick={(e) => {
+                                const scrollView = document.getElementById(
+                                    'favoriteGamesScrollView'
+                                );
+                                scrollView.scrollTo({
+                                    top: 0,
+                                    left: scrollView.scrollLeft - 400,
+                                    behavior: 'smooth',
+                                });
+                            }}
+                        ></button>
+                    )}
 
-            fetch(ratingsUrl, ratingRequestOptions)
-                .then((res) => res.json())
-                .then(
-                    (result) => {
-                        setRatingData(result);
-                    },
-                    (error) => {
-                        setRatingData(error);
-                    }
-                );
-        }
-    }, [ratingIdData]);
-
-    //TO-DO: add stuff to profile later
-    return (
-        <div className="text-center">
-            <h2>Profile Page</h2>
-            {!idToken && <img src="/imgs/profile.png" alt="profile" />}
-            {idToken && (
-                <img
-                    crossOrigin="anonymous"
-                    class="my-3 bg-dark"
-                    src={`http://localhost:5000/users/picture?idToken=${idToken}`}
-                    alt="profile"
-                />
-            )}
-            <br />
-            {idToken && <ProfilePictureModal idToken={idToken} />}
-            <h3>Name: </h3>
-            <p>
-                {pageData && pageData.firstName} {pageData && pageData.lastName}
-            </p>
-            <h3>Email: </h3>
-            <p>{pageData && pageData.email}</p>
-            <h3>Username: </h3>
-            <p>{pageData && pageData.displayName}</p>
-            <SignOutButton />
-        </div>
-    );
+                    {showRightArrow && (
+                        <button
+                            className={`${classes.rightArrow} ${classes.navArrow}`}
+                            onClick={(e) => {
+                                const scrollView = document.getElementById(
+                                    'favoriteGamesScrollView'
+                                );
+                                scrollView.scrollTo({
+                                    top: 0,
+                                    left: scrollView.scrollLeft + 400,
+                                    behavior: 'smooth',
+                                });
+                            }}
+                        ></button>
+                    )}
+                </div>
+                <SignOutButton />
+            </div>
+        );
+    }
 };
 
 export default Profile;
