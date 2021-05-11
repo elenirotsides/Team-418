@@ -75,7 +75,7 @@ const Profile = (props) => {
         <div className="text-center">
             <h2>Profile Page</h2>
             {!idToken && <img src='/imgs/profile.png' alt='profile' />}
-            {idToken && <img crossOrigin="anonymous" class="my-3" src={`http://localhost:5000/users/picture?idToken=${idToken}`} alt='profile' />}
+            {idToken && <img crossOrigin="anonymous" class="my-3 bg-dark" src={`http://localhost:5000/users/picture?idToken=${idToken}`} alt='profile' />}
             <br/>
             {idToken && <ProfilePictureModal idToken={idToken}/>}
             <h3>Name: </h3>
