@@ -39,7 +39,7 @@ module.exports = {
 
     // it adds a review obviously
     // comment is an optional parameter
-    async addReview(userId, gameId, rating, date, comment) {
+    async addReview(email, gameId, rating, date, comment) {
         if (arguments.length !== 4 && arguments.length !== 5)
             throw "Usage: User Id, Game Id, Rating, Date, (Optional) Comment";
         if (!Number.isInteger(rating) || rating < 1 || rating > 10)
@@ -55,17 +55,17 @@ module.exports = {
 
         let user;
         let game;
-
-        try {
-            user = await userMethods.getUserById(userId);
-            game = await gameMethods.getGameById(gameId);
-        } catch (e) {
-            throw e;
+        user = await userMethods.getUserByEmail(email);
+        try{
+            game = await gameMethods.getGameByEndpointId(gameId);
+        } catch {
+            // create the game if it does not exist
+            game = await gameMethods.addGame(gameId);
         }
 
         const newReview = {
             _id: ObjectId(),
-            userId: userId,
+            userId: user._id,
             gameId: gameId,
             rating: rating,
             comment: word,
@@ -98,7 +98,7 @@ module.exports = {
         const userCollection = await users();
         const gameCollection = await games();
 
-        const userUpdate = await userCollection.updateOne({ _id: userId }, { $set: newUser });
+        const userUpdate = await userCollection.updateOne({ _id: user._id }, { $set: newUser });
         if (userUpdate.modifiedCount === 0)
             throw "Could not modify user with new review";
 
@@ -107,7 +107,7 @@ module.exports = {
             endpointId: game.endpointId
         };
 
-        const gameUpdate = await gameCollection.updateOne({ _id: gameId }, { $set: newGame });
+        const gameUpdate = await gameCollection.updateOne({ _id: game._id }, { $set: newGame });
         if (gameUpdate.modifiedCount === 0)
             throw "Could not modify game with new review";
 
