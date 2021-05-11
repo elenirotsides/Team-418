@@ -12,20 +12,17 @@ const maxFileSize = 2 * 1024 * 1024;
 const maxFileSizeString = '2MB';
 const gm = require('gm').subClass({imageMagick: true});
 
-router.post('/profile', async function(req, res){
-    let email = req.body.email;
-    if (!await validation.isGoodEmail(email)){
-        res.status(400).send("Invalid email!");
-    }else{
-        try{
+router.get('/profile', async function(req, res){
+    // email comes validated from Google
+    let email = req.googleInfo.email;
+    {
+        try {
             const user = await usersData.getUserByEmail(email);
             res.send(user);
-    
-        }catch(error){
+        } catch (error) {
             res.status(500).send(error);
         }
     }   
-
 });
 
 router.get('/picture', async function (req, res) {
