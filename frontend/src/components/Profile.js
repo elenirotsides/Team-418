@@ -69,13 +69,14 @@ const styles = makeStyles({
 
 const Profile = () => {
     const [userData, setUserData] = useState(undefined);
+    const [loading, setLoading] = useState(true);
     const [favoriteGames, setFavoriteGames] = useState(false);
+    const [favoritesLoading, setfavoritesLoading] = useState(true);
     const [error, setError] = useState(false);
     const [idToken, setIdToken] = useState(false);
     const infoUrl = 'http://localhost:5000/users/profile';
     const favoriteGamesUrl = 'http://localhost:5000/users/profile/favorites';
     const classes = styles();
-    let loading = false;
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
 
@@ -109,6 +110,7 @@ const Profile = () => {
             });
             const data = await response.json();
             setUserData(data);
+            setLoading(false);
         } catch (e) {
             console.log(e);
             setError(true);
@@ -131,6 +133,7 @@ const Profile = () => {
             const data = await response.json();
             if (data.length < 8) setShowRightArrow(false);
             setFavoriteGames(data);
+            setfavoritesLoading(false);
         } catch (e) {
             console.log(e);
             setError(true);
@@ -138,7 +141,13 @@ const Profile = () => {
     }
 
     function createFavoriteGames() {
-        if (!favoriteGames || favoriteGames.length === 0) {
+        if (favoritesLoading) {
+            return (
+                <div>
+                    <p>Loading...</p>
+                </div>
+            );
+        } else if (!favoriteGames || favoriteGames.length === 0) {
             return (
                 <div>
                     <p>No favorite games yet.</p>
@@ -165,8 +174,10 @@ const Profile = () => {
                                 );
                             })}
                         <div className={classes.endPadding}></div>
-                        {loading && (
-                            <h2 className={classes.loading}>Loading...</h2>
+                        {favoritesLoading && (
+                            <h2 className={classes.favoritesLoading}>
+                                Loading...
+                            </h2>
                         )}
                     </div>
                     {showLeftArrow && (
@@ -218,6 +229,12 @@ const Profile = () => {
                     There was an error loading your profile. Please try
                     reloading the page.
                 </p>
+            </div>
+        );
+    } else if (loading) {
+        return (
+            <div class="text-center">
+                <h2>Loading...</h2>
             </div>
         );
     } else {
