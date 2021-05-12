@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink, Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
 import { Grid, makeStyles } from '@material-ui/core';
+import {getUserIdToken} from '../firebase/FirebaseFunctions';
 
 const styles = makeStyles({
 
@@ -69,8 +70,15 @@ const Navigation = () => {
 };
 
 const NavigationAuth = () => {
+    const [idToken, setIdToken] = useState(false);
     const classes = styles();
     let history = useHistory();
+    async function setUserIdToken() {
+        const token = await getUserIdToken();
+        setIdToken(token);
+        console.log(idToken);
+    }
+    setUserIdToken();
     return (
         <nav className={classes.navgitation}>
             <Grid container>
@@ -106,7 +114,8 @@ const NavigationAuth = () => {
                 <Grid item md={1} sm={2} xs={2}>
                     <div className={classes.dropdown}>
                         <button className={`${classes.navIconButton} profileBtn`}>
-                            <img className={classes.navIconSize} src='/imgs/profile.png' alt='profile' />
+                        {!idToken && <img className={classes.navIconSize} src='/imgs/profile.png' alt='profile' />}
+                        {idToken && <img className={classes.navIconSize} crossorigin="anonymous" src={`http://localhost:5000/users/picture?idToken=${idToken}`} alt='profile' />}
                         </button>
                         <div className='dropdownContent'>
                             <div className={classes.dropdownLink}><a className={classes.link} href='/profile'>Profile</a></div>
