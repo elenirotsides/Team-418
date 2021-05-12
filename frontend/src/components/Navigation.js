@@ -68,6 +68,17 @@ const NavigationAuth = () => {
         console.log(idToken);
     }
     setUserIdToken();
+
+    function changeColorMouseEnter(e) {
+        e.target.style.color = '#61dafb';
+        e.target.style.textDecoration = 'underline'
+        e.target.style.cursor = 'pointer'
+    }
+    function changeColorMouseLeave(e) {
+        e.target.style.color = 'white';
+        e.target.style.textDecoration = 'none'
+    }
+
     return (
         <nav className={classes.navgitation}>
             <Grid container>
@@ -104,8 +115,8 @@ const NavigationAuth = () => {
                         {idToken && <img className={classes.navIconSize} crossorigin="anonymous" src={`http://localhost:5000/users/picture?idToken=${idToken}`} alt='profile' />}
                         </button>
                         <div className='dropdownContent'>
-                            <div className={classes.dropdownLink}><a className={classes.link} href='/profile'>Profile</a></div>
-                            <div className={classes.dropdownLink}><a className={classes.link} onClick={doLogOut}>Logout</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} href='/profile'>Profile</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} onClick={doLogOut}>Logout</a></div>
                         </div>
                     </div>
                 </Grid>
