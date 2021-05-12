@@ -67,6 +67,26 @@ router.post('/', async function (req, res) {
     }
 });
 
+router.get('/:gameId', async function (req, res) {
+    let gameEid = req.params.gameId;
+    try {
+        validateGameEid(gameEid);
+    } catch (e) {
+        return res.status(400).json({ error: e });
+    }
+    try {
+        const reviews = await reviewsData.getAllGameReviews(gameEid);
+        if (reviews) {
+            res.json(reviews);
+        } else {
+            res.sendStatus(404);
+        }
+    } catch (e) {
+        console.log('Error in /reviews/:gameId/user', e);
+        res.sendStatus(500);
+    }
+});
+
 router.get('/:gameId/user', async function (req, res) {
     try {
         const gameId = Number.parseInt(req.params.gameId);

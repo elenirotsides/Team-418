@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 import GameDetailsHeader from './GameDetailsHeader';
 import GameDetailsScreenshots from './GameDetailsScreenshots';
+import GameReviews from './GameReviews';
 import { makeStyles } from '@material-ui/core';
 
 
@@ -57,7 +58,9 @@ const Game = (props) => {
                                 <GameDetailsScreenshots className={classes.defaultSpacing} data={pageData.screenshots} />
                             </div>
                         }
-                        <div className={classes.defaultSpacing}></div>
+                        <div className={classes.defaultSpacing}>
+                            <GameReviews className={classes.defaultSpacing} gameId={props.match.params.id} />
+                        </div>
                     </div>
                 )}
             </div>

@@ -2,6 +2,7 @@
 const mongoCollections = require('../config/mongoCollections');
 const games = mongoCollections.games;
 const { ObjectId } = require('mongodb');
+const { validateGameEid } = require('./validation');
 
 module.exports = {
     // you know what this does
@@ -25,10 +26,9 @@ module.exports = {
     // get a game by its endpoint id, also returns it
     async getGameByEndpointId(eid) {
         if (arguments.length !== 1) throw "Usage: Game Id";
-        if (!Number.isInteger(eid) || eid < 0) throw "Game Id needs to be a positive integer";
+        eid = validateGameEid(eid);
         const gameCollection = await games();
         const game = await gameCollection.findOne({endpointId: eid});
-        if (!game) throw "Game not found with the given id";
         return game;
     },
 
@@ -36,7 +36,7 @@ module.exports = {
     // so a game can have no ratings or comments, so those arrays can be empty i think
     async addGame(endpointId) {
         if (arguments.length != 1) throw "Usage: Endpoint Id";
-        if (!Number.isInteger(endpointId)) throw "Endpoint Id needs to be a number";
+        validateGameEid(endpointId);
         //TODO: maybe validate endpointId by calling the API and checking that 
         // it corresponds to an actual game
 
