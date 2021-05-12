@@ -42,6 +42,8 @@ const GameReviews = (props) => {
                                     name="read-only"
                                     value={r.rating}
                                     readOnly
+                                    min={1}
+                                    max={10}
                                 />
                                 <Card.Text>{r.comment}</Card.Text>
                             </Card.Body>
