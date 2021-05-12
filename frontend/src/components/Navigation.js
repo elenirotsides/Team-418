@@ -3,7 +3,8 @@ import { NavLink, Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
 import { Grid, makeStyles } from '@material-ui/core';
-import {getUserIdToken} from '../firebase/FirebaseFunctions';
+import { getUserIdToken } from '../firebase/FirebaseFunctions';
+import { doLogOut } from '../firebase/FirebaseFunctions';
 
 const styles = makeStyles({
 
@@ -104,7 +105,7 @@ const NavigationAuth = () => {
                         </button>
                         <div className='dropdownContent'>
                             <div className={classes.dropdownLink}><a className={classes.link} href='/profile'>Profile</a></div>
-                            <div className={classes.dropdownLink}><a className={classes.link} href='/logout'>Logout</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} onClick={doLogOut}>Logout</a></div>
                         </div>
                     </div>
                 </Grid>
