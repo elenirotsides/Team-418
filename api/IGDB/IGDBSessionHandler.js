@@ -8,6 +8,8 @@ var token;
 var tokenExperation;
 
 var nextQueue = [];
+var lastCallTime = new Date().getTime();
+var callsThisSecond = 0;
 
 // Singleton class
 class IGDBSessionHandler {
@@ -92,16 +94,30 @@ class IGDBSessionHandler {
     } 
 
     checkRateLimit() {
-        setTimeout(() => { this.checkRateLimit() }, 250);
 
         if (nextQueue.length === 0) {
+            setTimeout(() => { this.checkRateLimit() }, 10);
             return;
+        } else {
+            if ((new Date().getTime()) - lastCallTime < 1000) {
+                callsThisSecond++;
+            } else {
+                lastCallTime = new Date().getTime();
+                callsThisSecond = 0;
+            }
+
+            if (callsThisSecond < 4) {
+                setTimeout(() => { this.checkRateLimit() }, 10);
+            } else {
+                setTimeout(() => { this.checkRateLimit() }, 1000);
+            }
+
+
+            const next = nextQueue[0];
+            nextQueue.shift();
+
+            next();
         }
-
-        const nextNext = nextQueue[0];
-        nextQueue.shift();
-
-        nextNext();
     }
 
 }
@@ -111,5 +127,5 @@ const instance = new IGDBSessionHandler();
 Object.freeze(instance);
 
 
-// module export 
+// module export
 module.exports = { instance };

@@ -1,13 +1,11 @@
 const usersData = require('./users');
-const commentsData = require('./comments');
-const ratingsData = require('./ratings');
 const gamesData = require('./games');
+const reviewsData = require('./reviews');
 const validation = require('./validation');
 
 module.exports = {
     users: usersData,
-    comments: commentsData,
-    ratings: ratingsData,
     games: gamesData,
+    reviews: reviewsData,
     validation: validation
 };

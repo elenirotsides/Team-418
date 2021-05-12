@@ -1,5 +1,3 @@
-const { GridFSBucketReadStream } = require("mongodb");
-
 module.exports = {
     // checks if a supplied string is a valid string
     async validateString(str) {
@@ -16,5 +14,11 @@ module.exports = {
         //https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
+    },
+
+    validateGameEid(eid){
+        let intEid = Number.parseInt(eid);
+        if(!Number.isInteger(intEid) || eid < 0) throw 'Game endpoint id must be an integer greater than or equal to 0.';
+        return intEid;
     }
 };
