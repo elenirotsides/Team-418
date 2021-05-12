@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
 const reviewsData = require('../data').reviews;
-const {validateString} = require('../data/validation');
+const { validateString, validateGameEid } = require('../data/validation');
 
 router.post('/retrieve', async function (req, res) {
     let userId = req.body.userId;
@@ -12,10 +12,8 @@ router.post('/retrieve', async function (req, res) {
     }
     try {
         let reviews = await reviewsData.getAllreviewsByUserId(objId);
-        console.log(reviews);
         res.send(reviews);
     } catch (error) {
-        console.log(error);
         res.status(500).send(error);
     }
 });
@@ -27,6 +25,11 @@ router.post('/', async function (req, res) {
         });
     let rating = req.body.rating;
     let gameId = req.body.gameId;
+    try {
+        validateGameEid(gameId);
+    } catch (e) {
+        return res.status(400).json({ error: e });
+    }
     if (!Number.isInteger(rating) || rating < 0 || rating > 10)
         return res
             .status(400)
@@ -37,17 +40,50 @@ router.post('/', async function (req, res) {
             error: 'If provided, the review comment must be a non-empty string.',
         });
     try {
-        await reviewsData.addReview(
-            req.googleInfo.email,
+        const oldReview = await reviewsData.getReviewByEndpointIdAndEmail(
             gameId,
-            rating,
-            Date.now().toLocaleString,
-            comment
+            req.googleInfo.email
         );
+        if (oldReview) {
+            await reviewsData.updateReview(
+                oldReview._id,
+                rating,
+                comment,
+                Date.now().toLocaleString()
+            );
+        } else {
+            await reviewsData.addReview(
+                req.googleInfo.email,
+                gameId,
+                rating,
+                Date.now().toLocaleString,
+                comment
+            );
+        }
         return res.sendStatus(200);
     } catch (e) {
         console.log(e);
         return res.sendStatus(500);
+    }
+});
+
+router.get('/:gameId/user', async function (req, res) {
+    try {
+        const gameId = Number.parseInt(req.params.gameId);
+        if (!Number.isInteger(gameId) || gameId < 0)
+            return res.status(400).json({ error: 'Invalid game id.' });
+        const review = await reviewsData.getReviewByEndpointIdAndEmail(
+            gameId,
+            req.googleInfo.email
+        );
+        if (review) {
+            res.json(review);
+        } else {
+            res.sendStatus(404);
+        }
+    } catch (e) {
+        console.log('Error in /reviews/:gameId/user', e);
+        res.sendStatus(500);
     }
 });
 

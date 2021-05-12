@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { Rating } from '@material-ui/lab';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
@@ -6,7 +6,8 @@ import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 const GameReviewModal = (props) => {
     const [show, setShow] = useState(false);
     const [rating, setRating] = useState(5);
-    const [comment, setComment] = useState(false);
+    const [comment, setComment] = useState('');
+    const [loading, setLoading] = useState(true);
     const reviewUrl = `http://localhost:5000/reviews`;
 
     const handleClose = async () => {
@@ -33,14 +34,12 @@ const GameReviewModal = (props) => {
         // add comment if given
         if (comment) body['comment'] = comment;
         let idToken = await getUserIdToken();
-        console.log('body', body);
         try {
             const response = await fetch(`${reviewUrl}?idToken=${idToken}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
             });
-            console.log(response);
             if (response.status !== 200) throw 'Failed to submit review.';
             setShow(false);
         } catch (error) {
@@ -52,58 +51,94 @@ const GameReviewModal = (props) => {
 
     const handleShow = () => setShow(true);
 
-    return (
-        <div>
-            <Button variant="primary" onClick={handleShow}>
+    async function fetchReviewData() {
+        let idToken = await getUserIdToken();
+        try {
+            const response = await fetch(
+                `${reviewUrl}/${props.gameId}/user?idToken=${idToken}`,
+                {
+                    method: 'GET',
+                }
+            );
+            if (response.status === 200) {
+                let data = await response.json();
+                setRating(data.rating);
+                setComment(data.comment);
+            } else if (response.status !== 404) {
+                throw "Failed to load user's previous review.";
+            }
+            setLoading(false);
+        } catch (e) {
+            // if there is an error it won't unlock the review button
+            console.log('error fetching users preview review', e);
+        }
+    }
+
+    useEffect(() => {
+        fetchReviewData();
+    }, []);
+
+    if (loading) {
+        return (
+            <Button variant="primary" disabled>
                 Review Game
             </Button>
-            <Modal
-                show={show}
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter"
-                centered
-            >
-                <Modal.Header>
-                    <Modal.Title id="contained-modal-title-vcenter">
-                        Game Review
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleForm}>
-                        <div id="errorDiv"></div>
-                        <Form.Group controlId="rating">
-                            <Form.Label>Rating</Form.Label>
-                            <br />
-                            <Rating
-                                name="size-large"
-                                onChange={handleRatingChange}
-                                defaultValue={5}
-                                min={1}
-                                max={10}
-                                size="large"
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="comment">
-                            <Form.Label>Comment</Form.Label>
-                            <Form.Control
-                                name="comment"
-                                type="textarea"
-                                onChange={handleCommentChange}
-                                as="textarea"
-                                rows={3}
-                            />
-                        </Form.Group>
-                        <Button variant="primary" type="submit">
-                            Submit
-                        </Button>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={handleClose}>Close</Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    );
+        );
+    } else {
+        return (
+            <div>
+                <Button variant="primary" onClick={handleShow}>
+                    Review Game
+                </Button>
+                <Modal
+                    show={show}
+                    size="lg"
+                    aria-labelledby="contained-modal-title-vcenter"
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                            Game Review
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form onSubmit={handleForm}>
+                            <div id="errorDiv"></div>
+                            <Form.Group controlId="rating">
+                                <Form.Label>Rating</Form.Label>
+                                <br />
+                                <Rating
+                                    name="size-large"
+                                    onChange={handleRatingChange}
+                                    defaultValue={rating || 5}
+                                    min={1}
+                                    max={10}
+                                    size="large"
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="comment">
+                                <Form.Label>Comment</Form.Label>
+                                <Form.Control
+                                    name="comment"
+                                    type="textarea"
+                                    onChange={handleCommentChange}
+                                    as="textarea"
+                                    rows={3}
+                                    defaultValue={comment}
+                                />
+                            </Form.Group>
+                            <Button variant="primary" type="submit">
+                                Submit
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={handleClose}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
+        );
+    }
 };
 
 export default GameReviewModal;

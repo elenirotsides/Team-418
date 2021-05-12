@@ -25,9 +25,9 @@ module.exports = {
     // get a game by its endpoint id, also returns it
     async getGameByEndpointId(eid) {
         if (arguments.length !== 1) throw "Usage: Game Id";
-        if (Number.isInteger(eid) && eid > 0) throw "Game Id needs to be a positive integer";
+        if (!Number.isInteger(eid) || eid < 0) throw "Game Id needs to be a positive integer";
         const gameCollection = await games();
-        const game = await gameCollection.findOne({endpointId: id});
+        const game = await gameCollection.findOne({endpointId: eid});
         if (!game) throw "Game not found with the given id";
         return game;
     },

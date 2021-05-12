@@ -7,6 +7,7 @@ const games = mongoCollections.games;
 const userMethods = require('../data/users');
 const gameMethods = require('../data/games');
 const validate = require('./validation');
+const { validateGameEid } = require('./validation');
 
 module.exports = {
     // returns an array of all reviews
@@ -37,15 +38,33 @@ module.exports = {
         return reviews;
     },
 
+    async getReviewByEndpointIdAndEmail(gameEid, email){
+        if (arguments.length !== 2) throw "Usage: Game Endpoint Id, User Email";
+        validateGameEid(gameEid);
+        // email is validated through google
+        const user = await userMethods.getUserByEmail(email);
+        let game;
+        try {
+        game = await gameMethods.getGameByEndpointId(gameEid);
+        } catch {
+            // game not found, so no review
+            return null;
+        }
+        const reviewCollection = await reviews();
+        const review = await reviewCollection.findOne({userId: user._id, gameId: game._id});
+        return review;
+    },
+
     // it adds a review obviously
     // comment is an optional parameter
-    async addReview(email, gameId, rating, date, comment) {
+    async addReview(email, gameEid, rating, date, comment) {
         if (arguments.length !== 4 && arguments.length !== 5)
-            throw "Usage: User Id, Game Id, Rating, Date, (Optional) Comment";
+            throw "Usage: User Id, Game Endpoint Id, Rating, Date, (Optional) Comment";
         if (!Number.isInteger(rating) || rating < 1 || rating > 10)
             throw "Rating needs to be a positive integer from 1-10";
         if (comment && !validate.validateString(comment))
             throw "If you supply a comment, its gotta be a non empty string";
+        validateGameEid(gameEid);
 
         let word = "";
         if (comment)
@@ -56,17 +75,17 @@ module.exports = {
         let user;
         let game;
         user = await userMethods.getUserByEmail(email);
-        try{
-            game = await gameMethods.getGameByEndpointId(gameId);
+        try {
+            game = await gameMethods.getGameByEndpointId(gameEid);
         } catch {
             // create the game if it does not exist
-            game = await gameMethods.addGame(gameId);
+            game = await gameMethods.addGame(gameEid);
         }
 
         const newReview = {
             _id: ObjectId(),
             userId: user._id,
-            gameId: gameId,
+            gameId: game._id,
             rating: rating,
             comment: word,
             displayName: user.displayName,
