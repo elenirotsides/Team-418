@@ -34,18 +34,6 @@ const styles = makeStyles({
         marginRight: 10,
         marginLeft: 10
     },
-    
-    advancedSearchContainer: {
-        display:'inline',
-        position: 'absolute',
-        bottom:8,
-    },
-
-    advancedSearchLink: {
-        display: 'inline',
-        marginTop: 25,
-        marginLeft: 10
-    },
 
     dropdown: {
         position: 'relative',
@@ -106,9 +94,6 @@ const NavigationAuth = () => {
                                 }} />
                             </label>
                         </form>
-                        <div className={classes.advancedSearchContainer}>
-                            <a className={`${classes.advancedSearchLink} ${classes.link}`} href='/advancedsearch'>Advanced Search</a>
-                        </div>
                     </div>
                 </Grid>
                 <Grid item md={1} sm={2} xs={2}>
