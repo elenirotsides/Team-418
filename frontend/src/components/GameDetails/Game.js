@@ -50,7 +50,7 @@ const Game = (props) => {
                 {pageData && (
                     <div>
                         <div className={classes.defaultSpacing}>
-                            <GameDetailsHeader data={pageData} />
+                            <GameDetailsHeader gameId={props.match.params.id} data={pageData} />
                         </div>
                         {pageData.screenshots &&
                             <div className={classes.defaultSpacing}>

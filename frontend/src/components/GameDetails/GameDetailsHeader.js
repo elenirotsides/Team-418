@@ -132,7 +132,7 @@ const GameDetailsHeader = (props) => {
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         <div className={classes.ratingBox}>RatingBox</div>
-                        <GameReviewModal/>
+                        <GameReviewModal gameId={props.gameId}/>
                     </div>
                     <p>{props.data.summary} </p>
 
