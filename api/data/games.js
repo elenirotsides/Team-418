@@ -2,6 +2,7 @@
 const mongoCollections = require('../config/mongoCollections');
 const games = mongoCollections.games;
 const { ObjectId } = require('mongodb');
+const { validateGameEid } = require('./validation');
 
 module.exports = {
     // you know what this does
@@ -22,42 +23,27 @@ module.exports = {
         return game;
     },
 
+    // get a game by its endpoint id, also returns it
+    async getGameByEndpointId(eid) {
+        if (arguments.length !== 1) throw "Usage: Game Id";
+        eid = validateGameEid(eid);
+        const gameCollection = await games();
+        const game = await gameCollection.findOne({endpointId: eid});
+        return game;
+    },
+
     // adds a game
     // so a game can have no ratings or comments, so those arrays can be empty i think
     async addGame(endpointId) {
         if (arguments.length != 1) throw "Usage: Endpoint Id";
-        /*
-        if (!Array.isArray(ratings)) throw "Ratings needs to be an array of rating ids";
-        
-        if (ratings.length > 0) {
-            for (let i=0; i<ratings.length; i++) {
-                try {
-                    await ratingMethods.getRatingById(ratings[i]);
-                } catch (e) {
-                    throw e;
-                }
-            }
-        }
-        if (!Array.isArray(comments)) throw "Comments needs to be an array";
-        if (comments.length > 0) {
-            for (let i=0; i<comments.length; i++) {
-                try {
-                    await commentMethods.getCommentById(comments[i]);
-                } catch (e) {
-                    throw e;
-                }
-            }
-        } */
-
-        if (!Number.isInteger(endpointId)) throw "Endpoint Id needs to be a number";
-        //TODO: validate endpointId by calling the API and checking that 
+        validateGameEid(endpointId);
+        //TODO: maybe validate endpointId by calling the API and checking that 
         // it corresponds to an actual game
 
         // make the new game object
         const newGame = {
             _id: ObjectId(),
-            ratings: [],
-            comments: [],
+            reviews: [],
             endpointId: endpointId
         };
 

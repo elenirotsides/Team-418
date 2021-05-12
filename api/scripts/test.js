@@ -3,15 +3,13 @@ const dbConnection = require('../config/mongoConnection');
 const data = require('../data/index');
 const userData = data.users;
 const gameData = data.games;
-const ratingData = data.ratings;
-const commentData = data.comments;
+const reviewData = data.reviews;
 
 const user1 = {
     firstName: "Bernie",
     lastName: "Sanders",
     displayName: "bsanders15",
     email: "bsanders@gmail.com",
-    profilePic: "null"
 };
 
 const user2 = {
@@ -19,8 +17,6 @@ const user2 = {
     lastName: "Man",
     displayName: "broadway",
     email: "donotpassgo@gmail.com",
-
-    profilePic: "null"
 };
 
 const game1 = {
@@ -49,6 +45,7 @@ const main = async () => {
     let gaming1;
     let rating1;
     let comment1;
+    let name2;
 
     try {
         name1 = await userData.addUser(
@@ -56,30 +53,27 @@ const main = async () => {
             user1.lastName,
             user1.displayName,
             user1.email,
-            user1.profilePic
         );
-
         gaming1 = await gameData.addGame(game1.endpointId);
-        rating1 = await ratingData.addRating(name1._id, gaming1._id, 10, "4/19/2021");
-        comment1 = await commentData.addComment(name1._id, gaming1._id, "It really makes you feel like Batman", "4/19/2021");
-        rating1 = await ratingData.updateRating(rating1._id, 2);
-        comment1 = await commentData.updateComment(comment1._id, "This game sucks", "1/1/1999");
+        review1 = await reviewData.addReview(name1._id, gaming1._id, 10, "4/19/2201");
+
+        review1 = await reviewData.updateComment(review1._id, "Good game");
+
+        review1 = await reviewData.updateRating(review1._id, 1, "3/2/1990");
+        review1 = await reviewData.updateReview(review1._id, 5, "meh", "1/1/2005");
         
         await userData.addFavorites(name1._id, [game1.endpointId, game2.endpointId, game3.endpointId, game1.endpointId]);
-        
-        console.log(await userData.getUserByEmail("bsanders@gmail.com"));
         await userData.removeFavorites(name1._id, [game2.endpointId, game2.endpointId]);
 
-        console.log(await userData.getUserByEmail("bsanders@gmail.com"));
-        await userData.addUser(
+        let name2 = await userData.addUser(
             "poop",
             "butt",
-            "bsanders15",
-            "anemail@gmail.com",
-            "null"
+            "basd",
+            "bsandsfsdfdsers@gmail.com",
         );
 
     } catch (e) { console.log(e) }
+    console.log("Done with testing");
 
 };
 
