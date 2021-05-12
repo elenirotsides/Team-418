@@ -10,23 +10,73 @@ const font = path.resolve('./fonts/NewYork.ttf');
 const validFileExts = ['.jpg', '.jpeg', '.bmp', '.gif', '.png'];
 const maxFileSize = 2 * 1024 * 1024;
 const maxFileSizeString = '2MB';
-const gm = require('gm').subClass({imageMagick: true});
+const gm = require('gm').subClass({ imageMagick: true });
+const IGDBSessionHandler = require('../IGDB/IGDBSessionHandler');
+const { getCachedData, setCachedData, dataKeys } = require('../redis');
+const axios = require('axios');
 
-router.post('/profile', async function(req, res){
-    let email = req.body.email;
-    if (!await validation.isGoodEmail(email)){
-        res.status(400).send("Invalid email!");
-    }else{
-        try{
+router.get('/profile', async function (req, res) {
+    // email comes validated from Google
+    let email = req.googleInfo.email;
+    {
+        try {
             const user = await usersData.getUserByEmail(email);
             res.send(user);
-    
-        }catch(error){
+        } catch (error) {
+            console.log(error);
             res.status(500).send(error);
         }
-    }   
-
+    }
 });
+
+router.get(
+    '/profile/favorites',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        // email comes validated from Google
+        let email = req.googleInfo.email;
+        {
+            try {
+                const user = await usersData.getUserByEmail(email);
+                const favoriteGames = [];
+                try {
+                    for (const gameId of user.favoriteGames) {
+                        const cacheData = await getCachedData(
+                            dataKeys.gamesId(gameId)
+                        );
+                        if (cacheData) {
+                            favoriteGames.push(cacheData);
+                        } else {
+                            const response = await axios(
+                                IGDBSessionHandler.instance.igdbAxiosConfig(
+                                    'games',
+                                    null,
+                                    `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
+                                )
+                            );
+                            favoriteGames.push(response.data[0]);
+                            setCachedData(
+                                dataKeys.gamesId(gameId),
+                                response.data[0],
+                                3600
+                            );
+                        }
+                    }
+                } catch (e) {
+                    // if error with IGDB, just dont display favorites
+                    console.log(
+                        `Failed to load favorite game with id: (${gameId}).`
+                    );
+                }
+                res.send(favoriteGames);
+            } catch (error) {
+                console.log(error);
+                res.status(500).send(error);
+            }
+        }
+    }
+);
 
 router.get('/picture', async function (req, res) {
     // email field is appended by the google auth middleware, it will be previously validated
