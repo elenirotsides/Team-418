@@ -85,8 +85,13 @@ const GameReviews = (props) => {
 
     useEffect(() => {
         fetchReviews();
-    }, []);
+    }, [props.reloadReviews, props.setReloadReviews]);
 
+    if (props.reloadReviews) {
+        // reload after updating / adding a review
+        fetchReviews();
+        props.setReloadReviews(false);
+    }
     return (
         <div>
             <div className={classes.heading}>
