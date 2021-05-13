@@ -3,7 +3,8 @@ import { NavLink, Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
 import { Grid, makeStyles } from '@material-ui/core';
-import {getUserIdToken} from '../firebase/FirebaseFunctions';
+import { getUserIdToken } from '../firebase/FirebaseFunctions';
+import { doLogOut } from '../firebase/FirebaseFunctions';
 
 const styles = makeStyles({
 
@@ -32,18 +33,6 @@ const styles = makeStyles({
     navSearchBox: {
         display: 'inline',
         marginRight: 10,
-        marginLeft: 10
-    },
-    
-    advancedSearchContainer: {
-        display:'inline',
-        position: 'absolute',
-        bottom:8,
-    },
-
-    advancedSearchLink: {
-        display: 'inline',
-        marginTop: 25,
         marginLeft: 10
     },
 
@@ -79,6 +68,17 @@ const NavigationAuth = () => {
         console.log(idToken);
     }
     setUserIdToken();
+
+    function changeColorMouseEnter(e) {
+        e.target.style.color = '#61dafb';
+        e.target.style.textDecoration = 'underline'
+        e.target.style.cursor = 'pointer'
+    }
+    function changeColorMouseLeave(e) {
+        e.target.style.color = 'white';
+        e.target.style.textDecoration = 'none'
+    }
+
     return (
         <nav className={classes.navgitation}>
             <Grid container>
@@ -106,9 +106,6 @@ const NavigationAuth = () => {
                                 }} />
                             </label>
                         </form>
-                        <div className={classes.advancedSearchContainer}>
-                            <a className={`${classes.advancedSearchLink} ${classes.link}`} href='/advancedsearch'>Advanced Search</a>
-                        </div>
                     </div>
                 </Grid>
                 <Grid item md={1} sm={2} xs={2}>
@@ -118,8 +115,8 @@ const NavigationAuth = () => {
                         {idToken && <img className={classes.navIconSize} crossorigin="anonymous" src={`http://localhost:5000/users/picture?idToken=${idToken}`} alt='profile' />}
                         </button>
                         <div className='dropdownContent'>
-                            <div className={classes.dropdownLink}><a className={classes.link} href='/profile'>Profile</a></div>
-                            <div className={classes.dropdownLink}><a className={classes.link} href='/logout'>Logout</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} href='/profile'>Profile</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} onClick={doLogOut} href='/login'>Logout</a></div>
                         </div>
                     </div>
                 </Grid>

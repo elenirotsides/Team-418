@@ -6,7 +6,6 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Game from './components/GameDetails/Game';
 import Results from './components/Results';
-import AdvancedSearch from './components/AdvancedSearch';
 import Profile from './components/Profile';
 import NotFound from './components/NotFound';
 import { AuthProvider } from './firebase/Auth';
