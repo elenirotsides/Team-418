@@ -7,6 +7,16 @@ async function doSocialSignIn(provider) {
         socialProvider = new firebase.auth.GoogleAuthProvider();
     }
     await firebase.auth().signInWithPopup(socialProvider);
+
+    // after successful login create this user on the api if they don't exist
+    const idToken = await firebaseApp.auth().currentUser.getIdToken();
+    try {
+        await fetch(`http://localhost:5000/users/create?idToken=${idToken}`, {
+            method: 'POST',
+        });
+    } catch (e) {
+        console.log('Failed request to POST /users/create', e);
+    }
 }
 
 async function doLogOut() {
