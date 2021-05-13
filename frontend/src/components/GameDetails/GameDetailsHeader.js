@@ -79,7 +79,7 @@ const GameDetailsHeader = (props) => {
     const [coverURL, setCoverURL] = useState('');
     const [ageRatingUrl, setAgeRatingUrl] = useState('');
     const [gameDeveloper, setGameDeveloper] = useState('');
-    const [favText, setFavText] = useState('Add to Favorites');
+    const [favText, setFavText] = useState('');
     const [curFavs, setCurFavs] = useState('');
 
     useEffect(() => {
@@ -89,17 +89,31 @@ const GameDetailsHeader = (props) => {
         if (props.data.involved_companies) {
             setGameDeveloper(props.data.involved_companies.filter((e) => e.developer == true)[0].company.name);
         }
-        getFavorites();
-
-
-        
+        (async () => {
+            getFavorites();
+         })();
+         
+         
 
        
     }, []);
 
+    useEffect(() =>{
+        if (curFavs.length > 0){
+            for (let i = 0; i < curFavs.length; i++){
+                if (curFavs[i].id == props.data.id){
+                    setFavText("Remove from Favorites");
+                    break;
+                }
+                setFavText("Add to Favorites");
+            }
+        }
+        
+
+    }, [curFavs]);
+
     async function getFavorites(){
         let idToken = await getUserIdToken();
-
         const url = 'http://localhost:5000/users/profile/favorites/?idToken=' + idToken;
         fetch(
             url,
@@ -110,6 +124,8 @@ const GameDetailsHeader = (props) => {
             .then(
                 (result) => {
                     setCurFavs(result);
+
+                   
                 },
                 (error) => {
                     console.log(error);
@@ -118,21 +134,12 @@ const GameDetailsHeader = (props) => {
             );
 
             
-        for (let i = 0; i < curFavs.length; i++){
-            console.log(curFavs[i].id + " | " + props.data.id);
-            if (curFavs[i].id == props.data.id){
-                console.log("Test");
-                setFavText('Remove from Favorites');
-                break;
-            }
-        }
     }
 
 
     async function addRemoveFavorites(id){
-       console.log(id);
         const gameToAdd = props.data.id;
-        const url = "http://localhost:5000/users/addfavorites";
+        const url = "http://localhost:5000/users/modifyfavorites";
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -143,7 +150,7 @@ const GameDetailsHeader = (props) => {
         requestOptions.body = JSON.stringify(requestOptions.body);
         if (favText == "Add to Favorites"){
             setFavText("Remove From Favorites");
-            fetch(url, requestOptions)
+            fetch(url + "/add", requestOptions)
             .then(res => res.json())
                 .then(
                     (result) => {
@@ -156,6 +163,16 @@ const GameDetailsHeader = (props) => {
            
         }else{
             setFavText("Add to Favorites");
+            fetch(url + "/remove", requestOptions)
+            .then(res => res.json())
+                .then(
+                    (result) => {
+                        console.log(result);
+                    },
+                    (error) => {
+                        console.log("Error: " + error);
+                    }
+                )
         }
     }
 

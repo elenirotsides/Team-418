@@ -17,7 +17,6 @@ const Game = (props) => {
     const [loading, setLoading] = useState(true);
     const [pageData, setPageData] = useState(undefined);
     const [userData, setUserData] = useState(undefined);
-    const [favText, setFavText] = useState(undefined);
     const [reloadReviews, setReloadReviews] = useState(false);
     let idToken;
     let email = "zzwerlin@stevens.edu";
