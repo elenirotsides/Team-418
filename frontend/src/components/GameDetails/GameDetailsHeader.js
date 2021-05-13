@@ -79,6 +79,8 @@ const GameDetailsHeader = (props) => {
     const [coverURL, setCoverURL] = useState('');
     const [ageRatingUrl, setAgeRatingUrl] = useState('');
     const [gameDeveloper, setGameDeveloper] = useState('');
+    const [favText, setFavText] = useState('Add to Favorites');
+    const [curFavs, setCurFavs] = useState('');
 
     useEffect(() => {
         if (props.data.age_ratings && props.data.age_ratings.length > 0) {
@@ -87,7 +89,75 @@ const GameDetailsHeader = (props) => {
         if (props.data.involved_companies) {
             setGameDeveloper(props.data.involved_companies.filter((e) => e.developer == true)[0].company.name);
         }
+        getFavorites();
+
+
+        
+
+       
     }, []);
+
+    async function getFavorites(){
+        let idToken = await getUserIdToken();
+
+        const url = 'http://localhost:5000/users/profile/favorites/?idToken=' + idToken;
+        fetch(
+            url,
+            {
+                credentials: 'include',
+            }
+        ).then((res) => res.json())
+            .then(
+                (result) => {
+                    setCurFavs(result);
+                },
+                (error) => {
+                    console.log(error);
+                    setCurFavs(error);
+                }
+            );
+
+            
+        for (let i = 0; i < curFavs.length; i++){
+            console.log(curFavs[i].id + " | " + props.data.id);
+            if (curFavs[i].id == props.data.id){
+                console.log("Test");
+                setFavText('Remove from Favorites');
+                break;
+            }
+        }
+    }
+
+
+    async function addRemoveFavorites(id){
+       console.log(id);
+        const gameToAdd = props.data.id;
+        const url = "http://localhost:5000/users/addfavorites";
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: { userId: id.toString(), gameList: [gameToAdd] }
+        };
+        requestOptions.body.idToken = await getUserIdToken();
+        requestOptions.idToken = await getUserIdToken();
+        requestOptions.body = JSON.stringify(requestOptions.body);
+        if (favText == "Add to Favorites"){
+            setFavText("Remove From Favorites");
+            fetch(url, requestOptions)
+            .then(res => res.json())
+                .then(
+                    (result) => {
+                        console.log(result);
+                    },
+                    (error) => {
+                        console.log("Error: " + error);
+                    }
+                )
+           
+        }else{
+            setFavText("Add to Favorites");
+        }
+    }
 
     function urlForAgeRating(rating) {
         switch (rating) {
@@ -123,7 +193,7 @@ const GameDetailsHeader = (props) => {
             <div className={classes.leftContainer}>
                 <img className={classes.coverImage} src={props.data.cover.url}></img>
                 <div>
-                    <button>Add to favorites</button>
+                    <button onClick={async () => addRemoveFavorites(props.userData)}>{favText}</button>
                 </div>
             </div>
             <div className={classes.rightContainer}>

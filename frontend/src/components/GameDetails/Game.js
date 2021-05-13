@@ -16,8 +16,14 @@ const Game = (props) => {
     const classes = styles();
     const [loading, setLoading] = useState(true);
     const [pageData, setPageData] = useState(undefined);
+    const [userData, setUserData] = useState(undefined);
+    const [favText, setFavText] = useState(undefined);
     const [reloadReviews, setReloadReviews] = useState(false);
     let idToken;
+    let email = "zzwerlin@stevens.edu";
+
+    
+
 
     async function fetchData() {
         if (!idToken) idToken = await getUserIdToken();
@@ -40,7 +46,41 @@ const Game = (props) => {
 
     }
 
+    async function fetchUserData(){
+        if (!idToken) idToken = await getUserIdToken();
+
+        const userUrl = 'http://localhost:5000/users/profile?idToken=' + idToken;
+
+        const userRequestOptions = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            body: { email: email },
+        };
+       userRequestOptions.body.idToken = await getUserIdToken();
+       userRequestOptions.idToken = await getUserIdToken();
+       userRequestOptions.body = JSON.stringify(userRequestOptions.body);
+
+            fetch(
+                userUrl,
+                {
+                    credentials: 'include',
+                }
+            ).then((res) => res.json())
+                .then(
+                    (result) => {
+                        setUserData(result._id);
+                    },
+                    (error) => {
+                        console.log(error);
+                        setUserData(error);
+                    }
+                );
+    
+    }
+
     useEffect(() => {
+        fetchUserData();
+
         fetchData();
     }, []);
 
@@ -52,7 +92,7 @@ const Game = (props) => {
                 {pageData && (
                     <div>
                         <div className={classes.defaultSpacing}>
-                            <GameDetailsHeader setReloadReviews={setReloadReviews} gameId={props.match.params.id} data={pageData} />
+                            <GameDetailsHeader userData={userData} setReloadReviews={setReloadReviews} gameId={props.match.params.id} data={pageData} />
                         </div>
                         {pageData.screenshots &&
                             <div className={classes.defaultSpacing}>

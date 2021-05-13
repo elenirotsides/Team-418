@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import SectionTitle from '../Home/SectionTitle';
 import { Card } from 'react-bootstrap';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
-import { Rating } from '@material-ui/lab';
+import { Rating } from '@material-ui/lab'; 
 
 const styles = makeStyles({
     container: {
