@@ -12,6 +12,8 @@ import { AuthProvider } from './firebase/Auth';
 import PrivateRoute from './components/PrivateRoute';
 import AppBar from '@material-ui/core/AppBar';
 import Search from './components/Search'
+import AllPopularGames from './components/AllPopularGames';
+import AllNewGames from './components/AllNewGames';
 
 function App() {
     return (
@@ -31,6 +33,8 @@ function App() {
                     <PrivateRoute exact path="/profile" component={Profile} />
                     <PrivateRoute exact path="/game/:id" component={Game} />
                     <PrivateRoute exact path="/games/search" component={Search} />
+                    <PrivateRoute exact path="/games/allpopular" component={AllPopularGames} />
+                    <PrivateRoute exact path='/games/allnew' component={AllNewGames} /> 
                     <Route path="*" component={NotFound} />
                 </Switch>
             </Router>

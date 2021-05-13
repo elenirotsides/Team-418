@@ -89,6 +89,53 @@ router.get(
     }
 );
 
+router.get(
+    '/allpopular',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        try {
+
+            const response = await axios(
+                IGDBSessionHandler.instance.igdbAxiosConfig(
+                    'games',
+                    null,
+                    'limit 50; offset 0; fields cover.url, name, screenshots, age_ratings; sort rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
+                )
+            );
+
+            res.json(response.data);
+            //setCachedData(dataKeys.gamesPopular, response.data, 3600);
+
+        } catch (e) {
+            console.log(`Error occured in /games/allpopular route`, e);
+            res.sendStatus(500);
+        }
+    }
+);
+
+router.get(
+    '/allnew',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        try {
+
+            const response = await axios(
+                IGDBSessionHandler.instance.igdbAxiosConfig(
+                    'games',
+                    null,
+                    'limit 50; offset 0; fields cover.url, name; sort release_dates.date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
+                )
+            );
+
+            res.json(response.data);
+        } catch (e) {
+            console.log(`Error occured in /games/new route`, e);
+            res.sendStatus(500);
+        }
+    }
+); 
 
 router.get(
     '/game/:id',
