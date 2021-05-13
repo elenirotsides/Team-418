@@ -3,6 +3,7 @@ import SectionTitle from './SectionTitle';
 import ViewAllLink from './ViewAllLink';
 import GameSizableCard from './GameSizableCard';
 import { useState, useEffect } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 
 
 const styles = makeStyles({
@@ -133,7 +134,11 @@ const PopularGames = (props) => {
             </div>
 
             <div className={classes.viewAllLink}>
-                <ViewAllLink text='View all popular games' />
+                <Link to={`/games/allpopular`}>
+                    <button>
+                        <ViewAllLink text='View all popular games' />
+                    </button>
+                </Link>
             </div>
         </div>
     );

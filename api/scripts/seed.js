@@ -8,7 +8,7 @@ const reviewData = data.reviews;
 const user1 = {
     firstName: 'Jordan',
     lastName: 'Handwerger',
-    displayName: 'jHand',
+    displayName: 'theHand',
     email: 'jhandwer@stevens.edu',
 };
 
@@ -141,6 +141,7 @@ const main = async () => {
     let gaming9;
     let gaming10;
     let featured;
+    let name1;
     let name2;
     let name3;
     let name4;
