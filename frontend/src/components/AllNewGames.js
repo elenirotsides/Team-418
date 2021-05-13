@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 
 const styles = makeStyles({
-
     title: {
         textAlign: 'center',
         paddingTop: 60,

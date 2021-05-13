@@ -5,7 +5,6 @@ import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import SectionTitle from './Home/SectionTitle';
 
 const styles = makeStyles({
-
     title: {
         textAlign: 'center',
         paddingTop: 60,

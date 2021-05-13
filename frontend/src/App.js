@@ -35,7 +35,7 @@ function App() {
                     <PrivateRoute exact path="/game/:id" component={Game} />
                     <PrivateRoute exact path="/games/search" component={Search} />
                     <PrivateRoute exact path="/games/allpopular" component={AllPopularGames} />
-                    <PrivateRoute exact path='/games/allnew' component={AllNewGames} />
+                    <PrivateRoute exact path='/games/allnew' component={AllNewGames} /> 
                     <Route path="*" component={NotFound} />
                 </Switch>
             </Router>

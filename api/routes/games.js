@@ -72,7 +72,7 @@ router.get(
                 IGDBSessionHandler.instance.igdbAxiosConfig(
                     'games',
                     null,
-                    'limit 30; offset 0; fields cover.url, name, screenshots, age_ratings; sort rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
+                    'limit 50; offset 0; fields cover.url, name, screenshots, age_ratings; sort rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
                 )
             );
 
@@ -100,7 +100,7 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'offset 0; fields cover.url, name; sort release_dates.date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
+                        'limit 10; offset 0; fields cover.url, name; sort release_dates.date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
                     )
                 );
 
@@ -125,7 +125,7 @@ router.get(
                 IGDBSessionHandler.instance.igdbAxiosConfig(
                     'games',
                     null,
-                    'offset 0; fields cover.url, name; sort release_dates.date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
+                    'limit 50; offset 0; fields cover.url, name; sort release_dates.date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 100;'
                 )
             );
 

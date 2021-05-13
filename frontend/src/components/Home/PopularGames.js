@@ -135,7 +135,7 @@ const PopularGames = (props) => {
 
             <div className={classes.viewAllLink}>
                 <Link to={`/games/allpopular`}>
-                    <button>
+                    <button> 
                         <ViewAllLink text='View all popular games' />
                     </button>
                 </Link>
