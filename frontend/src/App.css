@@ -51,3 +51,7 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   }
+
+  .google {
+      cursor: pointer;
+  }
