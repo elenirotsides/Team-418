@@ -133,14 +133,14 @@ const PopularGames = (props) => {
                 }
             </div>
 
-            <div className={classes.viewAllLink}>
-                <Link to={`/games/allpopular`}>
-                    <button> 
-                        <ViewAllLink text='View all popular games' />
-                    </button>
-                </Link>
-            </div>
-        </div>
+            <div className={classes.viewAllLink}> 
+                <Link to={`/games/allpopular`}> 
+                    <button>  
+                        <ViewAllLink text='View all popular games' /> 
+                    </button> 
+                </Link>  
+            </div> 
+        </div> 
     );
 }
 

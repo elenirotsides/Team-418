@@ -66,14 +66,14 @@ const NewGames = (props) => {
                 <GameSizableCard data={props.data[6]} cardWidth={'24%'} cardPaddingTop={'24%'} cardMarginRight={'1%'}/>
 
 
+                </div>  
+                <div className={classes.viewAllLink}> 
+                    <Link to={`/games/allnew`}> 
+                        <button> 
+                            <ViewAllLink text='View all new games' /> 
+                        </button> 
+                    </Link> 
                 </div> 
-                <div className={classes.viewAllLink}>
-                    <Link to={`/games/allnew`}>
-                        <button>
-                            <ViewAllLink text='View all new games' />
-                        </button>
-                    </Link>
-                </div>
 
             </div>
         </div>
