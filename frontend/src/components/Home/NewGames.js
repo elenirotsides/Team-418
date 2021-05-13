@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import SectionTitle from './SectionTitle';
 import ViewAllLink from './ViewAllLink';
 import GameSizableCard from './GameSizableCard'
+import { Link } from 'react-router-dom';
 
 const styles = makeStyles({
 
@@ -67,8 +68,12 @@ const NewGames = (props) => {
 
                 </div>
                 <div className={classes.viewAllLink}>
-                    <ViewAllLink text='View all new games'/>
-                </div>
+                <Link to={'/games/allnew'}>
+                    <button>
+                        <ViewAllLink text='View all new games' />
+                    </button> 
+                </Link>
+            </div>
 
             </div>
         </div>
