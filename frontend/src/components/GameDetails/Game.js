@@ -51,15 +51,6 @@ const Game = (props) => {
 
         const userUrl = 'http://localhost:5000/users/profile?idToken=' + idToken;
 
-        const userRequestOptions = {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            body: { email: email },
-        };
-       userRequestOptions.body.idToken = await getUserIdToken();
-       userRequestOptions.idToken = await getUserIdToken();
-       userRequestOptions.body = JSON.stringify(userRequestOptions.body);
-
             fetch(
                 userUrl,
                 {
