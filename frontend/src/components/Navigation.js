@@ -116,7 +116,7 @@ const NavigationAuth = () => {
                         </button>
                         <div className='dropdownContent'>
                             <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} href='/profile'>Profile</a></div>
-                            <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} onClick={doLogOut}>Logout</a></div>
+                            <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} onClick={doLogOut} href='/login'>Logout</a></div>
                         </div>
                     </div>
                 </Grid>
