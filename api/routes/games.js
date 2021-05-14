@@ -213,7 +213,7 @@ router.post(
             return res.status(400).json({ error: 'No search term provided' });
         try {
             //offset ${req.params.pageNum}; 
-            let fieldString = `offset ${req.params.pageNum}; fields name, cover.url, genres; search "${searchTerm}";`;
+            let fieldString = `limit 12; offset ${req.params.pageNum * 12}; fields name, cover.url, genres; search "${searchTerm}";`;
             let advancedFields = '';
             for (const key of ['genres', 'platforms']) {
                 if (req.body.hasOwnProperty(key))

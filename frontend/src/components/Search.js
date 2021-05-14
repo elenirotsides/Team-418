@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import GameSizableCard from './Home/GameSizableCard';
 const Search = (props) => {
@@ -8,12 +9,15 @@ const Search = (props) => {
     const [searchInfo, setSearchInfo] = useState(undefined);
     const [genre, setGenre] = useState(undefined);
     const [platform, setPlatform] = useState(undefined);
+    //const [searchTerm, setSearchTerm] = useState(undefined);
+    const [pageNum, setPageNum] = useState(0)
     let idToken;
-    const searchUrl = `http://localhost:5000/games/search/${props.match.params.pageNum}`;
-    //const secondSearchURL = `http://localhost:5000/games/search/${props.match.params.pageNum + 1}`
     const searchInfoUrl = 'http://localhost:5000/games/search/info';
+    //const secondSearchURL = `http://localhost:5000/games/search/${props.match.params.pageNum + 1}`
+    
+    async function search(e, redirectedSearchTerm, page) {
+        let searchUrl = `http://localhost:5000/games/search/${page}`;
 
-    async function search(e, redirectedSearchTerm) {
         let searchTerm;
         if (redirectedSearchTerm) {
             searchTerm = redirectedSearchTerm;
@@ -21,6 +25,8 @@ const Search = (props) => {
             e.preventDefault();
             setError(false);
             searchTerm = e.target[0].value;
+            console.log('inside the else block')
+            console.log(searchTerm)
         }
         if (!searchTerm) return setError('Search term cannot be empty.');
         if (!idToken) idToken = await getUserIdToken();
@@ -71,19 +77,6 @@ const Search = (props) => {
         }
         setLoading(false);
     }
-    
-    // let cards = null;
-    // cards = pageData.forEach((element) => {
-    //     return (
-    //         <GameSizableCard
-    //             data={element}
-    //             cardWidth={'24%'}
-    //             cardPaddingTop={'24%'}
-    //             cardMarginRight={'1%'}
-    //         />
-    //     );
-    // })
-
     function createGameCards() {
         if (pageData && pageData.length === 0) {
             return (
@@ -91,44 +84,8 @@ const Search = (props) => {
                     <h2>No Games Found.</h2>
                 </div>
             );
-        } /*else if (pageData.error){
-            return(
-                <div>{pageData.error}</div>
-            )
-        } */
+        } 
         else {
-            // <div class="ml-3 mr-2">
-            //     {cards && cards}
-            // </div>
-            
-            // let cards = null;
-            // for (let i = 0; i < Object.keys(pageData).length; i++) {
-            //     console.log(pageData)
-            //     return (
-            //         <div class="ml-3 mr-2">
-            //             <GameSizableCard
-            //                 data={i}
-            //                 cardWidth={'24%'}
-            //                 cardPaddingTop={'24%'}
-            //                 cardMarginRight={'1%'}
-            //             />
-            //         </div>
-            //     )
-            // }
-            // return (
-            //     <div class="ml-3 mr-2">
-            //         {pageData.forEach((element) => {
-            //                 return (
-            //                     <GameSizableCard
-            //                         data={element}
-            //                         cardWidth={'24%'}
-            //                         cardPaddingTop={'24%'}
-            //                         cardMarginRight={'1%'}
-            //                     />
-            //                 );
-            //             })}
-            //     </div>
-            // );
             return (
                 <div class="ml-3 mr-2">
                     {pageData &&
@@ -156,10 +113,12 @@ const Search = (props) => {
         ) {
             document.getElementById('searchTerm').value =
                 props.location.state.searchTerm;
-            search(null, props.location.state.searchTerm);
+            search(null, props.location.state.searchTerm, pageNum);
+            console.log('page num:')
+            console.log(pageNum)
         }
         getSearchInfo();
-    }, [props]);
+    }, [props, pageNum]);
 
     function getAdvancedOptions() {
         return (
@@ -250,8 +209,12 @@ const Search = (props) => {
                 {!loading && pageData && createGameCards()}
                 <br />
                 <div class='text-center'>
-                    <button class='btn btn-primary col-sm-2'>Previous</button>
-                    <button class='btn btn-primary col-sm-2'>Next</button>
+                    <Link to={`/games/search/${setPageNum(pageNum - 1)}`}>
+                        <button class='btn btn-primary col-sm-2'>Previous</button>
+                    </Link>
+                    <Link to={`/games/search/${setPageNum(pageNum + 1)}`}>
+                        <button class='btn btn-primary col-sm-2'>Next</button>
+                    </Link>
                 </div>
             </div>
         );
