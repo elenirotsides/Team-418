@@ -72,17 +72,17 @@ const Search = (props) => {
         setLoading(false);
     }
     
-    let cards = null;
-    cards = pageData.forEach((element) => {
-        return (
-            <GameSizableCard
-                data={element}
-                cardWidth={'24%'}
-                cardPaddingTop={'24%'}
-                cardMarginRight={'1%'}
-            />
-        );
-    })
+    // let cards = null;
+    // cards = pageData.forEach((element) => {
+    //     return (
+    //         <GameSizableCard
+    //             data={element}
+    //             cardWidth={'24%'}
+    //             cardPaddingTop={'24%'}
+    //             cardMarginRight={'1%'}
+    //         />
+    //     );
+    // })
 
     function createGameCards() {
         if (pageData && pageData.length === 0) {
@@ -97,9 +97,9 @@ const Search = (props) => {
             )
         } */
         else {
-            <div class="ml-3 mr-2">
-                {cards && cards}
-            </div>
+            // <div class="ml-3 mr-2">
+            //     {cards && cards}
+            // </div>
             
             // let cards = null;
             // for (let i = 0; i < Object.keys(pageData).length; i++) {
@@ -129,6 +129,21 @@ const Search = (props) => {
             //             })}
             //     </div>
             // );
+            return (
+                <div class="ml-3 mr-2">
+                    {pageData &&
+                        pageData.map((game) => {
+                            return (
+                                <GameSizableCard
+                                    data={game}
+                                    cardWidth={'24%'}
+                                    cardPaddingTop={'24%'}
+                                    cardMarginRight={'1%'}
+                                />
+                            );
+                        })}
+                </div>
+            );
         }
     }
 

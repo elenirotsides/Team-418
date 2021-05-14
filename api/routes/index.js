@@ -7,6 +7,7 @@ const constructorMethod = (app) => {
     app.use('/reviews', reviewsRoutes);
     app.use('/games', gamesRoutes);
     app.all('*', (req, res) => {
+        console.log(req.baseUrl)
         res.status(404).json({ error: 'Route Not Found' });
     });
 };
