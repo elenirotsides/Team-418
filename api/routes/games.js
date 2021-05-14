@@ -203,15 +203,16 @@ router.get(
 );
 
 router.post(
-    '/search',
+    '/search/:pageNum',
     IGDBSessionHandler.instance.validateSession(),
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
+        console.log('inside the route')
         const searchTerm = req.body.searchTerm;
         if (!searchTerm)
             return res.status(400).json({ error: 'No search term provided' });
         try {
-            let fieldString = `fields name, cover.url, genres; search "${searchTerm}";`;
+            let fieldString = `offset ${req.params.pageNum}; fields name, cover.url, genres; search "${searchTerm}";`;
             let advancedFields = '';
             for (const key of ['genres', 'platforms']) {
                 if (req.body.hasOwnProperty(key))
@@ -234,7 +235,7 @@ router.post(
             res.json(data);
             setCachedData(dataKeys.gamesSearch(fieldString), data);
         } catch (e) {
-            console.log(`Error occured in /games/search route`, e);
+            console.log(`Error occured in /games/search/:pageNum route`, e);
             res.sendStatus(500);
         }
     }

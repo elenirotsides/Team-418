@@ -9,7 +9,8 @@ const Search = (props) => {
     const [genre, setGenre] = useState(undefined);
     const [platform, setPlatform] = useState(undefined);
     let idToken;
-    const searchUrl = 'http://localhost:5000/games/search';
+    const searchUrl = `http://localhost:5000/games/search/${props.match.params.pageNum}`;
+    //const secondSearchURL = `http://localhost:5000/games/search/${props.match.params.pageNum + 1}`
     const searchInfoUrl = 'http://localhost:5000/games/search/info';
 
     async function search(e, redirectedSearchTerm) {
@@ -41,7 +42,9 @@ const Search = (props) => {
                 body: JSON.stringify(body),
             };
             const response = await fetch(searchUrl, requestInfo);
+            console.log(searchUrl)
             setPageData(await response.json());
+            console.log(pageData)
         } catch (err) {
             console.log('search error', err);
             setError(true);
@@ -68,6 +71,18 @@ const Search = (props) => {
         }
         setLoading(false);
     }
+    
+    let cards = null;
+    cards = pageData.forEach((element) => {
+        return (
+            <GameSizableCard
+                data={element}
+                cardWidth={'24%'}
+                cardPaddingTop={'24%'}
+                cardMarginRight={'1%'}
+            />
+        );
+    })
 
     function createGameCards() {
         if (pageData && pageData.length === 0) {
@@ -76,22 +91,44 @@ const Search = (props) => {
                     <h2>No Games Found.</h2>
                 </div>
             );
-        } else {
-            return (
-                <div class="ml-3 mr-2">
-                    {pageData &&
-                        pageData.map((game) => {
-                            return (
-                                <GameSizableCard
-                                    data={game}
-                                    cardWidth={'24%'}
-                                    cardPaddingTop={'24%'}
-                                    cardMarginRight={'1%'}
-                                />
-                            );
-                        })}
-                </div>
-            );
+        } /*else if (pageData.error){
+            return(
+                <div>{pageData.error}</div>
+            )
+        } */
+        else {
+            <div class="ml-3 mr-2">
+                {cards && cards}
+            </div>
+            
+            // let cards = null;
+            // for (let i = 0; i < Object.keys(pageData).length; i++) {
+            //     console.log(pageData)
+            //     return (
+            //         <div class="ml-3 mr-2">
+            //             <GameSizableCard
+            //                 data={i}
+            //                 cardWidth={'24%'}
+            //                 cardPaddingTop={'24%'}
+            //                 cardMarginRight={'1%'}
+            //             />
+            //         </div>
+            //     )
+            // }
+            // return (
+            //     <div class="ml-3 mr-2">
+            //         {pageData.forEach((element) => {
+            //                 return (
+            //                     <GameSizableCard
+            //                         data={element}
+            //                         cardWidth={'24%'}
+            //                         cardPaddingTop={'24%'}
+            //                         cardMarginRight={'1%'}
+            //                     />
+            //                 );
+            //             })}
+            //     </div>
+            // );
         }
     }
 
@@ -196,6 +233,11 @@ const Search = (props) => {
                 <div id="errorDiv" class="text-center">{error && <p>{error}</p>}</div>
                 {loading && <div class="text-center"><h2>Loading...</h2></div>}
                 {!loading && pageData && createGameCards()}
+                <br />
+                <div class='text-center'>
+                    <button class='btn btn-primary col-sm-2'>Previous</button>
+                    <button class='btn btn-primary col-sm-2'>Next</button>
+                </div>
             </div>
         );
     }

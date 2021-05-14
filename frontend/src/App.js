@@ -32,7 +32,7 @@ function App() {
                     <Route exact path="/signup" component={SignUp} />
                     <PrivateRoute exact path="/profile" component={Profile} />
                     <PrivateRoute exact path="/game/:id" component={Game} />
-                    <PrivateRoute exact path="/games/search" component={Search} />
+                    <PrivateRoute exact path="/games/search/:pageNum" component={Search} />
                     <PrivateRoute exact path="/games/allpopular" component={AllPopularGames} />
                     <PrivateRoute exact path='/games/allnew' component={AllNewGames} /> 
                     <Route path="*" component={NotFound} />
