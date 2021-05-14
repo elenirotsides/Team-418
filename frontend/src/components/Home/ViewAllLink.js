@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core';
 
 const styles = makeStyles({
     link: {
-        fontSize:18
+        fontSize:18,
+        cursor: 'pointer'
     }
 });
 
