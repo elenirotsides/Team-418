@@ -29,6 +29,18 @@ router.get('/profile', async function (req, res) {
     }
 });
 
+// getting the profile page of a different user
+router.get('/profile/:userId', async function (req, res) {
+    let userId = req.params.userId;
+    try {
+        const user = await usersData.getUserById(userId);
+        res.send(user);
+    } catch (e) {
+        console.log(e);
+        res.status(500).send(e);    
+    }
+});
+
 router.get(
     '/profile/favorites',
     IGDBSessionHandler.instance.validateSession(),
@@ -39,6 +51,56 @@ router.get(
         {
             try {
                 const user = await usersData.getUserByEmail(email);
+                const favoriteGames = [];
+                try {
+                    for (const gameId of user.favoriteGames) {
+                        const cacheData = await getCachedData(
+                            dataKeys.gamesId(gameId)
+                        );
+                        if (cacheData) {
+                            favoriteGames.push(cacheData);
+                        } else {
+                            const response = await axios(
+                                IGDBSessionHandler.instance.igdbAxiosConfig(
+                                    'games',
+                                    null,
+                                    `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
+                                )
+                            );
+                            favoriteGames.push(response.data[0]);
+                            setCachedData(
+                                dataKeys.gamesId(gameId),
+                                response.data[0],
+                                3600
+                            );
+                        }
+                    }
+                } catch (e) {
+                    // if error with IGDB, just dont display favorites
+                    console.log(
+                        `Failed to load favorite game with id: (${gameId}).`
+                    );
+                }
+                res.send(favoriteGames);
+            } catch (error) {
+                console.log(error);
+                res.status(500).send(error);
+            }
+        }
+    }
+);
+
+router.get(
+    '/profile/favorites/:userId',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        // email comes validated from Google
+        let email = req.googleInfo.email;
+        let userId = req.params.userId;
+        {
+            try {
+                const user = await usersData.getUserById(userId);
                 const favoriteGames = [];
                 try {
                     for (const gameId of user.favoriteGames) {
@@ -90,6 +152,21 @@ router.get('/picture', async function (req, res) {
         res.sendStatus(404);
     }
 });
+
+router.get('/picture/:userId', async function (req, res) {
+    // email field is appended by the google auth middleware, it will be previously validated
+    let email = req.googleInfo.email;
+    let userId = req.params.userId;
+    try {
+        const user = await usersData.getUserById(userId);
+        res.sendFile(
+            path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
+        );
+    } catch (error) {
+        res.sendStatus(404);
+    }
+});
+
 
 router.post('/create', async function (req, res) {
     try {

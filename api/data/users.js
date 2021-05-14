@@ -20,7 +20,7 @@ module.exports = {
         if (!ObjectId.isValid(id)) throw "User Id needs to be a valid ObjectId";
 
         const userCollection = await users();
-        const user = await userCollection.findOne({_id: id});
+        const user = await userCollection.findOne({_id: ObjectId(id)});
         if (!user) throw "User not found with the given id";
         return user;
     },
