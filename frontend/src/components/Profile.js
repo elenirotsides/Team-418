@@ -106,7 +106,7 @@ const Profile = (props) => {
         }
         if (props && props.location.userId) {
             try {
-                const response = await fetch(`${infoUrl}/${props.location.userId}?idToken=${token}`, {
+                const response = await fetch(`${infoUrl}/other/${props.location.userId}?idToken=${token}`, {
                     method: 'GET',
                 });
                 const data = await response.json();
@@ -274,7 +274,7 @@ const Profile = (props) => {
             <div className="text-center">
                 <h2>Profile Page</h2>
                 {!idToken && <img src="/imgs/profile.png" alt="profile" />}
-                {idToken && !props && !props.location.userId && (
+                {idToken && !props.location.userId && (
                     <img
                         crossOrigin="anonymous"
                         class="my-3 bg-dark"
@@ -291,7 +291,7 @@ const Profile = (props) => {
                     />
                 )}
                 <br />
-                {idToken && !props && !props.location.userId &&<ProfilePictureModal idToken={idToken} />}
+                {idToken && !props.location.userId &&<ProfilePictureModal idToken={idToken} />}
                 <h3>Name: </h3>
                 <p>
                     {userData && userData.firstName}{' '}
@@ -303,7 +303,7 @@ const Profile = (props) => {
                 <p>{userData && userData.displayName}</p>
                 <h3>Favorite Games</h3>
                 {createFavoriteGames()}
-                {!props && !props.location.userId && <SignOutButton />}
+                {!props.location.userId && <SignOutButton />}
             </div>
         );
     }

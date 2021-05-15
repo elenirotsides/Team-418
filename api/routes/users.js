@@ -30,7 +30,7 @@ router.get('/profile', async function (req, res) {
 });
 
 // getting the profile page of a different user
-router.get('/profile/:userId', async function (req, res) {
+router.get('/profile/other/:userId', async function (req, res) {
     let userId = req.params.userId;
     try {
         const user = await usersData.getUserById(userId);
