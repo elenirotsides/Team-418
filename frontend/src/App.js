@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from './components/Home/Home';
 import Navigation from './components/Navigation';
 import Login from './components/Login';
-import SignUp from './components/SignUp';
 import Game from './components/GameDetails/Game';
 import Results from './components/Results';
 import Profile from './components/Profile';
@@ -29,7 +28,6 @@ function App() {
                 <Switch>
                     <PrivateRoute exact path="/" component={Home} />
                     <Route exact path="/login" component={Login} />
-                    <Route exact path="/signup" component={SignUp} />
                     <PrivateRoute exact path="/profile" component={Profile} />
                     <PrivateRoute exact path="/game/:id" component={Game} />
                     <PrivateRoute exact path="/games/search" component={Search} />
