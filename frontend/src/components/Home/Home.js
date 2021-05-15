@@ -99,6 +99,7 @@ const Home = (props) => {
             <div
                 className={`${classes.defaultSideMargin} ${classes.defaultSectionMargin}`}
             ></div>
+            
         </div>
     );
 };
