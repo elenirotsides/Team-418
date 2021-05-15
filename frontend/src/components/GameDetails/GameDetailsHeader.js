@@ -70,8 +70,7 @@ const styles = makeStyles({
     ageRatingImage: {
         maxWidth: '100%',
         minWidth: '50%'
-    }
-
+    },
 });
 
 const GameDetailsHeader = (props) => {
@@ -123,7 +122,7 @@ const GameDetailsHeader = (props) => {
             <div className={classes.leftContainer}>
                 <img className={classes.coverImage} src={props.data.cover.url}></img>
                 <div>
-                    <button>Add to favorites</button>
+                    <button class='btn btn-primary'>Add to favorites</button>
                 </div>
             </div>
             <div className={classes.rightContainer}>
