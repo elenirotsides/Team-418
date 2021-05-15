@@ -318,7 +318,7 @@ const Profile = (props) => {
                                 {idToken && !props.location.userId && (
                                     <Button
                                         id={r._id}
-                                        variant="primary"
+                                        variant="danger"
                                         onClick={deleteReview}
                                     >
                                         Delete
