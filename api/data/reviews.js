@@ -7,7 +7,7 @@ const games = mongoCollections.games;
 const userMethods = require('../data/users');
 const gameMethods = require('../data/games');
 const validate = require('./validation');
-const { validateGameEid } = require('./validation');
+const { validateGameEid, validateString } = require('./validation');
 
 module.exports = {
     // returns an array of all reviews
@@ -36,8 +36,17 @@ module.exports = {
             throw 'Review Id needs to be a valid ObjectId';
 
         const reviewCollection = await reviews();
-        const reviews = await reviewCollection.find({ userId: id }).toArray();
-        return reviews;
+        const userReviews = await reviewCollection.find({ userId: id }).toArray();
+        return userReviews;
+    },
+
+    //gets all reviews based on email
+    async getAllReviewsByEmail(email) {
+        if (arguments.length !== 1) throw 'Usage: User Email';
+        validateString(email)
+        const user = await userMethods.getUserByEmail(email);
+        const userReviews = await this.getAllReviewsByUserId(user._id);
+        return userReviews;
     },
 
     //gets all reviews beloning to a user id
@@ -247,4 +256,21 @@ module.exports = {
             throw e;
         }
     },
+
+    async deleteReviewById(reviewId){
+        if (arguments.length !== 1) throw 'Usage: Review Id';
+        if (!ObjectId.isValid(reviewId)) throw 'Review Id needs to be a valid ObjectId';
+        const review = await this.getReviewById(reviewId);
+        const reviewsCollection = await reviews();
+
+        // delete review from reviews collection
+        const deletedInfo = await reviewsCollection.deleteOne({_id: reviewId});
+        if(deletedInfo.deletedCount !== 1) throw 'could not delete review'
+
+        // delete review from user
+        await userMethods.removeReviewFromUser(review.userId, review._id);
+
+        // delete review from game
+        await gameMethods.removeReviewFromGame(review.gameId, review._id);
+    }
 };
