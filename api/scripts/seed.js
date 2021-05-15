@@ -77,43 +77,43 @@ const user10 = {
 
 // 10 games
 const game1 = {
-    endpointId: 54522,
+    endpointId: 103298,
 };
 
 const game2 = {
-    endpointId: 40104,
+    endpointId: 109462,
 };
 
 const game3 = {
-    endpointId: 20950,
+    endpointId: 113112,
 };
 
 const game4 = {
-    endpointId: 68841,
+    endpointId: 26192,
 };
 
 const game5 = {
-    endpointId: 33284,
+    endpointId: 11169,
 };
 
 const game6 = {
-    endpointId: 104748,
+    endpointId: 90101,
 };
 
 const game7 = {
-    endpointId: 85450,
+    endpointId: 103329,
 };
 
 const game8 = {
-    endpointId: 53297,
+    endpointId: 361,
 };
 
 const game9 = {
-    endpointId: 89616,
+    endpointId: 103281,
 };
 
 const game10 = {
-    endpointId: 90512,
+    endpointId: 19560,
 };
 
 const featured_game = {

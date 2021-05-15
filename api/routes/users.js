@@ -48,37 +48,33 @@ router.get(
     async function (req, res) {
         // email comes validated from Google
         let email = req.googleInfo.email;
+        let str = '(';
         {
             try {
                 const user = await usersData.getUserByEmail(email);
                 const favoriteGames = [];
                 try {
-                    for (const gameId of user.favoriteGames) {
-                        const cacheData = await getCachedData(
-                            dataKeys.gamesId(gameId)
-                        );
-                        if (cacheData) {
-                            favoriteGames.push(cacheData);
-                        } else {
-                            const response = await axios(
-                                IGDBSessionHandler.instance.igdbAxiosConfig(
-                                    'games',
-                                    null,
-                                    `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
-                                )
-                            );
-                            favoriteGames.push(response.data[0]);
-                            setCachedData(
-                                dataKeys.gamesId(gameId),
-                                response.data[0],
-                                3600
-                            );
-                        }
-                    }
+                    for (const gameId of user.favoriteGames)
+                        str = str.concat(gameId, ', ');
+
+                    str = str.slice(0, -2);
+                    str = str.concat(')');
+                    let gameId = str;
+
+                    const response = await axios(
+                        IGDBSessionHandler.instance.igdbAxiosConfig(
+                            'games',
+                            null,
+                            `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
+                        )
+                    );
+                    for (let i=0; i<response.data.length; i++)
+                            favoriteGames.push(response.data[i]);
+
                 } catch (e) {
                     // if error with IGDB, just dont display favorites
                     console.log(
-                        `Failed to load favorite game with id: (${gameId}).`
+                        `Failed to load favorite games`
                     );
                 }
                 res.send(favoriteGames);
@@ -98,37 +94,32 @@ router.get(
         // email comes validated from Google
         let email = req.googleInfo.email;
         let userId = req.params.userId;
+        let str = '(';
         {
             try {
                 const user = await usersData.getUserById(userId);
                 const favoriteGames = [];
                 try {
-                    for (const gameId of user.favoriteGames) {
-                        const cacheData = await getCachedData(
-                            dataKeys.gamesId(gameId)
-                        );
-                        if (cacheData) {
-                            favoriteGames.push(cacheData);
-                        } else {
-                            const response = await axios(
-                                IGDBSessionHandler.instance.igdbAxiosConfig(
-                                    'games',
-                                    null,
-                                    `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
-                                )
-                            );
-                            favoriteGames.push(response.data[0]);
-                            setCachedData(
-                                dataKeys.gamesId(gameId),
-                                response.data[0],
-                                3600
-                            );
-                        }
-                    }
+                    for (const gameId of user.favoriteGames) 
+                        str = str.concat(gameId, ', ');
+                    
+                    str = str.slice(0, -2);
+                    str = str.concat(')');
+                    let gameId = str;
+
+                    const response = await axios(
+                        IGDBSessionHandler.instance.igdbAxiosConfig(
+                            'games',
+                            null,
+                            `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
+                        )
+                    );
+                    for (let i=0; i<response.data.length; i++)
+                            favoriteGames.push(response.data[i]);
                 } catch (e) {
                     // if error with IGDB, just dont display favorites
                     console.log(
-                        `Failed to load favorite game with id: (${gameId}).`
+                        `Failed to load favorite games.`
                     );
                 }
                 res.send(favoriteGames);
