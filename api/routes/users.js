@@ -218,8 +218,11 @@ router.post('/picture', async function (req, res) {
         });
     }
     try {
-        await writeFileSync(filePath, profilePicture.data, fileOptions);
-        await gm(filePath)
+        // write new profile picture to disk
+        writeFileSync(filePath, profilePicture.data, fileOptions);
+        // update db to point to new profile picture
+        await usersData.updateProfilePic(req.googleInfo.email, newFileName);
+        gm(filePath)
             .resize(240, 240)
             .autoOrient()
             .font(font, 32)
@@ -231,13 +234,13 @@ router.post('/picture', async function (req, res) {
                         err
                     );
                 }
+                // the profile picture is still saved, just not formatted by ImageMagick
+                res.sendStatus(200);
             });
-        await usersData.updateProfilePic(req.googleInfo.email, newFileName);
     } catch (e) {
         console.log('Error in /users/picture', e);
         return res.sendStatus(500);
     }
-    res.sendStatus(200);
 });
 
 module.exports = router;
