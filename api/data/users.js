@@ -20,7 +20,7 @@ module.exports = {
         if (!ObjectId.isValid(id)) throw "User Id needs to be a valid ObjectId";
 
         const userCollection = await users();
-        const user = await userCollection.findOne({_id: id});
+        const user = await userCollection.findOne({_id: ObjectId(id)});
         if (!user) throw "User not found with the given id";
         return user;
     },
@@ -223,5 +223,16 @@ module.exports = {
         if (userUpdate.modifiedCount === 0)
             throw "Could not modify user with removed favorite games";
         return updatedList;
+    },
+
+    async removeReviewFromUser(userId, reviewId){
+        if (arguments.length != 2) throw "Usage: userId, reviewId";
+        if (!ObjectId.isValid(userId)) throw "User Id needs to be a valid ObjectId";
+        if (!ObjectId.isValid(reviewId)) throw "Review Id needs to be a valid ObjectId";
+        const userCollection = await users();
+        const updatedInfo = await userCollection.updateOne({_id: userId}, {$pull : {
+            reviews: reviewId
+        }})
+        if(updatedInfo.modifiedCount !== 1 ) throw 'could not remove review from user'
     }
 }

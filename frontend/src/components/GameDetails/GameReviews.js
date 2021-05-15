@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Grid } from '@material-ui/core';
 import SectionTitle from '../Home/SectionTitle';
 import { Card } from 'react-bootstrap';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
-import { Rating } from '@material-ui/lab'; 
+import { Rating } from '@material-ui/lab';
+import { Link } from 'react-router-dom';
+import Profile from '../Profile';
+import GameReviewModal from './GameReviewModal';
+
 
 const styles = makeStyles({
     container: {
-        height: 300,
         overflowX: 'auto',
-        whiteSpace: 'nowrap',
-        paddingLeft: 60,
-        paddingRight: 60,
+        minWidth: '100%',
     },
     inline: {
         display: 'inline',
@@ -19,6 +20,14 @@ const styles = makeStyles({
     heading: {
         marginLeft: 60,
     },
+    noReviews: {
+        marginBottom: 50
+    },
+
+    reviewButton: {
+        marginBottom: 20,
+        textAlign: 'center'
+    }
 });
 
 const GameReviews = (props) => {
@@ -30,14 +39,26 @@ const GameReviews = (props) => {
 
     function createReviewsList() {
         if (!reviews) {
-            return <h5 class="text-center">No reviews...</h5>;
+            return (
+                <div className={classes.noReviews}>
+                    <div className={classes.reviewButton}>
+                        <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} />
+                    </div>
+                    <h5 class="text-center">No reviews</h5>
+                </div>);
         } else {
             let cards = reviews.map((r) => {
                 return (
-                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 m-3">
-                        <Card style={{ width: '18rem' }}>
+                    <Grid item class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 m-4">
+                        <Card style={{ width: '100%' }}>
                             <Card.Body>
-                                <Card.Title>{r.displayName}</Card.Title>
+                                <Link to={{
+                                    pathname: `/users/${r.userId}`,
+                                    userId: r.userId
+                                }
+                                }>
+                                    <Card.Title>{r.displayName}</Card.Title>
+                                </Link>
                                 <Rating
                                     name="read-only"
                                     value={r.rating}
@@ -48,13 +69,19 @@ const GameReviews = (props) => {
                                 <Card.Text>{r.comment}</Card.Text>
                             </Card.Body>
                         </Card>
-                    </div>
+                    </Grid>
                 );
             });
             return (
-                <div class="container">
-                    <div class="row">{cards}</div>
+                <div>
+                    <div className={classes.reviewButton}>
+                        <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} />
+                    </div>
+                    <Grid container justify='center' alignItems='center' spacing='0' className={`noScrollbar ${classes.container}`}>
+                        {cards}
+                    </Grid>
                 </div>
+
             );
         }
     }

@@ -69,9 +69,7 @@ const NewGames = (props) => {
                 </div>
                 <div className={classes.viewAllLink}>
                 <Link to={'/games/allnew'}>
-                    <button>
                         <ViewAllLink text='View all new games' />
-                    </button> 
                 </Link>
             </div>
 

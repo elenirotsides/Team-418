@@ -3,6 +3,8 @@ const router = express.Router();
 const validation = require('../data/').validation;
 const usersData = require('../data').users;
 const { ObjectId } = require("mongodb");
+const reviewsData = require('../data').reviews;
+const gamesData = require('../data').games;
 const path = require('path');
 const fs = require('fs');
 const writeFileSync = fs.writeFileSync;
@@ -15,6 +17,7 @@ const gm = require('gm').subClass({ imageMagick: true });
 const IGDBSessionHandler = require('../IGDB/IGDBSessionHandler');
 const { getCachedData, setCachedData, dataKeys } = require('../redis');
 const axios = require('axios');
+const { ObjectId } = require('mongodb');
 
 router.get('/profile', async function (req, res) {
     // email comes validated from Google
@@ -30,6 +33,18 @@ router.get('/profile', async function (req, res) {
     }
 });
 
+// getting the profile page of a different user
+router.get('/profile/other/:userId', async function (req, res) {
+    let userId = req.params.userId;
+    try {
+        const user = await usersData.getUserById(userId);
+        res.send(user);
+    } catch (e) {
+        console.log(e);
+        res.status(500).send(e);    
+    }
+});
+
 router.get(
     '/profile/favorites',
     IGDBSessionHandler.instance.validateSession(),
@@ -37,37 +52,33 @@ router.get(
     async function (req, res) {
         // email comes validated from Google
         let email = req.googleInfo.email;
+        let str = '(';
         {
             try {
                 const user = await usersData.getUserByEmail(email);
                 const favoriteGames = [];
                 try {
-                    for (const gameId of user.favoriteGames) {
-                        const cacheData = await getCachedData(
-                            dataKeys.gamesId(gameId)
-                        );
-                        if (cacheData) {
-                            favoriteGames.push(cacheData);
-                        } else {
-                            const response = await axios(
-                                IGDBSessionHandler.instance.igdbAxiosConfig(
-                                    'games',
-                                    null,
-                                    `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
-                                )
-                            );
-                            favoriteGames.push(response.data[0]);
-                            setCachedData(
-                                dataKeys.gamesId(gameId),
-                                response.data[0],
-                                3600
-                            );
-                        }
-                    }
+                    for (const gameId of user.favoriteGames)
+                        str = str.concat(gameId, ', ');
+
+                    str = str.slice(0, -2);
+                    str = str.concat(')');
+                    let gameId = str;
+
+                    const response = await axios(
+                        IGDBSessionHandler.instance.igdbAxiosConfig(
+                            'games',
+                            null,
+                            `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
+                        )
+                    );
+                    for (let i=0; i<response.data.length; i++)
+                            favoriteGames.push(response.data[i]);
+
                 } catch (e) {
                     // if error with IGDB, just dont display favorites
                     console.log(
-                        `Failed to load favorite game with id: (${gameId}).`
+                        `Failed to load favorite games`
                     );
                 }
                 res.send(favoriteGames);
@@ -75,6 +86,107 @@ router.get(
                 console.log(error);
                 res.status(500).send(error);
             }
+        }
+    }
+);
+
+router.get(
+    '/profile/favorites/:userId',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        // email comes validated from Google
+        let email = req.googleInfo.email;
+        let userId = req.params.userId;
+        let str = '(';
+        {
+            try {
+                const user = await usersData.getUserById(userId);
+                const favoriteGames = [];
+                try {
+                    for (const gameId of user.favoriteGames) 
+                        str = str.concat(gameId, ', ');
+                    
+                    str = str.slice(0, -2);
+                    str = str.concat(')');
+                    let gameId = str;
+
+                    const response = await axios(
+                        IGDBSessionHandler.instance.igdbAxiosConfig(
+                            'games',
+                            null,
+                            `fields name, cover.url, age_ratings.rating, screenshots.url, summary, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${gameId};`
+                        )
+                    );
+                    for (let i=0; i<response.data.length; i++)
+                            favoriteGames.push(response.data[i]);
+                } catch (e) {
+                    // if error with IGDB, just dont display favorites
+                    console.log(
+                        `Failed to load favorite games.`
+                    );
+                }
+                res.send(favoriteGames);
+            } catch (error) {
+                console.log(error);
+                res.status(500).send(error);
+            }
+        }
+    }
+);
+
+router.get(
+    '/profile/reviews',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        try {
+            // email comes validated from Google
+            let email = req.googleInfo.email;
+
+            // check if user if viewing another user's profile
+            const userId = ObjectId(req.query.userId);
+            if(req.query.userId && ObjectId.isValid(userId)){
+                let user = await usersData.getUserById(userId);
+                email = user.email;
+            }
+
+            const reviews = await reviewsData.getAllReviewsByEmail(email);
+            // no reviews, send 404
+            if (reviews.length == 0) return res.sendStatus(404);
+            const gameIds = reviews.map((r) => {
+                return r.gameId;
+            });
+            const endpointIds = await gamesData.getEndpointIds(gameIds);
+            // create map to reconcile our api game ids, IGBD ids, and the titles
+            const gidToEidMap = {};
+            const eids = [];
+            endpointIds.map((e) => {
+                gidToEidMap[e._id] = e.endpointId;
+                eids.push(e.endpointId);
+            });
+
+            // create query string and send request to IGDB
+            const strEids = `(${eids.join(', ')})`;
+            const { data } = await axios(
+                IGDBSessionHandler.instance.igdbAxiosConfig(
+                    'games',
+                    null,
+                    `fields name; where id = ${strEids};`
+                )
+            );
+            // create final review objects to send to frontend
+            const eidToTitleMap = {};
+            data.map((d) => (eidToTitleMap[d.id] = d.name));
+            for (const review of reviews) {
+                let gid = review['gameId'];
+                let eid = gidToEidMap[gid];
+                review['title'] = eidToTitleMap[eid];
+            }
+            res.json(reviews);
+        } catch (e) {
+            console.log('Error in /profile/reviews', e);
+            res.sendStatus(500);
         }
     }
 );
@@ -125,7 +237,19 @@ router.post('/modifyfavorites/:operation', async function(req, res){
             res.status(500).send(error);
         }
     }
+});
     
+router.get('/picture/:userId', async function (req, res) {
+    // email field is appended by the google auth middleware, it will be previously validated
+    let userId = req.params.userId;
+    try {
+        const user = await usersData.getUserById(userId);
+        res.sendFile(
+            path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
+        );
+    } catch (error) {
+        res.sendStatus(404);
+    }
 });
 
 router.post('/create', async function (req, res) {
@@ -187,8 +311,11 @@ router.post('/picture', async function (req, res) {
         });
     }
     try {
-        await writeFileSync(filePath, profilePicture.data, fileOptions);
-        await gm(filePath)
+        // write new profile picture to disk
+        writeFileSync(filePath, profilePicture.data, fileOptions);
+        // update db to point to new profile picture
+        await usersData.updateProfilePic(req.googleInfo.email, newFileName);
+        gm(filePath)
             .resize(240, 240)
             .autoOrient()
             .font(font, 32)
@@ -200,13 +327,13 @@ router.post('/picture', async function (req, res) {
                         err
                     );
                 }
+                // the profile picture is still saved, just not formatted by ImageMagick
+                res.sendStatus(200);
             });
-        await usersData.updateProfilePic(req.googleInfo.email, newFileName);
     } catch (e) {
         console.log('Error in /users/picture', e);
         return res.sendStatus(500);
     }
-    res.sendStatus(200);
 });
 
 module.exports = router;

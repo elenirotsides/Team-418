@@ -1,9 +1,11 @@
-import { makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import SignOutButton from './LogOut';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import ProfilePictureModal from './ProfilePictureModal';
 import GameSizableCard from './Home/GameSizableCard';
+import { makeStyles, Grid } from '@material-ui/core';
+import { Rating } from '@material-ui/lab';
+import { Card, Button } from 'react-bootstrap';
 const styles = makeStyles({
     title: {
         marginLeft: 60,
@@ -67,15 +69,19 @@ const styles = makeStyles({
     },
 });
 
-const Profile = () => {
+const Profile = (props) => {
     const [userData, setUserData] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [favoriteGames, setFavoriteGames] = useState(false);
     const [favoritesLoading, setfavoritesLoading] = useState(true);
+    const [reviews, setReviews] = useState(false);
+    const [reviewsLoading, setReviewsLoading] = useState(true);
     const [error, setError] = useState(false);
     const [idToken, setIdToken] = useState(false);
     const infoUrl = 'http://localhost:5000/users/profile';
     const favoriteGamesUrl = 'http://localhost:5000/users/profile/favorites';
+    const reviewsUrl = 'http://localhost:5000/users/profile/reviews';
+    const deleteReviewUrl = 'http://localhost:5000/reviews';
     const classes = styles();
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
@@ -104,16 +110,33 @@ const Profile = () => {
             token = await getUserIdToken();
             setIdToken(token);
         }
-        try {
-            const response = await fetch(`${infoUrl}?idToken=${token}`, {
-                method: 'GET',
-            });
-            const data = await response.json();
-            setUserData(data);
-            setLoading(false);
-        } catch (e) {
-            console.log(e);
-            setError(true);
+        if (props && props.location.userId) {
+            try {
+                const response = await fetch(
+                    `${infoUrl}/other/${props.location.userId}?idToken=${token}`,
+                    {
+                        method: 'GET',
+                    }
+                );
+                const data = await response.json();
+                setUserData(data);
+                setLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
+        } else {
+            try {
+                const response = await fetch(`${infoUrl}?idToken=${token}`, {
+                    method: 'GET',
+                });
+                const data = await response.json();
+                setUserData(data);
+                setLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
         }
     }
 
@@ -123,17 +146,62 @@ const Profile = () => {
             token = await getUserIdToken();
             setIdToken(token);
         }
+        if (props && props.location.userId) {
+            try {
+                const response = await fetch(
+                    `${favoriteGamesUrl}/${props.location.userId}?idToken=${token}`,
+                    {
+                        method: 'GET',
+                    }
+                );
+                const data = await response.json();
+                if (data.length < 8) setShowRightArrow(false);
+                setFavoriteGames(data);
+                setfavoritesLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
+        } else {
+            try {
+                const response = await fetch(
+                    `${favoriteGamesUrl}?idToken=${token}`,
+                    {
+                        method: 'GET',
+                    }
+                );
+                const data = await response.json();
+                if (data.length < 8) setShowRightArrow(false);
+                setFavoriteGames(data);
+                setfavoritesLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
+        }
+    }
+
+    async function fetchReviews() {
+        let token = idToken;
+        if (!idToken) {
+            token = await getUserIdToken();
+            setIdToken(token);
+        }
         try {
-            const response = await fetch(
-                `${favoriteGamesUrl}?idToken=${token}`,
-                {
-                    method: 'GET',
-                }
-            );
-            const data = await response.json();
-            if (data.length < 8) setShowRightArrow(false);
-            setFavoriteGames(data);
-            setfavoritesLoading(false);
+            let queryUrl = (props && props.location.userId) ? `${reviewsUrl}/?idToken=${token}&userId=${props.location.userId}`: `${reviewsUrl}?idToken=${token}`;
+            console.log(queryUrl);
+            const response = await fetch(queryUrl, {
+                method: 'GET',
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                setReviews(data);
+            } else if(response.status === 404){
+                setReviews(false);
+            } else {
+                setError(true);
+            }
+            setReviewsLoading(false);
         } catch (e) {
             console.log(e);
             setError(true);
@@ -216,9 +284,91 @@ const Profile = () => {
         }
     }
 
+    function createReviews() {
+        if (reviewsLoading) {
+            return (
+                <div>
+                    <p>Loading...</p>
+                </div>
+            );
+        } else if (!reviews || reviews.length === 0) {
+            return (
+                <div className={classes.noReviews}>
+                    <h5 class="text-center">No reviews</h5>
+                </div>
+            );
+        } else {
+            let cards = reviews.map((r) => {
+                return (
+                    <Grid
+                        item
+                        class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 m-4"
+                    >
+                        <Card style={{ width: '100%' }}>
+                            <Card.Body>
+                                <Card.Title>{r.title}</Card.Title>
+                                <Rating
+                                    name="read-only"
+                                    value={r.rating}
+                                    readOnly
+                                    min={1}
+                                    max={10}
+                                />
+                                <Card.Text>{r.comment}</Card.Text>
+                                {idToken && !props.location.userId && (
+                                    <Button
+                                        id={r._id}
+                                        variant="danger"
+                                        onClick={deleteReview}
+                                    >
+                                        Delete
+                                    </Button>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    </Grid>
+                );
+            });
+            return (
+                <div>
+                    <Grid
+                        container
+                        justify="center"
+                        alignItems="center"
+                        spacing="0"
+                        className={`noScrollbar ${classes.container}`}
+                    >
+                        {cards}
+                    </Grid>
+                </div>
+            );
+        }
+    }
+
+    async function deleteReview(e){
+        try {
+            let token = idToken;
+            if (!idToken) {
+                token = await getUserIdToken();
+                setIdToken(token);
+            }
+            const response = await fetch(
+                `${deleteReviewUrl}/${e.target.id}?idToken=${token}`,
+                {
+                    method: 'DELETE',
+                }
+            );
+            if (response.status !== 200) return setError(true);
+            fetchReviews();
+        } catch (e) {
+            console.log('error deleting review', e);
+        }
+    }
+
     useEffect(() => {
         fetchProfile();
         fetchFavoriteGames();
+        fetchReviews();
     }, []);
 
     if (error) {
@@ -242,7 +392,7 @@ const Profile = () => {
             <div className="text-center">
                 <h2>Profile Page</h2>
                 {!idToken && <img src="/imgs/profile.png" alt="profile" />}
-                {idToken && (
+                {idToken && !props.location.userId && (
                     <img
                         crossOrigin="anonymous"
                         class="my-3 bg-dark"
@@ -250,8 +400,18 @@ const Profile = () => {
                         alt="profile"
                     />
                 )}
+                {idToken && props && props.location.userId && (
+                    <img
+                        crossOrigin="anonymous"
+                        class="my-3 bg-dark"
+                        src={`http://localhost:5000/users/picture/${props.location.userId}?idToken=${idToken}`}
+                        alt="profileeee"
+                    />
+                )}
                 <br />
-                {idToken && <ProfilePictureModal idToken={idToken} />}
+                {idToken && !props.location.userId && (
+                    <ProfilePictureModal idToken={idToken} />
+                )}
                 <h3>Name: </h3>
                 <p>
                     {userData && userData.firstName}{' '}
@@ -263,7 +423,9 @@ const Profile = () => {
                 <p>{userData && userData.displayName}</p>
                 <h3>Favorite Games</h3>
                 {createFavoriteGames()}
-                <SignOutButton />
+                <h3>Reviews</h3>
+                {createReviews()}
+                {!props.location.userId && <SignOutButton />}
             </div>
         );
     }

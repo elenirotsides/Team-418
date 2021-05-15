@@ -71,7 +71,6 @@ const styles = makeStyles({
         maxWidth: '100%',
         minWidth: '50%'
     }
-
 });
 
 const GameDetailsHeader = (props) => {
@@ -219,7 +218,6 @@ const GameDetailsHeader = (props) => {
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         <div className={classes.ratingBox}>RatingBox</div>
-                        <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews}/>
                     </div>
                     <p>{props.data.summary} </p>
 

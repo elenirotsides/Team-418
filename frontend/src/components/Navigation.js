@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { NavLink, Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, Redirect } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import '../App.css';
 import { Grid, makeStyles } from '@material-ui/core';
@@ -125,20 +125,9 @@ const NavigationAuth = () => {
     );
 };
 
-// I don't know how much we want to show if a user isn't logged in, but this can easily be changed to show more
-// I figured it might be easier to start off like this and then slowly progress into the trickier stuff (ie showing everything but
-// not allowing certain actions to occur like giving comments, ratings, etc)
 const NavigationNonAuth = () => {
     return (
-        <nav className="navigation">
-            <NavLink exact to="/login" activeClassName="active" className="navlink">
-                Log In
-            </NavLink>
-
-            <NavLink exact to="/signup" activeClassName="active" className="navlink">
-                Sign Up
-            </NavLink>
-        </nav>
+        <Redirect to='/login'/>
     );
 };
 
