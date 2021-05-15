@@ -67,7 +67,7 @@ const styles = makeStyles({
     },
 });
 
-const Profile = () => {
+const Profile = (props) => {
     const [userData, setUserData] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [favoriteGames, setFavoriteGames] = useState(false);
@@ -104,16 +104,30 @@ const Profile = () => {
             token = await getUserIdToken();
             setIdToken(token);
         }
-        try {
-            const response = await fetch(`${infoUrl}?idToken=${token}`, {
-                method: 'GET',
-            });
-            const data = await response.json();
-            setUserData(data);
-            setLoading(false);
-        } catch (e) {
-            console.log(e);
-            setError(true);
+        if (props && props.location.userId) {
+            try {
+                const response = await fetch(`${infoUrl}/${props.location.userId}?idToken=${token}`, {
+                    method: 'GET',
+                });
+                const data = await response.json();
+                setUserData(data);
+                setLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
+        } else {
+            try {
+                const response = await fetch(`${infoUrl}?idToken=${token}`, {
+                    method: 'GET',
+                });
+                const data = await response.json();
+                setUserData(data);
+                setLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
         }
     }
 
@@ -123,20 +137,38 @@ const Profile = () => {
             token = await getUserIdToken();
             setIdToken(token);
         }
-        try {
-            const response = await fetch(
-                `${favoriteGamesUrl}?idToken=${token}`,
-                {
-                    method: 'GET',
-                }
-            );
-            const data = await response.json();
-            if (data.length < 8) setShowRightArrow(false);
-            setFavoriteGames(data);
-            setfavoritesLoading(false);
-        } catch (e) {
-            console.log(e);
-            setError(true);
+        if (props && props.location.userId) {
+            try {
+                const response = await fetch(
+                    `${favoriteGamesUrl}/${props.location.userId}?idToken=${token}`,
+                    {
+                        method: 'GET',
+                    }
+                );
+                const data = await response.json();
+                if (data.length < 8) setShowRightArrow(false);
+                setFavoriteGames(data);
+                setfavoritesLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
+        } else {
+            try {
+                const response = await fetch(
+                    `${favoriteGamesUrl}?idToken=${token}`,
+                    {
+                        method: 'GET',
+                    }
+                );
+                const data = await response.json();
+                if (data.length < 8) setShowRightArrow(false);
+                setFavoriteGames(data);
+                setfavoritesLoading(false);
+            } catch (e) {
+                console.log(e);
+                setError(true);
+            }
         }
     }
 
@@ -242,7 +274,7 @@ const Profile = () => {
             <div className="text-center">
                 <h2>Profile Page</h2>
                 {!idToken && <img src="/imgs/profile.png" alt="profile" />}
-                {idToken && (
+                {idToken && !props && !props.location.userId && (
                     <img
                         crossOrigin="anonymous"
                         class="my-3 bg-dark"
@@ -250,8 +282,16 @@ const Profile = () => {
                         alt="profile"
                     />
                 )}
+                {idToken && props && props.location.userId && (
+                    <img
+                        crossOrigin="anonymous"
+                        class="my-3 bg-dark"
+                        src={`http://localhost:5000/users/picture/${props.location.userId}?idToken=${idToken}`}
+                        alt="profileeee"
+                    />
+                )}
                 <br />
-                {idToken && <ProfilePictureModal idToken={idToken} />}
+                {idToken && !props && !props.location.userId &&<ProfilePictureModal idToken={idToken} />}
                 <h3>Name: </h3>
                 <p>
                     {userData && userData.firstName}{' '}
@@ -263,7 +303,7 @@ const Profile = () => {
                 <p>{userData && userData.displayName}</p>
                 <h3>Favorite Games</h3>
                 {createFavoriteGames()}
-                <SignOutButton />
+                {!props && !props.location.userId && <SignOutButton />}
             </div>
         );
     }

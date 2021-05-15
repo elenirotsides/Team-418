@@ -4,6 +4,8 @@ import SectionTitle from '../Home/SectionTitle';
 import { Card } from 'react-bootstrap';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 import { Rating } from '@material-ui/lab';
+import { Link } from 'react-router-dom';
+import Profile from '../Profile';
 
 const styles = makeStyles({
     container: {
@@ -37,7 +39,13 @@ const GameReviews = (props) => {
                     <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 m-3">
                         <Card style={{ width: '18rem' }}>
                             <Card.Body>
-                                <Card.Title>{r.displayName}</Card.Title>
+                                <Link to={{
+                                    pathname: '/profile',
+                                    userId: r.userId
+                                }
+                                }>
+                                    <Card.Title>{r.displayName}</Card.Title>
+                                </Link>
                                 <Rating
                                     name="read-only"
                                     value={r.rating}
