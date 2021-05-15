@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import GameSizableCard from './Home/GameSizableCard';
+import { NavLink, Link, useHistory } from 'react-router-dom';
+
+
 const Search = (props) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -9,11 +11,13 @@ const Search = (props) => {
     const [searchInfo, setSearchInfo] = useState(undefined);
     const [genre, setGenre] = useState(undefined);
     const [platform, setPlatform] = useState(undefined);
-    //const [searchTerm, setSearchTerm] = useState(undefined);
-    const [pageNum, setPageNum] = useState(0)
+    const [showPrev, setShowPrev] = useState(false);
+    const [showNext, setShowNext] = useState(false);
+
     let idToken;
     const searchInfoUrl = 'http://localhost:5000/games/search/info';
-    //const secondSearchURL = `http://localhost:5000/games/search/${props.match.params.pageNum + 1}`
+    let history = useHistory();
+
     
     async function search(e, redirectedSearchTerm, page) {
         let searchUrl = `http://localhost:5000/games/search/${page}`;
@@ -48,8 +52,12 @@ const Search = (props) => {
                 body: JSON.stringify(body),
             };
             const response = await fetch(searchUrl, requestInfo);
-            console.log(searchUrl)
-            setPageData(await response.json());
+            const data = await response.json();
+            setPageData(data);
+            
+            setShowPrev(props.match.params.pageNum > 0)
+            setShowNext(data.length === 12);
+
             console.log(pageData)
         } catch (err) {
             console.log('search error', err);
@@ -113,12 +121,10 @@ const Search = (props) => {
         ) {
             document.getElementById('searchTerm').value =
                 props.location.state.searchTerm;
-            search(null, props.location.state.searchTerm, pageNum);
-            console.log('page num:')
-            console.log(pageNum)
+            search(null, props.location.state.searchTerm, props.match.params.pageNum);
         }
         getSearchInfo();
-    }, [props, pageNum]);
+    }, [props, props.location.pathname]);
 
     function getAdvancedOptions() {
         return (
@@ -130,7 +136,7 @@ const Search = (props) => {
             >
                 <div class="card-body text-center">
                     <label class="m-1">Genre</label>
-                    <select onChange={(e) => setGenre(e.target.value)}>
+                    <select onChange={(e) => setGenre(e.target[0].value)}>
                         <option value="-1">All</option>
                         {searchInfo.genres &&
                             searchInfo.genres.map((g) => {
@@ -164,7 +170,10 @@ const Search = (props) => {
         return (
             <div>
                 <div class="container">
-                    <form onSubmit={search} class="my-3">
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        history.push('/games/search/0', { searchTerm: e.target[0].value })
+                    }} class="my-3">
                         <div class="form-group row">
                             <label
                                 for="searchTerm"
@@ -209,12 +218,12 @@ const Search = (props) => {
                 {!loading && pageData && createGameCards()}
                 <br />
                 <div class='text-center'>
-                    <Link to={`/games/search/${setPageNum(pageNum - 1)}`}>
-                        <button class='btn btn-primary col-sm-2'>Previous</button>
-                    </Link>
-                    <Link to={`/games/search/${setPageNum(pageNum + 1)}`}>
-                        <button class='btn btn-primary col-sm-2'>Next</button>
-                    </Link>
+                    {showPrev && <button class='btn btn-primary col-sm-2' onClick={() => {
+                        history.push(`/games/search/${parseInt(props.match.params.pageNum) - 1}`, { searchTerm: props.location.state.searchTerm })
+                    }}>Previous</button>}
+                    {showNext && <button class='btn btn-primary col-sm-2' onClick={() => {
+                        history.push(`/games/search/${parseInt(props.match.params.pageNum) + 1}`, { searchTerm: props.location.state.searchTerm })
+                    }}>Next</button>}
                 </div>
             </div>
         );
