@@ -16,6 +16,7 @@ const gm = require('gm').subClass({ imageMagick: true });
 const IGDBSessionHandler = require('../IGDB/IGDBSessionHandler');
 const { getCachedData, setCachedData, dataKeys } = require('../redis');
 const axios = require('axios');
+const { ObjectId } = require('mongodb');
 
 router.get('/profile', async function (req, res) {
     // email comes validated from Google
@@ -138,9 +139,17 @@ router.get(
     IGDBSessionHandler.instance.validateSession(),
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
-        // email comes validated from Google
-        let email = req.googleInfo.email;
         try {
+            // email comes validated from Google
+            let email = req.googleInfo.email;
+
+            // check if user if viewing another user's profile
+            const userId = ObjectId(req.query.userId);
+            if(req.query.userId && ObjectId.isValid(userId)){
+                let user = await usersData.getUserById(userId);
+                email = user.email;
+            }
+
             const reviews = await reviewsData.getAllReviewsByEmail(email);
             // no reviews, send 404
             if (reviews.length == 0) return res.sendStatus(404);

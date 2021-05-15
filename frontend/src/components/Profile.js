@@ -188,7 +188,9 @@ const Profile = (props) => {
             setIdToken(token);
         }
         try {
-            const response = await fetch(`${reviewsUrl}?idToken=${token}`, {
+            let queryUrl = (props && props.location.userId) ? `${reviewsUrl}/?idToken=${token}&userId=${props.location.userId}`: `${reviewsUrl}?idToken=${token}`;
+            console.log(queryUrl);
+            const response = await fetch(queryUrl, {
                 method: 'GET',
             });
             if (response.status === 200) {
@@ -313,13 +315,15 @@ const Profile = (props) => {
                                     max={10}
                                 />
                                 <Card.Text>{r.comment}</Card.Text>
-                                <Button
-                                    id={r._id}
-                                    variant="primary"
-                                    onClick={deleteReview}
-                                >
-                                    Delete
-                                </Button>
+                                {idToken && !props.location.userId && (
+                                    <Button
+                                        id={r._id}
+                                        variant="primary"
+                                        onClick={deleteReview}
+                                    >
+                                        Delete
+                                    </Button>
+                                )}
                             </Card.Body>
                         </Card>
                     </Grid>
