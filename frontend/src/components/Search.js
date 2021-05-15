@@ -2,9 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import GameSizableCard from './Home/GameSizableCard';
 import { NavLink, Link, useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
+
+
+const styles = makeStyles({
+    page: {
+        margin:60
+    },
+
+    nextBtn: {
+        marginLeft:10
+    },
+
+    prevBtn: {
+        marginRight:10
+    },
+     
+    card: {
+        marginBottom:20,
+        display:'inline'
+    }
+});
 
 
 const Search = (props) => {
+    const classes = styles();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [pageData, setPageData] = useState(undefined);
@@ -103,7 +125,7 @@ const Search = (props) => {
                                     data={game}
                                     cardWidth={'24%'}
                                     cardPaddingTop={'24%'}
-                                    cardMarginRight={'1%'}
+                                    cardMarginRight={'0.5%'}
                                 />
                             );
                         })}
@@ -168,7 +190,7 @@ const Search = (props) => {
         );
     } else {
         return (
-            <div>
+            <div className={classes.page}>
                 <div class="container">
                     <form onSubmit={(e) => {
                         e.preventDefault();
@@ -218,10 +240,10 @@ const Search = (props) => {
                 {!loading && pageData && createGameCards()}
                 <br />
                 <div class='text-center'>
-                    {showPrev && <button class='btn btn-primary col-sm-2' onClick={() => {
+                    {showPrev && <button className={`btn btn-primary col-sm-2 ${classes.prevBtn}`} onClick={() => {
                         history.push(`/games/search/${parseInt(props.match.params.pageNum) - 1}`, { searchTerm: props.location.state.searchTerm })
                     }}>Previous</button>}
-                    {showNext && <button class='btn btn-primary col-sm-2' onClick={() => {
+                    {showNext && <button className={`btn btn-primary col-sm-2 ${classes.nextBtn}`} onClick={() => {
                         history.push(`/games/search/${parseInt(props.match.params.pageNum) + 1}`, { searchTerm: props.location.state.searchTerm })
                     }}>Next</button>}
                 </div>

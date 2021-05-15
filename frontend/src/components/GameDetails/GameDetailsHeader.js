@@ -85,7 +85,16 @@ const GameDetailsHeader = (props) => {
             setAgeRatingUrl(urlForAgeRating(props.data.age_ratings[0].rating));
         }
         if (props.data.involved_companies) {
-            setGameDeveloper(props.data.involved_companies.filter((e) => e.developer == true)[0].company.name);
+            let developmentCompanies = props.data.involved_companies.filter((e) => e.developer == true);
+            if (developmentCompanies.length > 0) {
+                setGameDeveloper(developmentCompanies[0].company.name);
+            } else {
+                if (props.data.involved_companies.length > 0) {
+                    setGameDeveloper(props.data.involved_companies[0].company.name);
+                } else {
+                    setGameDeveloper('')
+                }
+            }
         }
     }, []);
 
