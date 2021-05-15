@@ -82,14 +82,14 @@ const GameReviewModal = (props) => {
     if (loading) {
         return (
             <Button variant="primary" disabled>
-                Review Game
+                Add a review
             </Button>
         );
     } else {
         return (
             <div>
                 <Button variant="primary" onClick={handleShow}>
-                    Review Game
+                    Add a reivew
                 </Button>
                 <Modal
                     show={show}

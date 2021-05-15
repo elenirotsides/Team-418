@@ -62,6 +62,8 @@ const Game = (props) => {
                         <div className={classes.defaultSpacing}>
                             <GameReviews className={classes.defaultSpacing} gameId={props.match.params.id} reloadReviews={reloadReviews} setReloadReviews={setReloadReviews} />
                         </div>
+                        <div className={classes.defaultSpacing}>
+                        </div>
                     </div>
                 )}
             </div>
