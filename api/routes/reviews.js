@@ -87,6 +87,23 @@ router.get('/:gameId', async function (req, res) {
     }
 });
 
+router.get('/average/:gameId', async function (req, res) {
+    let gameEid = req.params.gameId;
+    try {
+        validateGameEid(gameEid);
+    } catch (e) {
+        return res.status(400).json({ error: e });
+    }
+    try {
+        const average = await reviewsData.getAverageRating(gameEid);
+        if(!average || (Array.isArray(average) && average.length === 0)) return res.sendStatus(404);
+        res.json(average[0]);
+    } catch (e) {
+        console.log('Error in /reviews/:gameId/user', e);
+        res.sendStatus(500);
+    }
+});
+
 router.get('/:gameId/user', async function (req, res) {
     try {
         const gameId = Number.parseInt(req.params.gameId);

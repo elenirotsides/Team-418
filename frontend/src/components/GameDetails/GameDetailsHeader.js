@@ -78,15 +78,83 @@ const GameDetailsHeader = (props) => {
     const [coverURL, setCoverURL] = useState('');
     const [ageRatingUrl, setAgeRatingUrl] = useState('');
     const [gameDeveloper, setGameDeveloper] = useState('');
+    const [averageRating, setAverageRating] = useState(undefined);
+    const [ratingCount, setRatingCount] = useState(undefined);
+    const [ratingLoading, setRatingLoading] = useState(true);
+    const [ratingError, setRatingError] = useState(false);
+
+    async function fetchAverageRating() {
+        let idToken = await getUserIdToken();
+        try {
+            console.log(props.data);
+            const response = await fetch(
+                `http://localhost:5000/reviews/average/${props.data.id}?idToken=${idToken}`
+            );
+            if (response.status === 200) {
+                const data = await response.json();
+                setAverageRating(data.average);
+                setRatingCount(data.count);
+                setRatingLoading(false);
+            } else if (response.status === 404) {
+                setRatingLoading(false);
+            } else {
+                setRatingError(true);
+            }
+        } catch (e) {
+            setRatingError(true);
+            console.log(e);
+        }
+    }
+
+    function getRatingInfo() {
+        if (ratingError) {
+            return (
+                <div className={classes.ratingBox}>
+                    <p>An error occurred.</p>
+                </div>
+            );
+        } else if (ratingLoading) {
+            return (
+                <div className={classes.ratingBox}>
+                    <p>Loading rating...</p>
+                </div>
+            );
+        } else if (!averageRating && !ratingCount) {
+            return (
+                <div className={classes.ratingBox}>
+                    <p>No ratings yet.</p>
+                </div>
+            );
+        } else {
+            return (
+                <div className={classes.ratingBox}>
+                    <p>{`Average Rating: ${averageRating}`}</p>
+                    <p>{`Total Ratings: ${ratingCount}`}</p>
+                </div>
+            );
+        }
+    }
 
     useEffect(() => {
         if (props.data.age_ratings && props.data.age_ratings.length > 0) {
             setAgeRatingUrl(urlForAgeRating(props.data.age_ratings[0].rating));
         }
         if (props.data.involved_companies) {
-            setGameDeveloper(props.data.involved_companies.filter((e) => e.developer == true)[0].company.name);
+            setGameDeveloper(
+                props.data.involved_companies.filter(
+                    (e) => e.developer == true
+                )[0].company.name
+            );
         }
+        fetchAverageRating();
     }, []);
+
+    if (props.reloadAverageRating) {
+        console.log(props);
+        // reload after updating / adding a review
+        fetchAverageRating();
+        props.setReloadAverageRating(false);
+    }
 
     function urlForAgeRating(rating) {
         switch (rating) {
@@ -130,7 +198,7 @@ const GameDetailsHeader = (props) => {
                     <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
-                        <div className={classes.ratingBox}>RatingBox</div>
+                        {getRatingInfo()}
                     </div>
                     <p>{props.data.summary} </p>
 

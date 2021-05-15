@@ -17,6 +17,7 @@ const Game = (props) => {
     const [loading, setLoading] = useState(true);
     const [pageData, setPageData] = useState(undefined);
     const [reloadReviews, setReloadReviews] = useState(false);
+    const [reloadAverageRating, setReloadAverageRating] = useState(false);
     let idToken;
 
     async function fetchData() {
@@ -52,7 +53,7 @@ const Game = (props) => {
                 {pageData && (
                     <div>
                         <div className={classes.defaultSpacing}>
-                            <GameDetailsHeader setReloadReviews={setReloadReviews} gameId={props.match.params.id} data={pageData} />
+                            <GameDetailsHeader reloadAverageRating={reloadAverageRating} setReloadAverageRating={setReloadAverageRating} gameId={props.match.params.id} data={pageData} />
                         </div>
                         {pageData.screenshots &&
                             <div className={classes.defaultSpacing}>
@@ -60,7 +61,7 @@ const Game = (props) => {
                             </div>
                         }
                         <div className={classes.defaultSpacing}>
-                            <GameReviews className={classes.defaultSpacing} gameId={props.match.params.id} reloadReviews={reloadReviews} setReloadReviews={setReloadReviews} />
+                            <GameReviews className={classes.defaultSpacing} gameId={props.match.params.id} reloadReviews={reloadReviews} setReloadReviews={setReloadReviews} setReloadAverageRating={setReloadAverageRating} />
                         </div>
                         <div className={classes.defaultSpacing}>
                         </div>

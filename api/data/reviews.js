@@ -247,4 +247,22 @@ module.exports = {
             throw e;
         }
     },
+
+    async getAverageRating(gameEid) {
+        validateGameEid(gameEid);
+        const reviewCollection = await reviews();
+        const game = await gameMethods.getGameByEndpointId(gameEid);
+        // game does not exist
+        if (!game) return null;
+        return await reviewCollection.aggregate([
+            { $match: { gameId: game._id } },
+            {
+                $group: {
+                    _id: '$gameId',
+                    count: { $sum: 1 },
+                    average: { $avg: '$rating' },
+                },
+            },
+        ]).toArray();
+    },
 };

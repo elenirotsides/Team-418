@@ -43,6 +43,7 @@ const GameReviewModal = (props) => {
             if (response.status !== 200) throw 'Failed to submit review.';
             setShow(false);
             props.setReloadReviews(true);
+            props.setReloadAverageRating(true);
         } catch (error) {
             errorP.innerText =
                 'Failed to submit review. Please reload the page and try again.';
