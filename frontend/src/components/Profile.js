@@ -112,11 +112,8 @@ const Profile = (props) => {
             token = await getUserIdToken();
             setIdToken(token);
         }
-        if (props)
-            console.log(props.location.sameUser);
-        if (props && props.location.userId && !props.location.sameUser) {
+        if (props && props.location.userId) {
             try {
-                console.log("this is bad");
                 const response = await fetch(
                     `${infoUrl}/other/${props.location.userId}?idToken=${token}`,
                     {
@@ -124,7 +121,6 @@ const Profile = (props) => {
                     }
                 );
                 const data = await response.json();
-                console.log(data);
                 if (data.hasOwnProperty('edge')) {
                     setSameUser(true);
                     setLoading(false);
