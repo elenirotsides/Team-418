@@ -7,7 +7,7 @@ import { makeStyles, Grid } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import { Card, Button, Form } from 'react-bootstrap';
 import TextField from '@material-ui/core/TextField';
-import axios from 'axios';
+
 const styles = makeStyles({
     title: {
         marginLeft: 60,
@@ -88,7 +88,7 @@ const Profile = (props) => {
     const classes = styles();
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
-    // const [showStatusToggle, setShowStatusToggle] = useState(false);
+    const [status, setStatus] = useState("Status not set.");
     const [statusToggle, setStatusToggle] = useState(false);
     const [statusUpdate, setStatusUpdate] = useState(null)
     const [displayStatus, setDisplayStatus] = useState("")
@@ -220,6 +220,7 @@ const Profile = (props) => {
     };
 
     async function editStatus(e) {
+        console.log('IN edit status')
         e.preventDefault();
         const errorDiv = document.getElementById('errorDiv');
         errorDiv.innerHTML = '';
@@ -235,22 +236,29 @@ const Profile = (props) => {
         }
 
         let idToken = await getUserIdToken();
-        console.log(idToken);
         try {
+            console.log('Sending post')
             const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(body),
             });
-            // console.log('inside of the post');
-            // console.log(response);
-            if (response.status !== 200) {
+            console.log('inside of the post');
+            console.log(response);
+            if (response.status === 200) {
+                const data = await response.json();
+                const userDataCopy = JSON.parse(JSON.stringify(userData));
+                userDataCopy.status = statusUpdate;
+                setUserData(userDataCopy);
+                console.log('status response',data)
+            } else {
                 errorP.innerHTML = 'Failed to submit status update. Please try again.';
                 errorDiv.appendChild(errorP)
             }
             // 
             // fetchStatus();
         } catch (e) {
+            console.log('Caught an error', e)
             errorP.innerHTML = 'Failed to submit status update. Please try again.';
             errorDiv.appendChild(errorP)
         }
@@ -261,20 +269,17 @@ const Profile = (props) => {
         let idToken = await getUserIdToken();
         let response = null;
         try {
-            // const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
-            //     method: 'GET',
-            // });
-            // if (response.status === 200) {
-            //     let status = await response.json();
-            //     console.log('inside of the get status fetch function')
-            //     setDisplayStatus(status);
-            //     console.log(displayStatus)
-            // } else if (response.status !== 404) {
-            //     throw 'Failed to load status';
-            // }
-            response = await axios.get(`${statusUrl}/?idToken=${idToken}`);
-            console.log('inside the fetchStatus');
-            
+            const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
+                method: 'GET',
+            });
+            if (response.status === 200) {
+                let data = await response.json();
+                console.log('data', data);
+                setStatus(data);
+                console.log(displayStatus)
+            } else if (response.status !== 404) {
+                throw 'Failed to load status';
+            }
         } catch (e) {
             console.log('Error fetching status', e)
         }
@@ -492,8 +497,7 @@ const Profile = (props) => {
                     {userData && userData.lastName}
                 </p>
                 <h3>Status: </h3>
-                <p>{userData && userData.status}</p>
-                <p>{displayStatus}</p> {/* This doesn't work!?!?!? */}
+                <p>{userData && userData.status || "No Status Yet"}</p>
                 <button class="btn btn-primary" onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
                 {statusToggle && (
                     <form noValidate autocomplete="off" onSubmit={editStatus}>

@@ -179,7 +179,7 @@ router.post(
         try {
             const response = await usersData.editStatus(userEmail, newStatus);
             console.log(response)
-            return response; 
+            res.json(response); 
         } catch(e) {
             console.log(e);
             res.status(500).send(e);
