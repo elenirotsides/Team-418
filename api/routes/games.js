@@ -207,12 +207,10 @@ router.post(
     IGDBSessionHandler.instance.validateSession(),
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
-        console.log('inside the route')
         const searchTerm = req.body.searchTerm;
         if (!searchTerm)
             return res.status(400).json({ error: 'No search term provided' });
         try {
-            //offset ${req.params.pageNum}; 
             let fieldString = `limit 12; offset ${req.params.pageNum * 12}; fields name, cover.url, genres; search "${searchTerm}";`;
             let advancedFields = '';
             for (const key of ['genres', 'platforms']) {
