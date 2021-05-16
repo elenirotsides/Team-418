@@ -51,8 +51,6 @@ const Search = (props) => {
             e.preventDefault();
             setError(false);
             searchTerm = e.target[0].value;
-            console.log('inside the else block')
-            console.log(searchTerm)
         }
         if (!searchTerm) return setError('Search term cannot be empty.');
         if (!idToken) idToken = await getUserIdToken();
@@ -79,8 +77,6 @@ const Search = (props) => {
             
             setShowPrev(props.match.params.pageNum > 0)
             setShowNext(data.length === 12);
-
-            console.log(pageData)
         } catch (err) {
             console.log('search error', err);
             setError(true);
@@ -158,7 +154,7 @@ const Search = (props) => {
             >
                 <div class="card-body text-center">
                     <label class="m-1">Genre</label>
-                    <select onChange={(e) => setGenre(e.target[0].value)}>
+                    <select onChange={(e) => setGenre(e.target.value)}>
                         <option value="-1">All</option>
                         {searchInfo.genres &&
                             searchInfo.genres.map((g) => {
