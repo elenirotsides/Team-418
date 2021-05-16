@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import GameSizableCard from '../Home/GameSizableCard';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
-import GameReviewModal from './GameReviewModal';
+import { Rating } from '@material-ui/lab';
+
 
 const styles = makeStyles({
 
@@ -60,11 +60,25 @@ const styles = makeStyles({
         display: 'inline-block',
         padding: 0,
         margin: 0,
+        marginRight:10,
         float:'right',
         textAlign:'right',
         '& p':{
             margin:0
         }
+    },
+
+    ratingAverage: {
+        position:'relative',
+        bottom:5,
+    },
+    
+    ratingStar: {
+        marginLeft:5
+    },
+
+    inlineBlock: {
+        display:'inline-block'
     },
 
     ageRating: {
@@ -82,7 +96,6 @@ const styles = makeStyles({
 
 const GameDetailsHeader = (props) => {
     const classes = styles();
-    const [coverURL, setCoverURL] = useState('');
     const [ageRatingUrl, setAgeRatingUrl] = useState('');
     const [gameDeveloper, setGameDeveloper] = useState('');
     const [averageRating, setAverageRating] = useState(undefined);
@@ -135,7 +148,10 @@ const GameDetailsHeader = (props) => {
         } else {
             return (
                 <div className={classes.ratingBox}>
-                    <p>{`${averageRating} / 10`}</p>
+                    <p className={`${classes.inlineBlock} ${classes.ratingAverage} `}>{`${averageRating} / 10`}</p>
+                    <div className={`${classes.inlineBlock} ${classes.ratingStar}`}>
+                        <Rating name="read-only" value={1} readOnly min={1} max={1} />
+                    </div>
                     <p>{`Total Ratings: ${ratingCount}`}</p>
                 </div>
             );
