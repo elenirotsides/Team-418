@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import GameSizableCard from '../Home/GameSizableCard';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
-import GameReviewModal from './GameReviewModal';
+import { Rating } from '@material-ui/lab';
+
 
 const styles = makeStyles({
 
@@ -46,18 +46,39 @@ const styles = makeStyles({
 
     publisherLabel: {
         display: 'inline-block',
-        minWidth: 'calc(100% - 150px)',
         padding: 0,
-        margin: 0
+        margin: 0,
+        verticalAlign:'top'
+    },
+
+    summary: {
+        clear:'both',
+        marginTop:40
     },
 
     ratingBox: {
         display: 'inline-block',
         padding: 0,
         margin: 0,
-        height: 30,
-        width: 150,
-        backgroundColor: 'yellow'
+        marginRight:10,
+        float:'right',
+        textAlign:'right',
+        '& p':{
+            margin:0
+        }
+    },
+
+    ratingAverage: {
+        position:'relative',
+        bottom:5,
+    },
+    
+    ratingStar: {
+        marginLeft:5
+    },
+
+    inlineBlock: {
+        display:'inline-block'
     },
 
     ageRating: {
@@ -75,9 +96,68 @@ const styles = makeStyles({
 
 const GameDetailsHeader = (props) => {
     const classes = styles();
-    const [coverURL, setCoverURL] = useState('');
     const [ageRatingUrl, setAgeRatingUrl] = useState('');
     const [gameDeveloper, setGameDeveloper] = useState('');
+    const [averageRating, setAverageRating] = useState(undefined);
+    const [ratingCount, setRatingCount] = useState(undefined);
+    const [ratingLoading, setRatingLoading] = useState(true);
+    const [ratingError, setRatingError] = useState(false);
+
+    async function fetchAverageRating() {
+        let idToken = await getUserIdToken();
+        try {
+            const response = await fetch(
+                `http://localhost:5000/reviews/average/${props.data.id}?idToken=${idToken}`
+            );
+            if (response.status === 200) {
+                const data = await response.json();
+                setAverageRating(data.average);
+                setRatingCount(data.count);
+                setRatingLoading(false);
+            } else if (response.status === 404) {
+                setAverageRating(undefined);
+                setRatingCount(undefined);
+                setRatingLoading(false);
+            } else {
+                setRatingError(true);
+            }
+        } catch (e) {
+            setRatingError(true);
+            console.log(e);
+        }
+    }
+
+    function getRatingInfo() {
+        if (ratingError) {
+            return (
+                <div className={classes.ratingBox}>
+                    <p>An error occurred.</p>
+                </div>
+            );
+        } else if (ratingLoading) {
+            return (
+                <div className={classes.ratingBox}>
+                    <p>Loading rating...</p>
+                </div>
+            );
+        } else if (!averageRating && !ratingCount) {
+            return (
+                <div className={classes.ratingBox}>
+                    <p>No ratings yet.</p>
+                </div>
+            );
+        } else {
+            return (
+                <div className={classes.ratingBox}>
+                    <p className={`${classes.inlineBlock} ${classes.ratingAverage} `}>{`${averageRating} / 10`}</p>
+                    <div className={`${classes.inlineBlock} ${classes.ratingStar}`}>
+                        <Rating name="read-only" value={1} readOnly min={1} max={1} />
+                    </div>
+                    <p>{`Total Ratings: ${ratingCount}`}</p>
+                </div>
+            );
+        }
+    }
 
     useEffect(() => {
         if (props.data.age_ratings && props.data.age_ratings.length > 0) {
@@ -95,7 +175,14 @@ const GameDetailsHeader = (props) => {
                 }
             }
         }
+        fetchAverageRating();
     }, []);
+
+    if (props.reloadAverageRating) {
+        // reload after updating / adding a review
+        fetchAverageRating();
+        props.setReloadAverageRating(false);
+    }
 
     function urlForAgeRating(rating) {
         switch (rating) {
@@ -139,9 +226,9 @@ const GameDetailsHeader = (props) => {
                     <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
-                        <div className={classes.ratingBox}>RatingBox</div>
+                        {getRatingInfo()}
                     </div>
-                    <p>{props.data.summary} </p>
+                    <p className={classes.summary}>{props.data.summary} </p>
 
                 </div>
                 {ageRatingUrl &&

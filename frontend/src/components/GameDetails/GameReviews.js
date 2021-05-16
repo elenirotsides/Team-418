@@ -42,7 +42,7 @@ const GameReviews = (props) => {
             return (
                 <div className={classes.noReviews}>
                     <div className={classes.reviewButton}>
-                        <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} />
+                        <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} setReloadAverageRating={props.setReloadAverageRating} />
                     </div>
                     <h5 class="text-center">No reviews</h5>
                 </div>);
@@ -76,7 +76,7 @@ const GameReviews = (props) => {
             return (
                 <div>
                     <div className={classes.reviewButton}>
-                        <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} />
+                        <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} setReloadAverageRating={props.setReloadAverageRating} />
                     </div>
                     <Grid container justify='center' alignItems='center' spacing='0' className={`noScrollbar ${classes.container}`}>
                         {cards}
