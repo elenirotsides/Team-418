@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const validation = require('../data/').validation;
 const usersData = require('../data').users;
-const { ObjectId } = require("mongodb");
 const reviewsData = require('../data').reviews;
 const gamesData = require('../data').games;
 const path = require('path');
@@ -209,7 +208,6 @@ router.post('/modifyfavorites/:operation', async function(req, res){
     let gameList = req.body.gameList;
     let operation = req.params.operation;
     let objId = new ObjectId(userId);
-    console.log(operation);
     
     if (operation != "add" && operation != "remove"){
         res.status(400).send("Invalid or missing operation type.");

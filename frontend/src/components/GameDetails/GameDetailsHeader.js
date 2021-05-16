@@ -106,6 +106,8 @@ const GameDetailsHeader = (props) => {
                 }
                 setFavText("Add to Favorites");
             }
+        }else{
+            setFavText("Add to Favorites");
         }
         
 
@@ -128,7 +130,7 @@ const GameDetailsHeader = (props) => {
                 },
                 (error) => {
                     console.log(error);
-                    setCurFavs(error);
+                    setCurFavs(null);
                 }
             );
 
@@ -153,7 +155,6 @@ const GameDetailsHeader = (props) => {
             .then(res => res.json())
                 .then(
                     (result) => {
-                        console.log(result);
                     },
                     (error) => {
                         console.log("Error: " + error);
@@ -166,7 +167,6 @@ const GameDetailsHeader = (props) => {
             .then(res => res.json())
                 .then(
                     (result) => {
-                        console.log(result);
                     },
                     (error) => {
                         console.log("Error: " + error);
@@ -209,7 +209,7 @@ const GameDetailsHeader = (props) => {
             <div className={classes.leftContainer}>
                 <img className={classes.coverImage} src={props.data.cover.url}></img>
                 <div>
-                    <button onClick={async () => addRemoveFavorites(props.userData)}>{favText}</button>
+                    <button class='btn btn-primary' onClick={async () => addRemoveFavorites(props.userData)}>{favText}</button>
                 </div>
             </div>
             <div className={classes.rightContainer}>

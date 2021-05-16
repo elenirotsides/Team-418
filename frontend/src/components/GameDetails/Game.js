@@ -19,7 +19,6 @@ const Game = (props) => {
     const [userData, setUserData] = useState(undefined);
     const [reloadReviews, setReloadReviews] = useState(false);
     let idToken;
-    let email = "zzwerlin@stevens.edu";
 
     
 
