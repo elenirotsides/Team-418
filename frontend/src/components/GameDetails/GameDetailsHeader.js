@@ -46,18 +46,25 @@ const styles = makeStyles({
 
     publisherLabel: {
         display: 'inline-block',
-        minWidth: 'calc(100% - 150px)',
         padding: 0,
-        margin: 0
+        margin: 0,
+        verticalAlign:'top'
+    },
+
+    summary: {
+        clear:'both',
+        marginTop:40
     },
 
     ratingBox: {
         display: 'inline-block',
         padding: 0,
         margin: 0,
-        height: 30,
-        width: 150,
-        backgroundColor: 'yellow'
+        float:'right',
+        textAlign:'right',
+        '& p':{
+            margin:0
+        }
     },
 
     ageRating: {
@@ -128,7 +135,7 @@ const GameDetailsHeader = (props) => {
         } else {
             return (
                 <div className={classes.ratingBox}>
-                    <p>{`Average Rating: ${averageRating}`}</p>
+                    <p>{`${averageRating} / 10`}</p>
                     <p>{`Total Ratings: ${ratingCount}`}</p>
                 </div>
             );
@@ -200,7 +207,7 @@ const GameDetailsHeader = (props) => {
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         {getRatingInfo()}
                     </div>
-                    <p>{props.data.summary} </p>
+                    <p className={classes.summary}>{props.data.summary} </p>
 
                 </div>
                 {ageRatingUrl &&
