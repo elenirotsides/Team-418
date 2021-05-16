@@ -5,18 +5,22 @@ import GameDetailsScreenshots from './GameDetailsScreenshots';
 import GameReviews from './GameReviews';
 import { makeStyles } from '@material-ui/core';
 
-
 const styles = makeStyles({
     defaultSpacing: {
-        marginTop: 20
-    }
+        marginTop: 20,
+    },
+    page: {
+        marginBottom: 60,
+    },
 });
 
 const Game = (props) => {
     const classes = styles();
     const [loading, setLoading] = useState(true);
     const [pageData, setPageData] = useState(undefined);
+    const [userData, setUserData] = useState(undefined);
     const [reloadReviews, setReloadReviews] = useState(false);
+    const [reloadAverageRating, setReloadAverageRating] = useState(false);
     let idToken;
 
     async function fetchData() {
@@ -27,7 +31,8 @@ const Game = (props) => {
             {
                 credentials: 'include',
             }
-        ).then((res) => res.json())
+        )
+            .then((res) => res.json())
             .then(
                 (result) => {
                     setPageData(result);
@@ -37,10 +42,32 @@ const Game = (props) => {
                     setPageData(null);
                 }
             );
+    }
 
+    async function fetchUserData() {
+        if (!idToken) idToken = await getUserIdToken();
+
+        const userUrl =
+            'http://localhost:5000/users/profile?idToken=' + idToken;
+
+        fetch(userUrl, {
+            credentials: 'include',
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setUserData(result._id);
+                },
+                (error) => {
+                    console.log(error);
+                    setUserData(error);
+                }
+            );
     }
 
     useEffect(() => {
+        fetchUserData();
+
         fetchData();
     }, []);
 
@@ -48,22 +75,36 @@ const Game = (props) => {
         return <h3 class="text-center">Loading.....</h3>;
     } else {
         return (
-            <div>
+            <div className={classes.page}>
                 {pageData && (
                     <div>
                         <div className={classes.defaultSpacing}>
-                            <GameDetailsHeader setReloadReviews={setReloadReviews} gameId={props.match.params.id} data={pageData} />
+                            <GameDetailsHeader
+                                userData={userData}
+                                reloadAverageRating={reloadAverageRating}
+                                setReloadAverageRating={setReloadAverageRating}
+                                gameId={props.match.params.id}
+                                data={pageData}
+                            />
                         </div>
-                        {pageData.screenshots &&
+                        {pageData.screenshots && (
                             <div className={classes.defaultSpacing}>
-                                <GameDetailsScreenshots className={classes.defaultSpacing} data={pageData.screenshots} />
+                                <GameDetailsScreenshots
+                                    className={classes.defaultSpacing}
+                                    data={pageData.screenshots}
+                                />
                             </div>
-                        }
+                        )}
                         <div className={classes.defaultSpacing}>
-                            <GameReviews className={classes.defaultSpacing} gameId={props.match.params.id} reloadReviews={reloadReviews} setReloadReviews={setReloadReviews} />
+                            <GameReviews
+                                className={classes.defaultSpacing}
+                                gameId={props.match.params.id}
+                                reloadReviews={reloadReviews}
+                                setReloadReviews={setReloadReviews}
+                                setReloadAverageRating={setReloadAverageRating}
+                            />
                         </div>
-                        <div className={classes.defaultSpacing}>
-                        </div>
+                        <div className={classes.defaultSpacing}></div>
                     </div>
                 )}
             </div>

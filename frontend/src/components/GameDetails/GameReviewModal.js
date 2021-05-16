@@ -46,6 +46,7 @@ const GameReviewModal = (props) => {
             setShow(false);
             setReviewed(true);
             props.setReloadReviews(true);
+            props.setReloadAverageRating(true);
             fetchReviewData();
         } catch (error) {
             errorP.innerText =
@@ -96,10 +97,11 @@ const GameReviewModal = (props) => {
             );
             if (response.status === 200) {
                 setShow(false);
-                props.setReloadReviews(true);
                 setReviewed(false);
                 setComment('');
                 setRating(5);
+                props.setReloadReviews(true);
+                props.setReloadAverageRating(true);
             } else {
                 console.log(response.status);
                 errorP.innerText =

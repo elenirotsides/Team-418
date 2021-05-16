@@ -257,6 +257,24 @@ module.exports = {
         }
     },
 
+    async getAverageRating(gameEid) {
+        validateGameEid(gameEid);
+        const reviewCollection = await reviews();
+        const game = await gameMethods.getGameByEndpointId(gameEid);
+        // game does not exist
+        if (!game) return null;
+        return await reviewCollection.aggregate([
+            { $match: { gameId: game._id } },
+            {
+                $group: {
+                    _id: '$gameId',
+                    count: { $sum: 1 },
+                    average: { $avg: '$rating' },
+                },
+            },
+        ]).toArray();
+    },
+    
     async deleteReviewById(reviewId){
         if (arguments.length !== 1) throw 'Usage: Review Id';
         if (!ObjectId.isValid(reviewId)) throw 'Review Id needs to be a valid ObjectId';
