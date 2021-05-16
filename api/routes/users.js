@@ -145,8 +145,6 @@ router.get(
 
 router.post(
     '/profile/status',
-    IGDBSessionHandler.instance.validateSession(),
-    IGDBSessionHandler.instance.addToRateLimit,
     async function(req, res) {
         if (!req.body ||  !req.body.status) {
             return res.status(400).json('Cannot update without a status update. Must also be non empty.'); 
