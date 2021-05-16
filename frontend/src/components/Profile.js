@@ -5,7 +5,9 @@ import ProfilePictureModal from './ProfilePictureModal';
 import GameSizableCard from './Home/GameSizableCard';
 import { makeStyles, Grid } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import { Card, Button } from 'react-bootstrap';
+import { Card, Button, Form } from 'react-bootstrap';
+import TextField from '@material-ui/core/TextField';
+import axios from 'axios';
 const styles = makeStyles({
     title: {
         marginLeft: 60,
@@ -82,9 +84,14 @@ const Profile = (props) => {
     const favoriteGamesUrl = 'http://localhost:5000/users/profile/favorites';
     const reviewsUrl = 'http://localhost:5000/users/profile/reviews';
     const deleteReviewUrl = 'http://localhost:5000/reviews';
+    const statusUrl = 'http://localhost:5000/users/profile/status';
     const classes = styles();
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
+    // const [showStatusToggle, setShowStatusToggle] = useState(false);
+    const [statusToggle, setStatusToggle] = useState(false);
+    const [statusUpdate, setStatusUpdate] = useState(null)
+    const [displayStatus, setDisplayStatus] = useState("")
 
     function OnScroll() {
         const scrollView = document.getElementById('favoriteGamesScrollView');
@@ -206,6 +213,72 @@ const Profile = (props) => {
             console.log(e);
             setError(true);
         }
+    }
+
+    const handleStatusChange = (e) => {
+        setStatusUpdate(e.target.value);
+    };
+
+    async function editStatus(e) {
+        e.preventDefault();
+        const errorDiv = document.getElementById('errorDiv');
+        errorDiv.innerHTML = '';
+        const errorP = document.createElement('p');
+        errorP.className = 'text-danger';
+        let body = {};
+
+        // if(userData && userData.email) {
+        //     body['userEmail'] = userData.email
+        // }
+        if (statusUpdate) {
+            body['status'] = statusUpdate
+        }
+
+        let idToken = await getUserIdToken();
+        console.log(idToken);
+        try {
+            const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body),
+            });
+            // console.log('inside of the post');
+            // console.log(response);
+            if (response.status !== 200) {
+                errorP.innerHTML = 'Failed to submit status update. Please try again.';
+                errorDiv.appendChild(errorP)
+            }
+            // 
+            // fetchStatus();
+        } catch (e) {
+            errorP.innerHTML = 'Failed to submit status update. Please try again.';
+            errorDiv.appendChild(errorP)
+        }
+        
+    }
+
+    async function fetchStatus() {
+        let idToken = await getUserIdToken();
+        let response = null;
+        try {
+            // const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
+            //     method: 'GET',
+            // });
+            // if (response.status === 200) {
+            //     let status = await response.json();
+            //     console.log('inside of the get status fetch function')
+            //     setDisplayStatus(status);
+            //     console.log(displayStatus)
+            // } else if (response.status !== 404) {
+            //     throw 'Failed to load status';
+            // }
+            response = await axios.get(`${statusUrl}/?idToken=${idToken}`);
+            console.log('inside the fetchStatus');
+            
+        } catch (e) {
+            console.log('Error fetching status', e)
+        }
+    console.log(response);
     }
 
     function createFavoriteGames() {
@@ -369,6 +442,7 @@ const Profile = (props) => {
         fetchProfile();
         fetchFavoriteGames();
         fetchReviews();
+        // fetchStatus();
     }, []);
 
     if (error) {
@@ -417,6 +491,40 @@ const Profile = (props) => {
                     {userData && userData.firstName}{' '}
                     {userData && userData.lastName}
                 </p>
+                <h3>Status: </h3>
+                <p>{userData && userData.status}</p>
+                <p>{displayStatus}</p> {/* This doesn't work!?!?!? */}
+                <button class="btn btn-primary" onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
+                {statusToggle && (
+                    <form noValidate autocomplete="off" onSubmit={editStatus}>
+                        <div id="errorDiv"></div>
+                        <br/>
+                        <TextField id="statusUpdate" label="Set your status..." onChange={handleStatusChange} variant="outlined" onChange={handleStatusChange}/>
+                        <br/>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    // <Form onSubmit={editStatus}>
+                    //     <div id="errorDiv"></div>
+                    //     <br/>
+                    //     <Form.Group controlId='status'>
+                    //         <Form.Label>New Status</Form.Label>
+                    //         <Form.Control
+                    //             name='status'
+                    //             type='input'
+                    //             onChange={handleStatusChange}
+                    //             as='input'
+                    //         />
+                    //     </Form.Group>
+                    //     <Button
+                    //         className="mx-3"
+                    //         variant="primary"
+                    //         type="submit"
+                    //     >
+                    //         Submit
+                    //     </Button>
+                    // </Form>
+                )}
+                
                 <h3>Email: </h3>
                 <p>{userData && userData.email}</p>
                 <h3>Username: </h3>
