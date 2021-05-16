@@ -134,52 +134,22 @@ router.get(
     }
 );
 
-router.get(
-    '/profile/status',
-    IGDBSessionHandler.instance.validateSession(),
-    IGDBSessionHandler.instance.addToRateLimit,
-    async function (req, res) {
-        // if (!req.params.userEmail) {
-        //     return res.status(400).json({ 
-        //         error: "You must provide a userEmail"
-        //     });
-        // }
-        const userEmail = req.googleInfo.email;
-        console.log(userEmail)
-        let status;
-        // input validation??
-        try {
-            console.log('inside of here')
-            status = await usersData.getStatus(userEmail);
-            res.status(200);
-            // console.log(await status)
-            // return await usersData.getStatus(userEmail);
-        } catch(e) {
-            console.log(e);
-            res.status(500).send(e);
-        }
-        console.log(status);
-        return status;
-    }
-);
-
 router.post(
     '/profile/status',
     IGDBSessionHandler.instance.validateSession(),
     IGDBSessionHandler.instance.addToRateLimit,
     async function(req, res) {
         if (!req.body ||  !req.body.status) {
-            return res.status(400).json({
-                error: 'Cannot update without a status update must be non empty',
-            }); 
+            return res.status(400).json('Cannot update without a status update. Must also be non empty.'); 
         }
-        // need to do some kind of input validation here, check if its a string, etc
+        if (typeof req.body.status !== 'string') {
+            return res.status(400).json('Status must be a string.'); 
+        }
         let userEmail = req.googleInfo.email;
         let newStatus = req.body.status;
         try {
             const response = await usersData.editStatus(userEmail, newStatus);
-            console.log(response)
-            res.json(response); 
+            res.status(200).json(response); 
         } catch(e) {
             console.log(e);
             res.status(500).send(e);

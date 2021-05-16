@@ -5,7 +5,7 @@ import ProfilePictureModal from './ProfilePictureModal';
 import GameSizableCard from './Home/GameSizableCard';
 import { makeStyles, Grid } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import { Card, Button, Form } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
 import TextField from '@material-ui/core/TextField';
 
 const styles = makeStyles({
@@ -88,10 +88,8 @@ const Profile = (props) => {
     const classes = styles();
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
-    const [status, setStatus] = useState("Status not set.");
     const [statusToggle, setStatusToggle] = useState(false);
     const [statusUpdate, setStatusUpdate] = useState(null)
-    const [displayStatus, setDisplayStatus] = useState("")
 
     function OnScroll() {
         const scrollView = document.getElementById('favoriteGamesScrollView');
@@ -220,7 +218,6 @@ const Profile = (props) => {
     };
 
     async function editStatus(e) {
-        console.log('IN edit status')
         e.preventDefault();
         const errorDiv = document.getElementById('errorDiv');
         errorDiv.innerHTML = '';
@@ -228,62 +225,32 @@ const Profile = (props) => {
         errorP.className = 'text-danger';
         let body = {};
 
-        // if(userData && userData.email) {
-        //     body['userEmail'] = userData.email
-        // }
         if (statusUpdate) {
             body['status'] = statusUpdate
         }
 
         let idToken = await getUserIdToken();
         try {
-            console.log('Sending post')
             const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(body),
             });
-            console.log('inside of the post');
-            console.log(response);
             if (response.status === 200) {
-                const data = await response.json();
                 const userDataCopy = JSON.parse(JSON.stringify(userData));
                 userDataCopy.status = statusUpdate;
                 setUserData(userDataCopy);
-                console.log('status response',data)
+                setStatusToggle(false);
             } else {
-                errorP.innerHTML = 'Failed to submit status update. Please try again.';
+                errorP.innerHTML = await response.json() ||'Failed to submit status update. Please try again.';
                 errorDiv.appendChild(errorP)
             }
-            // 
-            // fetchStatus();
         } catch (e) {
-            console.log('Caught an error', e)
+            console.log('Error updating status', e)
             errorP.innerHTML = 'Failed to submit status update. Please try again.';
             errorDiv.appendChild(errorP)
         }
         
-    }
-
-    async function fetchStatus() {
-        let idToken = await getUserIdToken();
-        let response = null;
-        try {
-            const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
-                method: 'GET',
-            });
-            if (response.status === 200) {
-                let data = await response.json();
-                console.log('data', data);
-                setStatus(data);
-                console.log(displayStatus)
-            } else if (response.status !== 404) {
-                throw 'Failed to load status';
-            }
-        } catch (e) {
-            console.log('Error fetching status', e)
-        }
-    console.log(response);
     }
 
     function createFavoriteGames() {
@@ -498,37 +465,18 @@ const Profile = (props) => {
                 </p>
                 <h3>Status: </h3>
                 <p>{userData && userData.status || "No Status Yet"}</p>
-                <button class="btn btn-primary" onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
+                {!props.location.userId && (
+                    <button class="btn btn-primary" onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
+                )}
                 {statusToggle && (
                     <form noValidate autocomplete="off" onSubmit={editStatus}>
-                        <div id="errorDiv"></div>
                         <br/>
+                        <div id="errorDiv"></div>
                         <TextField id="statusUpdate" label="Set your status..." onChange={handleStatusChange} variant="outlined" onChange={handleStatusChange}/>
                         <br/>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
-                    // <Form onSubmit={editStatus}>
-                    //     <div id="errorDiv"></div>
-                    //     <br/>
-                    //     <Form.Group controlId='status'>
-                    //         <Form.Label>New Status</Form.Label>
-                    //         <Form.Control
-                    //             name='status'
-                    //             type='input'
-                    //             onChange={handleStatusChange}
-                    //             as='input'
-                    //         />
-                    //     </Form.Group>
-                    //     <Button
-                    //         className="mx-3"
-                    //         variant="primary"
-                    //         type="submit"
-                    //     >
-                    //         Submit
-                    //     </Button>
-                    // </Form>
                 )}
-                
                 <h3>Email: </h3>
                 <p>{userData && userData.email}</p>
                 <h3>Username: </h3>
