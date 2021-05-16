@@ -9,6 +9,9 @@ import { makeStyles } from '@material-ui/core';
 const styles = makeStyles({
     defaultSpacing: {
         marginTop: 20
+    },
+    page: {
+        marginBottom:60
     }
 });
 
@@ -49,7 +52,7 @@ const Game = (props) => {
         return <h3 class="text-center">Loading.....</h3>;
     } else {
         return (
-            <div>
+            <div className={classes.page}>
                 {pageData && (
                     <div>
                         <div className={classes.defaultSpacing}>

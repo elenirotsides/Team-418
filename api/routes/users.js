@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const validation = require('../data/').validation;
 const usersData = require('../data').users;
+const reviewsData = require('../data').reviews;
+const gamesData = require('../data').games;
 const path = require('path');
 const fs = require('fs');
 const writeFileSync = fs.writeFileSync;
@@ -14,6 +16,7 @@ const gm = require('gm').subClass({ imageMagick: true });
 const IGDBSessionHandler = require('../IGDB/IGDBSessionHandler');
 const { getCachedData, setCachedData, dataKeys } = require('../redis');
 const axios = require('axios');
+const { ObjectId } = require('mongodb');
 
 router.get('/profile', async function (req, res) {
     // email comes validated from Google
@@ -31,9 +34,17 @@ router.get('/profile', async function (req, res) {
 
 // getting the profile page of a different user
 router.get('/profile/other/:userId', async function (req, res) {
+    let email = req.googleInfo.email;
     let userId = req.params.userId;
     try {
         const user = await usersData.getUserById(userId);
+        const currentUser = await usersData.getUserByEmail(email);
+        let one = currentUser._id.toString();
+        let two = user._id.toString();
+        if (one == two) {
+            res.send({edge: 'same user'})
+            return;
+        }
         res.send(user);
     } catch (e) {
         console.log(e);
@@ -98,6 +109,7 @@ router.get(
         {
             try {
                 const user = await usersData.getUserById(userId);
+                const currentUser = await usersData.getUserByEmail(email);
                 const favoriteGames = [];
                 try {
                     for (const gameId of user.favoriteGames) 
@@ -131,6 +143,62 @@ router.get(
     }
 );
 
+router.get(
+    '/profile/reviews',
+    IGDBSessionHandler.instance.validateSession(),
+    IGDBSessionHandler.instance.addToRateLimit,
+    async function (req, res) {
+        try {
+            // email comes validated from Google
+            let email = req.googleInfo.email;
+
+            // check if user if viewing another user's profile
+            const userId = ObjectId(req.query.userId);
+            if(req.query.userId && ObjectId.isValid(userId)){
+                let user = await usersData.getUserById(userId);
+                email = user.email;
+            }
+
+            const reviews = await reviewsData.getAllReviewsByEmail(email);
+            // no reviews, send 404
+            if (reviews.length == 0) return res.sendStatus(404);
+            const gameIds = reviews.map((r) => {
+                return r.gameId;
+            });
+            const endpointIds = await gamesData.getEndpointIds(gameIds);
+            // create map to reconcile our api game ids, IGBD ids, and the titles
+            const gidToEidMap = {};
+            const eids = [];
+            endpointIds.map((e) => {
+                gidToEidMap[e._id] = e.endpointId;
+                eids.push(e.endpointId);
+            });
+
+            // create query string and send request to IGDB
+            const strEids = `(${eids.join(', ')})`;
+            const { data } = await axios(
+                IGDBSessionHandler.instance.igdbAxiosConfig(
+                    'games',
+                    null,
+                    `fields name; where id = ${strEids};`
+                )
+            );
+            // create final review objects to send to frontend
+            const eidToTitleMap = {};
+            data.map((d) => (eidToTitleMap[d.id] = d.name));
+            for (const review of reviews) {
+                let gid = review['gameId'];
+                let eid = gidToEidMap[gid];
+                review['title'] = eidToTitleMap[eid];
+            }
+            res.json(reviews);
+        } catch (e) {
+            console.log('Error in /profile/reviews', e);
+            res.sendStatus(500);
+        }
+    }
+);
+
 router.get('/picture', async function (req, res) {
     // email field is appended by the google auth middleware, it will be previously validated
     let email = req.googleInfo.email;
@@ -146,7 +214,6 @@ router.get('/picture', async function (req, res) {
 
 router.get('/picture/:userId', async function (req, res) {
     // email field is appended by the google auth middleware, it will be previously validated
-    let email = req.googleInfo.email;
     let userId = req.params.userId;
     try {
         const user = await usersData.getUserById(userId);
@@ -157,7 +224,6 @@ router.get('/picture/:userId', async function (req, res) {
         res.sendStatus(404);
     }
 });
-
 
 router.post('/create', async function (req, res) {
     try {

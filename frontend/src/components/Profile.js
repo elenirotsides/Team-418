@@ -1,9 +1,12 @@
-import { makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import SignOutButton from './LogOut';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import ProfilePictureModal from './ProfilePictureModal';
 import GameSizableCard from './Home/GameSizableCard';
+import { makeStyles, Grid } from '@material-ui/core';
+import { Rating } from '@material-ui/lab';
+import { Card, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router';
 const styles = makeStyles({
     title: {
         marginLeft: 60,
@@ -72,13 +75,18 @@ const Profile = (props) => {
     const [loading, setLoading] = useState(true);
     const [favoriteGames, setFavoriteGames] = useState(false);
     const [favoritesLoading, setfavoritesLoading] = useState(true);
+    const [reviews, setReviews] = useState(false);
+    const [reviewsLoading, setReviewsLoading] = useState(true);
     const [error, setError] = useState(false);
     const [idToken, setIdToken] = useState(false);
     const infoUrl = 'http://localhost:5000/users/profile';
     const favoriteGamesUrl = 'http://localhost:5000/users/profile/favorites';
+    const reviewsUrl = 'http://localhost:5000/users/profile/reviews';
+    const deleteReviewUrl = 'http://localhost:5000/reviews';
     const classes = styles();
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
+    const [sameUser, setSameUser] = useState(false);
 
     function OnScroll() {
         const scrollView = document.getElementById('favoriteGamesScrollView');
@@ -106,10 +114,23 @@ const Profile = (props) => {
         }
         if (props && props.location.userId) {
             try {
-                const response = await fetch(`${infoUrl}/other/${props.location.userId}?idToken=${token}`, {
-                    method: 'GET',
-                });
+                const response = await fetch(
+                    `${infoUrl}/other/${props.location.userId}?idToken=${token}`,
+                    {
+                        method: 'GET',
+                    }
+                );
                 const data = await response.json();
+                if (data.hasOwnProperty('edge')) {
+                    setSameUser(true);
+                    setLoading(false);
+                    const response = await fetch(`${infoUrl}?idToken=${token}`, {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+                    setUserData(data);
+                    return;
+                }
                 setUserData(data);
                 setLoading(false);
             } catch (e) {
@@ -169,6 +190,33 @@ const Profile = (props) => {
                 console.log(e);
                 setError(true);
             }
+        }
+    }
+
+    async function fetchReviews() {
+        let token = idToken;
+        if (!idToken) {
+            token = await getUserIdToken();
+            setIdToken(token);
+        }
+        try {
+            let queryUrl = (props && props.location.userId) ? `${reviewsUrl}/?idToken=${token}&userId=${props.location.userId}`: `${reviewsUrl}?idToken=${token}`;
+            console.log(queryUrl);
+            const response = await fetch(queryUrl, {
+                method: 'GET',
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                setReviews(data);
+            } else if(response.status === 404){
+                setReviews(false);
+            } else {
+                setError(true);
+            }
+            setReviewsLoading(false);
+        } catch (e) {
+            console.log(e);
+            setError(true);
         }
     }
 
@@ -248,9 +296,91 @@ const Profile = (props) => {
         }
     }
 
+    function createReviews() {
+        if (reviewsLoading) {
+            return (
+                <div>
+                    <p>Loading...</p>
+                </div>
+            );
+        } else if (!reviews || reviews.length === 0) {
+            return (
+                <div className={classes.noReviews}>
+                    <h5 class="text-center">No reviews</h5>
+                </div>
+            );
+        } else {
+            let cards = reviews.map((r) => {
+                return (
+                    <Grid
+                        item
+                        class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 m-4"
+                    >
+                        <Card style={{ width: '100%' }}>
+                            <Card.Body>
+                                <Card.Title>{r.title}</Card.Title>
+                                <Rating
+                                    name="read-only"
+                                    value={r.rating}
+                                    readOnly
+                                    min={1}
+                                    max={10}
+                                />
+                                <Card.Text>{r.comment}</Card.Text>
+                                {idToken && (!props.location.userId || sameUser) && (
+                                    <Button
+                                        id={r._id}
+                                        variant="danger"
+                                        onClick={deleteReview}
+                                    >
+                                        Delete
+                                    </Button>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    </Grid>
+                );
+            });
+            return (
+                <div>
+                    <Grid
+                        container
+                        justify="center"
+                        alignItems="center"
+                        spacing="0"
+                        className={`noScrollbar ${classes.container}`}
+                    >
+                        {cards}
+                    </Grid>
+                </div>
+            );
+        }
+    }
+
+    async function deleteReview(e){
+        try {
+            let token = idToken;
+            if (!idToken) {
+                token = await getUserIdToken();
+                setIdToken(token);
+            }
+            const response = await fetch(
+                `${deleteReviewUrl}/${e.target.id}?idToken=${token}`,
+                {
+                    method: 'DELETE',
+                }
+            );
+            if (response.status !== 200) return setError(true);
+            fetchReviews();
+        } catch (e) {
+            console.log('error deleting review', e);
+        }
+    }
+
     useEffect(() => {
         fetchProfile();
         fetchFavoriteGames();
+        fetchReviews();
     }, []);
 
     if (error) {
@@ -269,7 +399,8 @@ const Profile = (props) => {
                 <h2>Loading...</h2>
             </div>
         );
-    } else {
+    } 
+    else {
         return (
             <div className="text-center">
                 <h2>Profile Page</h2>
@@ -291,7 +422,9 @@ const Profile = (props) => {
                     />
                 )}
                 <br />
-                {idToken && !props.location.userId &&<ProfilePictureModal idToken={idToken} />}
+                {idToken && (!props.location.userId || sameUser) && (
+                    <ProfilePictureModal idToken={idToken} />
+                )}
                 <h3>Name: </h3>
                 <p>
                     {userData && userData.firstName}{' '}
@@ -303,7 +436,9 @@ const Profile = (props) => {
                 <p>{userData && userData.displayName}</p>
                 <h3>Favorite Games</h3>
                 {createFavoriteGames()}
-                {!props.location.userId && <SignOutButton />}
+                <h3>Reviews</h3>
+                {createReviews()}
+                {(!props.location.userId || sameUser) && <SignOutButton />}
             </div>
         );
     }

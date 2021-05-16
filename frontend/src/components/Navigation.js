@@ -100,7 +100,7 @@ const NavigationAuth = () => {
                                         e.preventDefault();
                                         const searchTerm = e.target.value;
                                         e.target.value = '';
-                                        history.push('/games/search', {searchTerm: searchTerm})
+                                        history.push('/games/search/0', {searchTerm: searchTerm})
                                         // hit enter
                                     }
                                 }} />

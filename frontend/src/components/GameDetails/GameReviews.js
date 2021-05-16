@@ -53,8 +53,9 @@ const GameReviews = (props) => {
                         <Card style={{ width: '100%' }}>
                             <Card.Body>
                                 <Link to={{
-                                    pathname: '/profile',
-                                    userId: r.userId
+                                    pathname: `/users/${r.userId}`,
+                                    userId: r.userId,
+                                    sameUser: false
                                 }
                                 }>
                                     <Card.Title>{r.displayName}</Card.Title>

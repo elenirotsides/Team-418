@@ -7,7 +7,9 @@ const GameReviewModal = (props) => {
     const [show, setShow] = useState(false);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
+    const [reviewId, setReviewId] = useState('');
     const [loading, setLoading] = useState(true);
+    const [reviewed, setReviewed] = useState(false);
     const reviewUrl = `http://localhost:5000/reviews`;
 
     const handleClose = async () => {
@@ -42,8 +44,10 @@ const GameReviewModal = (props) => {
             });
             if (response.status !== 200) throw 'Failed to submit review.';
             setShow(false);
+            setReviewed(true);
             props.setReloadReviews(true);
             props.setReloadAverageRating(true);
+            fetchReviewData();
         } catch (error) {
             errorP.innerText =
                 'Failed to submit review. Please reload the page and try again.';
@@ -66,6 +70,8 @@ const GameReviewModal = (props) => {
                 let data = await response.json();
                 setRating(data.rating);
                 setComment(data.comment);
+                setReviewId(data._id);
+                setReviewed(true);
             } else if (response.status !== 404) {
                 throw "Failed to load user's previous review.";
             }
@@ -73,6 +79,37 @@ const GameReviewModal = (props) => {
         } catch (e) {
             // if there is an error it won't unlock the review button
             console.log('error fetching users preview review', e);
+        }
+    }
+
+    async function deleteReview(e) {
+        const errorDiv = document.getElementById('errorDiv');
+        errorDiv.innerHTML = '';
+        const errorP = document.createElement('p');
+        errorP.className = 'text-danger';
+        try {
+            let token = await getUserIdToken();
+            const response = await fetch(
+                `${reviewUrl}/${reviewId}?idToken=${token}`,
+                {
+                    method: 'DELETE',
+                }
+            );
+            if (response.status === 200) {
+                setShow(false);
+                setReviewed(false);
+                setComment('');
+                setRating(5);
+                props.setReloadReviews(true);
+                props.setReloadAverageRating(true);
+            } else {
+                console.log(response.status);
+                errorP.innerText =
+                    'Failed to delete review. Please reload the page and try again.';
+                errorDiv.appendChild(errorP);
+            }
+        } catch (e) {
+            console.log('error deleting review', e);
         }
     }
 
@@ -89,8 +126,8 @@ const GameReviewModal = (props) => {
     } else {
         return (
             <div>
-                <Button variant="primary" onClick={handleShow}>
-                    Add a reivew
+                <Button variant="primary" className = "mx-3" onClick={handleShow}>
+                    {reviewed ? 'Edit Review' : 'Add Review'}
                 </Button>
                 <Modal
                     show={show}
@@ -129,9 +166,22 @@ const GameReviewModal = (props) => {
                                     defaultValue={comment}
                                 />
                             </Form.Group>
-                            <Button variant="primary" type="submit">
-                                Submit
+                            <Button
+                                className="mx-3"
+                                variant="primary"
+                                type="submit"
+                            >
+                                {reviewed ? 'Update Review' : 'Submit Review'}
                             </Button>
+                            {reviewed && (
+                                <Button
+                                    variant="danger"
+                                    type="button"
+                                    onClick={deleteReview}
+                                >
+                                    Delete Review
+                                </Button>
+                            )}
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>

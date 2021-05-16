@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
 const reviewsData = require('../data').reviews;
+const usersData = require('../data').users;
 const { validateString, validateGameEid } = require('../data/validation');
 
 router.post('/retrieve', async function (req, res) {
@@ -120,6 +121,25 @@ router.get('/:gameId/user', async function (req, res) {
         }
     } catch (e) {
         console.log('Error in /reviews/:gameId/user', e);
+        res.sendStatus(500);
+    }
+});
+
+router.delete('/:reviewId', async function (req, res) {
+    try {
+        const reviewId = ObjectId(req.params.reviewId);
+        if (!ObjectId.isValid(reviewId)) return res.sendStatus(400);
+        const review = await reviewsData.getReviewById(reviewId);
+        const currentUser = await usersData.getUserByEmail(
+            req.googleInfo.email
+        );
+        // ensure user is deleting their own review
+        if (currentUser._id.toString() !== review.userId.toString())
+            return res.sendStatus(401);
+        await reviewsData.deleteReviewById(review._id);
+        res.sendStatus(200);
+    } catch (e) {
+        console.log('Error in DELETE /reviews/:gameId/user', e);
         res.sendStatus(500);
     }
 });

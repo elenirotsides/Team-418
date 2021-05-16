@@ -54,5 +54,22 @@ module.exports = {
             throw "Could not create new game object";
         const game = await this.getGameById(newGame._id);
         return game;
+    },
+
+    async getEndpointIds(gameIds){
+        for(const gid of gameIds) if (!ObjectId.isValid(gid)) throw "Game Id needs to be a valid ObjectId";
+        const gameCollection = await games();
+        return await gameCollection.find({_id: {$in: gameIds}}).project({endpointId: 1}).toArray();
+    },
+
+    async removeReviewFromGame(gameId, reviewId){
+        if (arguments.length != 2) throw "Usage: gameId, reviewId";
+        if (!ObjectId.isValid(gameId)) throw "Game Id needs to be a valid ObjectId";
+        if (!ObjectId.isValid(reviewId)) throw "Review Id needs to be a valid ObjectId";
+        const gameCollection = await games();
+        const updatedInfo = await gameCollection.updateOne({_id: gameId}, {$pull : {
+            reviews: reviewId
+        }})
+        if(updatedInfo.modifiedCount !== 1 ) throw 'could not remove review from game'
     }
 };

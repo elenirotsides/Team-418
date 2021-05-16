@@ -8,7 +8,9 @@ const dataKeys = {
     featuredGame: '/featured',
     gamesSearch: (searchTerm) => {
         return `gamesSearch#${searchTerm}`;
-    }
+    },
+    gamesSearchInfo: 'games/search/info',
+    gamesGenres: '/games/genres'
 };
 
 module.exports = dataKeys;
