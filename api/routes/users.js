@@ -146,7 +146,7 @@ router.get(
 router.post(
     '/profile/status',
     async function(req, res) {
-        if (!req.body ||  !req.body.status) {
+        if (!req.body || !req.body.status || !req.body.status.trim()) {
             return res.status(400).json('Cannot update without a status update. Must also be non empty.'); 
         }
         if (typeof req.body.status !== 'string') {
