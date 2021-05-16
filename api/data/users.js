@@ -83,7 +83,8 @@ module.exports = {
             email: email,
             favoriteGames: [],
             reviews: [],
-            profilePic: "profile.png"
+            profilePic: "profile.png",
+            status: "Status not set"
         };
 
         const userCollection = await users();
@@ -226,7 +227,7 @@ module.exports = {
     },
 
     async removeReviewFromUser(userId, reviewId){
-        if (arguments.length != 2) throw "Usage: userId, reviewId";
+        if (arguments.length !== 2) throw "Usage: userId, reviewId";
         if (!ObjectId.isValid(userId)) throw "User Id needs to be a valid ObjectId";
         if (!ObjectId.isValid(reviewId)) throw "Review Id needs to be a valid ObjectId";
         const userCollection = await users();
@@ -234,5 +235,25 @@ module.exports = {
             reviews: reviewId
         }})
         if(updatedInfo.modifiedCount !== 1 ) throw 'could not remove review from user'
+    },
+
+    async getStatus(userEmail){
+        if(arguments.length !== 1) throw "Usage: userEmail";
+        if(!validate.isGoodEmail(userEmail)) throw "userEmail must be a valid email";
+
+        user = await this.getUserByEmail(userEmail)
+        return user.status
+    },
+
+    async editStatus(userEmail, status){
+        if (arguments.length !== 2) throw "Usage: userEmail, status";
+        if (!validate.isGoodEmail(userEmail)) throw "userEmail must be a valid email"
+        if (!validate.validateString(status)) throw "Status must be a non empty string";
+
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne({email: userEmail}, {$set: {status: status}});
+        if (updateInfo.modifiedCount !== 1) throw "Could not update status"
+
+        return await this.getStatus(userEmail)
     }
 }

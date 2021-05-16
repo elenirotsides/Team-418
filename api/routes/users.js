@@ -143,6 +143,27 @@ router.get(
     }
 );
 
+router.post(
+    '/profile/status',
+    async function(req, res) {
+        if (!req.body || !req.body.status || !req.body.status.trim()) {
+            return res.status(400).json('Cannot update without a status update. Must also be non empty.'); 
+        }
+        if (typeof req.body.status !== 'string') {
+            return res.status(400).json('Status must be a string.'); 
+        }
+        let userEmail = req.googleInfo.email;
+        let newStatus = req.body.status;
+        try {
+            const response = await usersData.editStatus(userEmail, newStatus);
+            res.status(200).json(response); 
+        } catch(e) {
+            console.log(e);
+            res.status(500).send(e);
+        }
+    }
+)
+
 router.get(
     '/profile/reviews',
     IGDBSessionHandler.instance.validateSession(),
