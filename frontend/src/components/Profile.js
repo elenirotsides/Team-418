@@ -478,7 +478,7 @@ const Profile = (props) => {
                 </p>
                 <h3>Status: </h3>
                 <p>{userData && userData.status || "No Status Yet"}</p>
-                {!props.location.userId && (
+                {(!props.location.userId || sameUser )&& (
                     <button class="btn btn-primary" onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
                 )}
                 {statusToggle && (
