@@ -212,6 +212,40 @@ router.get('/picture', async function (req, res) {
     }
 });
 
+router.post('/modifyfavorites/:operation', async function(req, res){
+    let userId = req.body.userId;
+    let gameList = req.body.gameList;
+    let operation = req.params.operation;
+    let objId = new ObjectId(userId);
+    
+    if (operation != "add" && operation != "remove"){
+        res.status(400).send("Invalid or missing operation type.");
+    }
+   
+    else if (!ObjectId.isValid(objId)){
+        res.status(400).send("Invalid Object ID!");
+    }
+    else if (operation == "add"){
+        try{
+            let favorites = await usersData.addFavorites(objId, gameList);
+            res.send(favorites);
+    
+        }catch(error){
+            console.log(error);
+            res.status(500).send(error);
+        }
+    }else{
+        try{
+            let favorites = await usersData.removeFavorites(objId, gameList);
+            res.send(favorites);
+    
+        }catch(error){
+            console.log(error);
+            res.status(500).send(error);
+        }
+    }
+});
+    
 router.get('/picture/:userId', async function (req, res) {
     // email field is appended by the google auth middleware, it will be previously validated
     let userId = req.params.userId;
