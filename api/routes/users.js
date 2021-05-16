@@ -34,9 +34,17 @@ router.get('/profile', async function (req, res) {
 
 // getting the profile page of a different user
 router.get('/profile/other/:userId', async function (req, res) {
+    let email = req.googleInfo.email;
     let userId = req.params.userId;
     try {
         const user = await usersData.getUserById(userId);
+        const currentUser = await usersData.getUserByEmail(email);
+        let one = currentUser._id.toString();
+        let two = user._id.toString();
+        if (one == two) {
+            res.send({edge: 'same user'})
+            return;
+        }
         res.send(user);
     } catch (e) {
         console.log(e);
@@ -101,6 +109,7 @@ router.get(
         {
             try {
                 const user = await usersData.getUserById(userId);
+                const currentUser = await usersData.getUserByEmail(email);
                 const favoriteGames = [];
                 try {
                     for (const gameId of user.favoriteGames) 

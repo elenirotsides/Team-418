@@ -6,6 +6,7 @@ import GameSizableCard from './Home/GameSizableCard';
 import { makeStyles, Grid } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import { Card, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router';
 const styles = makeStyles({
     title: {
         marginLeft: 60,
@@ -85,6 +86,7 @@ const Profile = (props) => {
     const classes = styles();
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
+    const [sameUser, setSameUser] = useState(false);
 
     function OnScroll() {
         const scrollView = document.getElementById('favoriteGamesScrollView');
@@ -110,8 +112,11 @@ const Profile = (props) => {
             token = await getUserIdToken();
             setIdToken(token);
         }
-        if (props && props.location.userId) {
+        if (props)
+            console.log(props.location.sameUser);
+        if (props && props.location.userId && !props.location.sameUser) {
             try {
+                console.log("this is bad");
                 const response = await fetch(
                     `${infoUrl}/other/${props.location.userId}?idToken=${token}`,
                     {
@@ -119,6 +124,17 @@ const Profile = (props) => {
                     }
                 );
                 const data = await response.json();
+                console.log(data);
+                if (data.hasOwnProperty('edge')) {
+                    setSameUser(true);
+                    setLoading(false);
+                    const response = await fetch(`${infoUrl}?idToken=${token}`, {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+                    setUserData(data);
+                    return;
+                }
                 setUserData(data);
                 setLoading(false);
             } catch (e) {
@@ -315,7 +331,7 @@ const Profile = (props) => {
                                     max={10}
                                 />
                                 <Card.Text>{r.comment}</Card.Text>
-                                {idToken && !props.location.userId && (
+                                {idToken && (!props.location.userId || sameUser) && (
                                     <Button
                                         id={r._id}
                                         variant="danger"
@@ -387,7 +403,8 @@ const Profile = (props) => {
                 <h2>Loading...</h2>
             </div>
         );
-    } else {
+    } 
+    else {
         return (
             <div className="text-center">
                 <h2>Profile Page</h2>
@@ -409,7 +426,7 @@ const Profile = (props) => {
                     />
                 )}
                 <br />
-                {idToken && !props.location.userId && (
+                {idToken && (!props.location.userId || sameUser) && (
                     <ProfilePictureModal idToken={idToken} />
                 )}
                 <h3>Name: </h3>
@@ -425,7 +442,7 @@ const Profile = (props) => {
                 {createFavoriteGames()}
                 <h3>Reviews</h3>
                 {createReviews()}
-                {!props.location.userId && <SignOutButton />}
+                {(!props.location.userId || sameUser) && <SignOutButton />}
             </div>
         );
     }
