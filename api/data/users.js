@@ -238,23 +238,23 @@ module.exports = {
         if(updatedInfo.modifiedCount !== 1 ) throw 'could not remove review from user'
     },
 
-    async getStatus(userId){
-        if(arguments.length !== 1) throw "Usage: userId";
-        if(!ObjectId.isValid(userId)) throw "User id needs to be a valid ObjectId";
+    async getStatus(userEmail){
+        if(arguments.length !== 1) throw "Usage: userEmail";
+        if(!validate.isGoodEmail(userEmail)) throw "userEmail must be a valid email";
 
-        user = await this.getUserById(ObjectId(userId))
+        user = await this.getUserByEmail(userEmail)
         return user.status
     },
 
-    async editStatus(userId, status){
-        if (arguments.length !== 2) throw "Usage: userId, status";
-        if (!ObjectId.isValid(userId)) throw "User Id needs to be a valid ObjectId";
+    async editStatus(userEmail, status){
+        if (arguments.length !== 2) throw "Usage: userEmail, status";
+        if (!validate.isGoodEmail(userEmail)) throw "userEmail must be a valid email"
         if (!validate.validateString(status)) throw "Status must be a non empty string";
 
         const userCollection = await users();
-        const updateInfo = await userCollection.updateOne({_id: userId}, {$set: {status: status}});
+        const updateInfo = await userCollection.updateOne({email: userEmail}, {$set: {status: status}});
         if (updateInfo.modifiedCount !== 1) throw "Could not update status"
 
-        return await this.getStatus(userId)
+        return await this.getStatus(userEmail)
     }
 }
