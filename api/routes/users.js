@@ -312,7 +312,6 @@ router.post('/create', async function (req, res) {
             await usersData.addUser(
                 firstName,
                 lastName,
-                req.googleInfo.email,
                 req.googleInfo.email
             );
             console.log('User successfully created');

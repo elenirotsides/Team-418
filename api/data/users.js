@@ -48,38 +48,21 @@ module.exports = {
         }
     },
 
-    // checks if a disply name is already taken, returns true if so
-    async isDisplayNameTaken(dName) {
-        if (arguments.length !== 1) throw "Usage: Display name";
-        if (!validate.validateString(dName)) throw "Display name must be a non empty string";
-        
-        const userCollection = await users();
-        const user = await userCollection.findOne({displayName: dName});
-        if (!user) return false;
-        return true;
-    },
-
     // it adds a user
-    async addUser(fName, lName, dName, email) {
-        if (arguments.length !== 4) 
-            throw "Usage: First name, Last name, Display name, Email";
+    async addUser(fName, lName, email) {
+        if (arguments.length !== 3)
+            throw "Usage: First name, Last name, Email";
         if (!validate.validateString(fName)) throw "First name must be a non empty string";
         if (!validate.validateString(lName)) throw "Last name must be a non empty string";
-        if (!validate.validateString(dName)) throw "Display name must be a non empty string";
         if (!validate.isGoodEmail(email)) throw "Email must be a non empty string and valid";
 
         // check that the user doesn't already exist
         if (await this.userAlreadyExists(email)) throw "Another user has taken this email";
 
-        // check that the display name is unique and doesn't already exist in the database
-        if (await this.isDisplayNameTaken(dName)) 
-            throw "That display name is already taken, how unfortunate for you";
-
         const newUser = {
             _id: ObjectId(),
             firstName: fName,
             lastName: lName,
-            displayName: dName,
             email: email,
             favoriteGames: [],
             reviews: [],
@@ -116,7 +99,6 @@ module.exports = {
             _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
-            displayName: user.displayName,
             email: user.email,
             favoriteGames: user.favoriteGames,
             reviews: user.reviews,
@@ -163,7 +145,6 @@ module.exports = {
             _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
-            displayName: user.displayName,
             email: user.email,
             favoriteGames: updatedList,
             reviews: user.reviews,
@@ -212,7 +193,6 @@ module.exports = {
             _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
-            displayName: user.displayName,
             email: user.email,
             favoriteGames: updatedList,
             reviews: user.reviews,

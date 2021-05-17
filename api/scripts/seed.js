@@ -8,70 +8,60 @@ const reviewData = data.reviews;
 const user1 = {
     firstName: 'Jordan',
     lastName: 'Handwerger',
-    displayName: 'jHand',
     email: 'jhandwer@stevens.edu',
 };
 
 const user2 = {
     firstName: 'Patrick',
     lastName: 'Sommer',
-    displayName: 'Mason',
     email: 'psommer@stevens.edu',
 };
 
 const user3 = {
     firstName: 'Eleni',
     lastName: 'Rotsides',
-    displayName: 'eRot',
     email: 'erotside@stevens.edu',
 };
 
 const user4 = {
     firstName: 'Zachary',
     lastName: 'Zwerling',
-    displayName: 'tooManyZs',
     email: 'zzwerlin@stevens.edu',
 };
 
 const user5 = {
     firstName: 'Ishaan',
     lastName: 'Patel',
-    displayName: 'arandomdude',
     email: 'ipatel9@stevens.edu',
 };
 
 const user6 = {
     firstName: 'Bernie',
     lastName: 'Sanders',
-    displayName: 'bsanders15',
     email: 'bsanders@gmail.com',
 };
 
 const user7 = {
     firstName: 'Monopoly',
     lastName: 'Man',
-    displayName: 'broadway',
     email: 'donotpassgo@gmail.com',
 };
 
 const user8 = {
     firstName: 'Adam',
     lastName: 'West',
-    displayName: 'AWest!!!!',
     email: 'batman@gmail.com',
 };
 
 const user9 = {
     firstName: 'Barack',
     lastName: 'Obama',
-    displayName: 'exPres',
     email: 'america@gmail.com',
 };
 
 const user10 = {
     firstName: 'Jeff',
     lastName: 'Bezos',
-    displayName: 'money010101',
     email: 'imreallygreedy@gmail.com',
 };
 
@@ -155,70 +145,60 @@ const main = async () => {
         name1 = await userData.addUser(
             user1.firstName,
             user1.lastName,
-            user1.displayName,
             user1.email
         );
 
         name2 = await userData.addUser(
             user2.firstName,
             user2.lastName,
-            user2.displayName,
             user2.email
         );
 
         name3 = await userData.addUser(
             user3.firstName,
             user3.lastName,
-            user3.displayName,
             user3.email
         );
 
         name4 = await userData.addUser(
             user4.firstName,
             user4.lastName,
-            user4.displayName,
             user4.email
         );
 
         name5 = await userData.addUser(
             user5.firstName,
             user5.lastName,
-            user5.displayName,
             user5.email
         );
 
         name6 = await userData.addUser(
             user6.firstName,
             user6.lastName,
-            user6.displayName,
             user6.email
         );
 
         name7 = await userData.addUser(
             user7.firstName,
             user7.lastName,
-            user7.displayName,
             user7.email
         );
 
         name8 = await userData.addUser(
             user8.firstName,
             user8.lastName,
-            user8.displayName,
             user8.email
         );
 
         name9 = await userData.addUser(
             user9.firstName,
             user9.lastName,
-            user9.displayName,
             user9.email
         );
 
         name10 = await userData.addUser(
             user10.firstName,
             user10.lastName,
-            user10.displayName,
             user10.email
         );
 
