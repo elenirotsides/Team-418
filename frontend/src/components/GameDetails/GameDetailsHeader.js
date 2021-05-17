@@ -119,7 +119,7 @@ const GameDetailsHeader = (props) => {
             );
             if (response.status === 200) {
                 const data = await response.json();
-                setAverageRating(data.average);
+                setAverageRating(data.average.toFixed(2));
                 setRatingCount(data.count);
                 setRatingLoading(false);
             } else if (response.status === 404) {
