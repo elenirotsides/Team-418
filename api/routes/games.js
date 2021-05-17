@@ -154,7 +154,7 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        `fields name, cover.url, age_ratings.rating, screenshots.url, summary, genres, platforms, category, first_release_date, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${req.params.id};`
+                        `fields name, cover.url, age_ratings.rating, screenshots.url, summary, genres.name, platforms.name, platforms.platform_logo.url, game_modes.name, player_perspectives.name, themes.name, websites.category, websites.url, category, first_release_date, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${req.params.id};`
                     )
                 );
 

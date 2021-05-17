@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, useScrollTrigger } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 import { Rating } from '@material-ui/lab';
@@ -164,6 +164,7 @@ const GameDetailsHeader = (props) => {
         if (props.data.age_ratings && props.data.age_ratings.length > 0) {
             setAgeRatingUrl(urlForAgeRating(props.data.age_ratings[0].rating));
         }
+        
         if (props.data.involved_companies) {
             let developmentCompanies = props.data.involved_companies.filter((e) => e.developer == true);
             if (developmentCompanies.length > 0) {
@@ -275,101 +276,6 @@ const GameDetailsHeader = (props) => {
         }
     }
 
-    function gameCategory(num) {
-        switch (num) {
-            case 0: {
-                return 'Main game';
-            }
-            case 1: {
-                return 'Add on';
-            }
-            case 2: {
-                return 'Expansion';
-            }
-            case 3: {
-                return 'Bundle';
-            }
-            case 4: {
-                return 'Stand-alone expansion';
-            }
-            case 5: {
-                return 'Mod';
-            }
-            case 6: {
-                return 'Episode';
-            }
-            case 7: {
-                return 'Season';
-            }
-            case 8: {
-                return 'Remake';
-            }
-            case 9: {
-                return 'Remaster';
-            }
-            case 10: {
-                return 'Expanded game';
-            }
-            case 11: {
-                return 'Port';
-            }
-            case 12: {
-                return 'Fork';
-            }
-        }
-    }
-
-    function platforms(platformArray) {
-        const p = [
-            { id: 5, name: 'Wii' },
-            { id: 9, name: 'PlayStation 3' },
-            { id: 12, name: 'Xbox 360' },
-            { id: 41, name: 'Wii U' },
-            { id: 48, name: 'PlayStation 4' },
-            { id: 49, name: 'Xbox One' },
-            { id: 130, name: 'Nintendo Switch' },
-            { id: 167, name: 'PlayStation 5' },
-            { id: 169, name: 'Xbox Series' },
-        ];
-
-        let platforms = [];
-        p.forEach((element) => {
-            if (platformArray.includes(element.id)) {
-                platforms.push(element.name);
-            }
-        });
-
-        const stringToDisplay = platforms.toString().replace(/,/g, ', ');
-
-        return stringToDisplay;
-    }
-
-    function genres(genresArray) {
-        const g = [
-            { id: 4, name: 'Fighting' },
-            { id: 5, name: 'Shooter' },
-            { id: 7, name: 'Music' },
-            { id: 8, name: 'Platform' },
-            { id: 9, name: 'Puzzle' },
-            { id: 10, name: 'Racing' },
-            { id: 11, name: 'Real Time Strategy (RTS)' },
-            { id: 12, name: 'Role-playing (RPG)' },
-            { id: 13, name: 'Simulator' },
-            { id: 14, name: 'Sport' },
-        ];
-
-        let genres = [];
-        g.forEach((element) => {
-            if (genresArray.includes(element.id)) {
-                genres.push(element.name);
-            }
-        });
-
-        const stringToDisplay = genres.toString().replace(/,/g, ', ');
-
-        return stringToDisplay;
-    }
-
     if (props.data.cover && props.data.cover.url) {
         props.data.cover.url = props.data.cover.url.replace('t_thumb', 't_720p');
     } else {
@@ -400,14 +306,6 @@ const GameDetailsHeader = (props) => {
                         <img className={classes.ageRatingImage} src={ageRatingUrl}></img>
                     </div>
                 )}
-            </div>
-            <div className={classes.center}>
-                <p>Game Category: {gameCategory(props.data.category)}</p>
-                <p>
-                    First Release Date: {new Date(props.data.first_release_date * 1000).toLocaleString() || "A first release date wasn't specified"}
-                </p>
-                <p>Genres: {genres(props.data.genres) || "Genre(s) not specified"}</p>
-                <p>Platforms: {platforms(props.data.platforms) || "Platform(s) not specified"}</p>
             </div>
         </div>
     );
