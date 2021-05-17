@@ -9,7 +9,7 @@ router.post('/retrieve', async function (req, res) {
     let userId = req.body.userId;
     let objId = new ObjectId(userId);
     if (!ObjectId.isValid(objId)) {
-        res.status(400).send('Invalid Object ID!');
+        return res.status(400).send('Invalid Object ID!');
     }
     try {
         let reviews = await reviewsData.getAllreviewsByUserId(objId);

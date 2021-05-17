@@ -224,15 +224,21 @@ router.get('/picture', async function (req, res) {
     // email field is appended by the google auth middleware, it will be previously validated
     let email = req.googleInfo.email;
     try {
-        const user = await usersData.getUserByEmail(email);
-        res.sendFile(
-            path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
-        );
-    } catch (error) {
-        // send default for race condition with DB
-        res.sendFile(
-            path.resolve(`${profilePictureDirectory}/profile.png`)
-        );
+        try {
+            const user = await usersData.getUserByEmail(email);
+            res.sendFile(
+                path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
+            );
+        } catch (error) {
+            // send default for race condition with DB
+            res.sendFile(
+                path.resolve(`${profilePictureDirectory}/profile.png`)
+            );
+        }
+    } catch (e) {
+        // could happen if the path above is messed up
+        console.log('Erro in /users/picture', e);
+        res.sendStatus(500);
     }
 });
 
@@ -274,15 +280,20 @@ router.get('/picture/:userId', async function (req, res) {
     // email field is appended by the google auth middleware, it will be previously validated
     let userId = req.params.userId;
     try {
-        const user = await usersData.getUserById(userId);
-        res.sendFile(
-            path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
-        );
-    } catch (error) {
-        // send default for race condition with DB
-        res.sendFile(
-            path.resolve(`${profilePictureDirectory}/profile.png`)
-        );
+        try {
+            const user = await usersData.getUserById(userId);
+            res.sendFile(
+                path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
+            );
+        } catch (error) {
+            // send default for race condition with DB
+            res.sendFile(
+                path.resolve(`${profilePictureDirectory}/profile.png`)
+            );
+        }
+    } catch (e) {
+        console.log('Error in /users/picture/:userId', e);
+        res.sendStatus(500);
     }
 });
 
