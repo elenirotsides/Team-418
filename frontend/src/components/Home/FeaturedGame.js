@@ -22,7 +22,7 @@ const styles = makeStyles({
         height: 80,
         bottom: 0,
         left: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
 
     gameTitle: {
@@ -60,7 +60,7 @@ const FeaturedGame = (props) => {
                 <SectionTitle title='Featured' />
                 <Link to={`/game/${props.data.igdbData[0].id}`} key={props.data.id}>
                     <div className={classes.container}>
-                        <img className={classes.backgroundImage} src={props.data.banner}></img>
+                        <img alt='Featured Game Image' className={classes.backgroundImage} src={props.data.banner}></img>
                         <div className={classes.nameContainer}>
                             <div className={classes.gameTitle}>{props.data.igdbData[0].name}</div>
                         </div>

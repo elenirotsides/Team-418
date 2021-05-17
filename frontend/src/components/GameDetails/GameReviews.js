@@ -27,7 +27,11 @@ const styles = makeStyles({
     reviewButton: {
         marginBottom: 20,
         textAlign: 'center'
-    }
+    },
+
+    text: {
+        color: '#0061c9',
+    },
 });
 
 const GameReviews = (props) => {
@@ -44,6 +48,8 @@ const GameReviews = (props) => {
                     <div className={classes.reviewButton}>
                         <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} setReloadAverageRating={props.setReloadAverageRating} />
                     </div>
+                    <h3></h3>
+                    <h4></h4>
                     <h5 class="text-center">No reviews</h5>
                 </div>);
         } else {
@@ -58,7 +64,7 @@ const GameReviews = (props) => {
                                     sameUser: false
                                 }
                                 }>
-                                    <Card.Title>{r.username}</Card.Title>
+                                    <Card.Title className={classes.text}>{r.username}</Card.Title>
                                 </Link>
                                 <Rating
                                     name="read-only"

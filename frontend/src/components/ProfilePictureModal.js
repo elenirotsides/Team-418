@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { makeStyles } from '@material-ui/core';
+
+const styles = makeStyles({
+    buttons: {
+        color: 'white',
+        backgroundColor: '#0061c9',
+    },
+});
 
 const ProfilePictureModal = (props) => {
+    const classes = styles();
     const [show, setShow] = useState(false);
     const [file, setFile] = useState(false);
     const url = `http://localhost:5000/users/picture?idToken=${props.idToken}`;
-    const validFileExts = ['.jpg', '.jpeg', '.bmp', '.gif', '.png'];
+    const validFileExts = ['.jpg', '.jpeg', '.bmp', '.gif', '.png', '.JPG', '.JPEG', '.BMP', '.GIF', '.PNG'];
     const maxFileSize = 2 * 1024 * 1024;
     const maxFileSizeString = '2MB';
     
@@ -71,7 +80,7 @@ const ProfilePictureModal = (props) => {
 
     return (
         <div>
-            <Button variant="primary" onClick={handleShow}>
+            <Button className={classes.buttons} onClick={handleShow}>
                 Change Profile Picture
             </Button>
             <Modal
@@ -82,7 +91,7 @@ const ProfilePictureModal = (props) => {
             >
                 <Modal.Header>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Modal heading
+                        Upload new profile picture
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -96,13 +105,13 @@ const ProfilePictureModal = (props) => {
                                 onChange={handleFileChange}
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit">
+                        <Button className={classes.buttons} type="submit">
                             Submit
                         </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleClose}>Close</Button>
+                    <Button className={classes.buttons} onClick={handleClose}>Close</Button>
                 </Modal.Footer>
             </Modal>
         </div>

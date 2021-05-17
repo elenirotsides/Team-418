@@ -93,6 +93,11 @@ const styles = makeStyles({
     center: {
         textAlign: 'center',
     },
+
+    buttons: {
+        color: 'white',
+        backgroundColor: '#0061c9',
+    },
 });
 
 const GameDetailsHeader = (props) => {
@@ -351,10 +356,11 @@ const GameDetailsHeader = (props) => {
                 <img
                     className={classes.coverImage}
                     src={props.data.cover.url}
+                    alt= "Cover Image"
                 ></img>
                 <div>
                     <button
-                        class="btn btn-primary"
+                        class={`btn ${classes.buttons}`}
                         onClick={async () => addRemoveFavorites(props.userData)}
                     >
                         {favText}
@@ -363,6 +369,7 @@ const GameDetailsHeader = (props) => {
             </div>
             <div className={classes.rightContainer}>
                 <div className={classes.titleDescriptionContainer}>
+                    <h1></h1>
                     <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>
@@ -375,6 +382,7 @@ const GameDetailsHeader = (props) => {
                 {ageRatingUrl && (
                     <div className={classes.ageRating}>
                         <img
+                            alt = "Age Rating"
                             className={classes.ageRatingImage}
                             src={ageRatingUrl}
                         ></img>
