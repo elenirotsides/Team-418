@@ -14,7 +14,7 @@ const ProfilePictureModal = (props) => {
     const [show, setShow] = useState(false);
     const [file, setFile] = useState(false);
     const url = `http://localhost:5000/users/picture?idToken=${props.idToken}`;
-    const validFileExts = ['.jpg', '.jpeg', '.bmp', '.gif', '.png', '.JPG', '.JPEG', '.BMP', '.GIF', '.PNG'];
+    const validFileExts = ['.jpg', '.jpeg', '.gif', '.png', '.JPG', '.JPEG', '.GIF', '.PNG'];
     const maxFileSize = 2 * 1024 * 1024;
     const maxFileSizeString = '2MB';
     
