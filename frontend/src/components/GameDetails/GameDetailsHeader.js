@@ -87,7 +87,7 @@ const styles = makeStyles({
 
     ageRatingImage: {
         maxWidth: '100%',
-        minWidth: '50%'
+        minWidth: '50%',
     },
 
     center: {
@@ -109,9 +109,7 @@ const GameDetailsHeader = (props) => {
     async function fetchAverageRating() {
         let idToken = await getUserIdToken();
         try {
-            const response = await fetch(
-                `http://localhost:5000/reviews/average/${props.data.id}?idToken=${idToken}`
-            );
+            const response = await fetch(`http://localhost:5000/reviews/average/${props.data.id}?idToken=${idToken}`);
             if (response.status === 200) {
                 const data = await response.json();
                 setAverageRating(data.average);
@@ -152,19 +150,9 @@ const GameDetailsHeader = (props) => {
         } else {
             return (
                 <div className={classes.ratingBox}>
-                    <p
-                        className={`${classes.inlineBlock} ${classes.ratingAverage} `}
-                    >{`${averageRating} / 10`}</p>
-                    <div
-                        className={`${classes.inlineBlock} ${classes.ratingStar}`}
-                    >
-                        <Rating
-                            name="read-only"
-                            value={1}
-                            readOnly
-                            min={1}
-                            max={1}
-                        />
+                    <p className={`${classes.inlineBlock} ${classes.ratingAverage} `}>{`${averageRating} / 10`}</p>
+                    <div className={`${classes.inlineBlock} ${classes.ratingStar}`}>
+                        <Rating name='read-only' value={1} readOnly min={1} max={1} />
                     </div>
                     <p>{`Total Ratings: ${ratingCount}`}</p>
                 </div>
@@ -177,16 +165,12 @@ const GameDetailsHeader = (props) => {
             setAgeRatingUrl(urlForAgeRating(props.data.age_ratings[0].rating));
         }
         if (props.data.involved_companies) {
-            let developmentCompanies = props.data.involved_companies.filter(
-                (e) => e.developer == true
-            );
+            let developmentCompanies = props.data.involved_companies.filter((e) => e.developer == true);
             if (developmentCompanies.length > 0) {
                 setGameDeveloper(developmentCompanies[0].company.name);
             } else {
                 if (props.data.involved_companies.length > 0) {
-                    setGameDeveloper(
-                        props.data.involved_companies[0].company.name
-                    );
+                    setGameDeveloper(props.data.involved_companies[0].company.name);
                 } else {
                     setGameDeveloper('');
                 }
@@ -212,8 +196,7 @@ const GameDetailsHeader = (props) => {
 
     async function getFavorites() {
         let idToken = await getUserIdToken();
-        const url =
-            'http://localhost:5000/users/profile/favorites/?idToken=' + idToken;
+        const url = 'http://localhost:5000/users/profile/favorites/?idToken=' + idToken;
         fetch(url, {
             credentials: 'include',
         })
@@ -293,7 +276,7 @@ const GameDetailsHeader = (props) => {
     }
 
     function gameCategory(num) {
-        switch(num) {
+        switch (num) {
             case 0: {
                 return 'Main game';
             }
@@ -336,11 +319,59 @@ const GameDetailsHeader = (props) => {
         }
     }
 
+    function platforms(platformArray) {
+        const p = [
+            { id: 5, name: 'Wii' },
+            { id: 9, name: 'PlayStation 3' },
+            { id: 12, name: 'Xbox 360' },
+            { id: 41, name: 'Wii U' },
+            { id: 48, name: 'PlayStation 4' },
+            { id: 49, name: 'Xbox One' },
+            { id: 130, name: 'Nintendo Switch' },
+            { id: 167, name: 'PlayStation 5' },
+            { id: 169, name: 'Xbox Series' },
+        ];
+
+        let platforms = [];
+        p.forEach((element) => {
+            if (platformArray.includes(element.id)) {
+                platforms.push(element.name);
+            }
+        });
+
+        const stringToDisplay = platforms.toString().replace(/,/g, ', ');
+
+        return stringToDisplay;
+    }
+
+    function genres(genresArray) {
+        const g = [
+            { id: 4, name: 'Fighting' },
+            { id: 5, name: 'Shooter' },
+            { id: 7, name: 'Music' },
+            { id: 8, name: 'Platform' },
+            { id: 9, name: 'Puzzle' },
+            { id: 10, name: 'Racing' },
+            { id: 11, name: 'Real Time Strategy (RTS)' },
+            { id: 12, name: 'Role-playing (RPG)' },
+            { id: 13, name: 'Simulator' },
+            { id: 14, name: 'Sport' },
+        ];
+
+        let genres = [];
+        g.forEach((element) => {
+            if (genresArray.includes(element.id)) {
+                genres.push(element.name);
+            }
+        });
+
+        const stringToDisplay = genres.toString().replace(/,/g, ', ');
+
+        return stringToDisplay;
+    }
+
     if (props.data.cover && props.data.cover.url) {
-        props.data.cover.url = props.data.cover.url.replace(
-            't_thumb',
-            't_720p'
-        );
+        props.data.cover.url = props.data.cover.url.replace('t_thumb', 't_720p');
     } else {
         props.data.cover = { url: '/imgs/imageNotFound.png' };
     }
@@ -348,15 +379,9 @@ const GameDetailsHeader = (props) => {
     return (
         <div>
             <div className={classes.leftContainer}>
-                <img
-                    className={classes.coverImage}
-                    src={props.data.cover.url}
-                ></img>
+                <img className={classes.coverImage} src={props.data.cover.url}></img>
                 <div>
-                    <button
-                        class="btn btn-primary"
-                        onClick={async () => addRemoveFavorites(props.userData)}
-                    >
+                    <button class='btn btn-primary' onClick={async () => addRemoveFavorites(props.userData)}>
                         {favText}
                     </button>
                 </div>
@@ -365,27 +390,24 @@ const GameDetailsHeader = (props) => {
                 <div className={classes.titleDescriptionContainer}>
                     <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
-                        <p className={classes.publisherLabel}>
-                            {gameDeveloper}
-                        </p>
+                        <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         {getRatingInfo()}
                     </div>
                     <p className={classes.summary}>{props.data.summary} </p>
                 </div>
                 {ageRatingUrl && (
                     <div className={classes.ageRating}>
-                        <img
-                            className={classes.ageRatingImage}
-                            src={ageRatingUrl}
-                        ></img>
+                        <img className={classes.ageRatingImage} src={ageRatingUrl}></img>
                     </div>
                 )}
             </div>
             <div className={classes.center}>
                 <p>Game Category: {gameCategory(props.data.category)}</p>
-                <p>Created: {(new Date(props.data.created_at * 1000).toLocaleString()) || "A created date wasn't specified"}</p>
-                <p>First Release Date: {(new Date(props.data.first_release_date * 1000).toLocaleString()) || "A first release date wasn't specified"}</p>
-                <p>Updated: {(new Date(props.data.updated_at * 1000).toLocaleString()) || "An updated date was not specified"}</p>
+                <p>
+                    First Release Date: {new Date(props.data.first_release_date * 1000).toLocaleString() || "A first release date wasn't specified"}
+                </p>
+                <p>Genres: {genres(props.data.genres) || "Genre(s) not specified"}</p>
+                <p>Platforms: {platforms(props.data.platforms) || "Platform(s) not specified"}</p>
             </div>
         </div>
     );
