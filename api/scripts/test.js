@@ -8,14 +8,12 @@ const reviewData = data.reviews;
 const user1 = {
     firstName: "Bernie",
     lastName: "Sanders",
-    displayName: "bsanders15",
     email: "bsanders@gmail.com",
 };
 
 const user2 = {
     firstName: "Monopoly",
     lastName: "Man",
-    displayName: "broadway",
     email: "donotpassgo@gmail.com",
 };
 
@@ -51,7 +49,6 @@ const main = async () => {
         name1 = await userData.addUser(
             user1.firstName,
             user1.lastName,
-            user1.displayName,
             user1.email,
         );
         gaming1 = await gameData.addGame(game1.endpointId);

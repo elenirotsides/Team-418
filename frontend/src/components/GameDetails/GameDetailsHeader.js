@@ -87,7 +87,11 @@ const styles = makeStyles({
 
     ageRatingImage: {
         maxWidth: '100%',
-        minWidth: '50%',
+        minWidth: '50%'
+    },
+
+    center: {
+        textAlign: 'center',
     },
 
     buttons: {
@@ -293,6 +297,50 @@ const GameDetailsHeader = (props) => {
         }
     }
 
+    function gameCategory(num) {
+        switch(num) {
+            case 0: {
+                return 'Main game';
+            }
+            case 1: {
+                return 'Add on';
+            }
+            case 2: {
+                return 'Expansion';
+            }
+            case 3: {
+                return 'Bundle';
+            }
+            case 4: {
+                return 'Stand-alone expansion';
+            }
+            case 5: {
+                return 'Mod';
+            }
+            case 6: {
+                return 'Episode';
+            }
+            case 7: {
+                return 'Season';
+            }
+            case 8: {
+                return 'Remake';
+            }
+            case 9: {
+                return 'Remaster';
+            }
+            case 10: {
+                return 'Expanded game';
+            }
+            case 11: {
+                return 'Port';
+            }
+            case 12: {
+                return 'Fork';
+            }
+        }
+    }
+
     if (props.data.cover && props.data.cover.url) {
         props.data.cover.url = props.data.cover.url.replace(
             't_thumb',
@@ -340,6 +388,12 @@ const GameDetailsHeader = (props) => {
                         ></img>
                     </div>
                 )}
+            </div>
+            <div className={classes.center}>
+                <p>Game Category: {gameCategory(props.data.category)}</p>
+                <p>Created: {(new Date(props.data.created_at * 1000).toLocaleString()) || "A created date wasn't specified"}</p>
+                <p>First Release Date: {(new Date(props.data.first_release_date * 1000).toLocaleString()) || "A first release date wasn't specified"}</p>
+                <p>Updated: {(new Date(props.data.updated_at * 1000).toLocaleString()) || "An updated date was not specified"}</p>
             </div>
         </div>
     );

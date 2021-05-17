@@ -106,10 +106,10 @@ module.exports = {
         const newReview = {
             _id: ObjectId(),
             userId: user._id,
+            username: `${user.firstName} ${user.lastName}`,
             gameId: game._id,
             rating: rating,
             comment: word,
-            displayName: user.displayName,
             datePosted: date,
         };
 
@@ -128,7 +128,6 @@ module.exports = {
             _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
-            displayName: user.displayName,
             email: user.email,
             favoriteGames: user.favoriteGames,
             reviews: userReviews,
@@ -187,7 +186,7 @@ module.exports = {
             gameId: review.gameId,
             rating: newRating,
             comment: review.comment,
-            displayName: review.displayName,
+            username: review.username,
             datePosted: newDate,
         };
 
@@ -227,7 +226,7 @@ module.exports = {
             gameId: review.gameId,
             rating: review.rating,
             comment: newComment,
-            displayName: review.displayName,
+            username: review.username,
             datePosted: newDate,
         };
 

@@ -500,8 +500,6 @@ const Profile = (props) => {
                 )}
                 <h3>Email: </h3>
                 <p>{userData && userData.email}</p>
-                <h3>Username: </h3>
-                <p>{userData && userData.displayName}</p>
                 <h3>Favorite Games</h3>
                 {createFavoriteGames()}
                 <h3>Reviews</h3>

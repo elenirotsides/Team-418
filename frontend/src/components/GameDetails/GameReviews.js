@@ -64,7 +64,7 @@ const GameReviews = (props) => {
                                     sameUser: false
                                 }
                                 }>
-                                    <Card.Title className={classes.text}>{r.displayName}</Card.Title>
+                                    <Card.Title className={classes.text}>{r.username}</Card.Title>
                                 </Link>
                                 <Rating
                                     name="read-only"
