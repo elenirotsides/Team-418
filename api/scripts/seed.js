@@ -237,6 +237,68 @@ const main = async () => {
         console.log(e);
     }
 
+    // Adding statuses to each user
+
+    try {
+        console.log(await userData.editStatus(name1.email, "Having a good time"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name2.email, "Playing Fortnite"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name3.email, "Chillin like a villian"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name4.email, "Need a partner for some epic APEX duos"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name5.email, "Meh"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name6.email, "I'm tired"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name7.email, "Working on Web dev hw don't bother me"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name8.email, "Busy"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name9.email, "Listening to music"))
+    } catch (e) {
+        console.log(e)
+    }
+
+    try {
+        console.log(await userData.editStatus(name10.email, "Living life like Larry"))
+    } catch (e) {
+        console.log(e)
+    }
+
     // the part where i now add in a crap ton of reviews
     try {
         console.log('Adding reviews...');

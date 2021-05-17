@@ -1,18 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import GameSizableCard from './Home/GameSizableCard';
+import { NavLink, Link, useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
+
+
+const styles = makeStyles({
+    page: {
+        margin:60
+    },
+
+    nextBtn: {
+        marginLeft:10
+    },
+
+    prevBtn: {
+        marginRight:10
+    },
+     
+    card: {
+        marginBottom:20,
+        display:'inline'
+    }
+});
+
+
 const Search = (props) => {
+    const classes = styles();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [pageData, setPageData] = useState(undefined);
     const [searchInfo, setSearchInfo] = useState(undefined);
     const [genre, setGenre] = useState(undefined);
     const [platform, setPlatform] = useState(undefined);
-    let idToken;
-    const searchUrl = 'http://localhost:5000/games/search';
-    const searchInfoUrl = 'http://localhost:5000/games/search/info';
+    const [showPrev, setShowPrev] = useState(false);
+    const [showNext, setShowNext] = useState(false);
 
-    async function search(e, redirectedSearchTerm) {
+    let idToken;
+    const searchInfoUrl = 'http://localhost:5000/games/search/info';
+    let history = useHistory();
+
+    
+    async function search(e, redirectedSearchTerm, page) {
+        let searchUrl = `http://localhost:5000/games/search/${page}`;
+
         let searchTerm;
         if (redirectedSearchTerm) {
             searchTerm = redirectedSearchTerm;
@@ -41,7 +72,11 @@ const Search = (props) => {
                 body: JSON.stringify(body),
             };
             const response = await fetch(searchUrl, requestInfo);
-            setPageData(await response.json());
+            const data = await response.json();
+            setPageData(data);
+            
+            setShowPrev(props.match.params.pageNum > 0)
+            setShowNext(data.length === 12);
         } catch (err) {
             console.log('search error', err);
             setError(true);
@@ -68,7 +103,6 @@ const Search = (props) => {
         }
         setLoading(false);
     }
-
     function createGameCards() {
         if (pageData && pageData.length === 0) {
             return (
@@ -76,7 +110,8 @@ const Search = (props) => {
                     <h2>No Games Found.</h2>
                 </div>
             );
-        } else {
+        } 
+        else {
             return (
                 <div class="ml-3 mr-2">
                     {pageData &&
@@ -86,7 +121,7 @@ const Search = (props) => {
                                     data={game}
                                     cardWidth={'24%'}
                                     cardPaddingTop={'24%'}
-                                    cardMarginRight={'1%'}
+                                    cardMarginRight={'0.5%'}
                                 />
                             );
                         })}
@@ -104,10 +139,10 @@ const Search = (props) => {
         ) {
             document.getElementById('searchTerm').value =
                 props.location.state.searchTerm;
-            search(null, props.location.state.searchTerm);
+            search(null, props.location.state.searchTerm, props.match.params.pageNum);
         }
         getSearchInfo();
-    }, [props]);
+    }, [props, props.location.pathname]);
 
     function getAdvancedOptions() {
         return (
@@ -151,9 +186,12 @@ const Search = (props) => {
         );
     } else {
         return (
-            <div>
+            <div className={classes.page}>
                 <div class="container">
-                    <form onSubmit={search} class="my-3">
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        history.push('/games/search/0', { searchTerm: e.target[0].value })
+                    }} class="my-3">
                         <div class="form-group row">
                             <label
                                 for="searchTerm"
@@ -196,6 +234,15 @@ const Search = (props) => {
                 <div id="errorDiv" class="text-center">{error && <p>{error}</p>}</div>
                 {loading && <div class="text-center"><h2>Loading...</h2></div>}
                 {!loading && pageData && createGameCards()}
+                <br />
+                <div class='text-center'>
+                    {showPrev && <button className={`btn btn-primary col-sm-2 ${classes.prevBtn}`} onClick={() => {
+                        history.push(`/games/search/${parseInt(props.match.params.pageNum) - 1}`, { searchTerm: props.location.state.searchTerm })
+                    }}>Previous</button>}
+                    {showNext && <button className={`btn btn-primary col-sm-2 ${classes.nextBtn}`} onClick={() => {
+                        history.push(`/games/search/${parseInt(props.match.params.pageNum) + 1}`, { searchTerm: props.location.state.searchTerm })
+                    }}>Next</button>}
+                </div>
             </div>
         );
     }

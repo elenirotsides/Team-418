@@ -6,6 +6,9 @@ import GameSizableCard from './Home/GameSizableCard';
 import { makeStyles, Grid } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import { Card, Button } from 'react-bootstrap';
+import TextField from '@material-ui/core/TextField';
+import { Redirect } from 'react-router';
+
 const styles = makeStyles({
     title: {
         marginLeft: 60,
@@ -82,9 +85,13 @@ const Profile = (props) => {
     const favoriteGamesUrl = 'http://localhost:5000/users/profile/favorites';
     const reviewsUrl = 'http://localhost:5000/users/profile/reviews';
     const deleteReviewUrl = 'http://localhost:5000/reviews';
+    const statusUrl = 'http://localhost:5000/users/profile/status';
     const classes = styles();
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
+    const [statusToggle, setStatusToggle] = useState(false);
+    const [statusUpdate, setStatusUpdate] = useState(null)
+    const [sameUser, setSameUser] = useState(false);
 
     function OnScroll() {
         const scrollView = document.getElementById('favoriteGamesScrollView');
@@ -119,6 +126,16 @@ const Profile = (props) => {
                     }
                 );
                 const data = await response.json();
+                if (data.hasOwnProperty('edge')) {
+                    setSameUser(true);
+                    setLoading(false);
+                    const response = await fetch(`${infoUrl}?idToken=${token}`, {
+                        method: 'GET',
+                    });
+                    const data = await response.json();
+                    setUserData(data);
+                    return;
+                }
                 setUserData(data);
                 setLoading(false);
             } catch (e) {
@@ -206,6 +223,46 @@ const Profile = (props) => {
             console.log(e);
             setError(true);
         }
+    }
+
+    const handleStatusChange = (e) => {
+        setStatusUpdate(e.target.value);
+    };
+
+    async function editStatus(e) {
+        e.preventDefault();
+        const errorDiv = document.getElementById('errorDiv');
+        errorDiv.innerHTML = '';
+        const errorP = document.createElement('p');
+        errorP.className = 'text-danger';
+        let body = {};
+
+        if (statusUpdate) {
+            body['status'] = statusUpdate
+        }
+
+        let idToken = await getUserIdToken();
+        try {
+            const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body),
+            });
+            if (response.status === 200) {
+                const userDataCopy = JSON.parse(JSON.stringify(userData));
+                userDataCopy.status = statusUpdate;
+                setUserData(userDataCopy);
+                setStatusToggle(false);
+            } else {
+                errorP.innerHTML = await response.json() ||'Failed to submit status update. Please try again.';
+                errorDiv.appendChild(errorP)
+            }
+        } catch (e) {
+            console.log('Error updating status', e)
+            errorP.innerHTML = 'Failed to submit status update. Please try again.';
+            errorDiv.appendChild(errorP)
+        }
+        
     }
 
     function createFavoriteGames() {
@@ -315,7 +372,7 @@ const Profile = (props) => {
                                     max={10}
                                 />
                                 <Card.Text>{r.comment}</Card.Text>
-                                {idToken && !props.location.userId && (
+                                {idToken && (!props.location.userId || sameUser) && (
                                     <Button
                                         id={r._id}
                                         variant="danger"
@@ -369,6 +426,7 @@ const Profile = (props) => {
         fetchProfile();
         fetchFavoriteGames();
         fetchReviews();
+        // fetchStatus();
     }, []);
 
     if (error) {
@@ -387,7 +445,8 @@ const Profile = (props) => {
                 <h2>Loading...</h2>
             </div>
         );
-    } else {
+    } 
+    else {
         return (
             <div className="text-center">
                 <h2>Profile Page</h2>
@@ -409,7 +468,7 @@ const Profile = (props) => {
                     />
                 )}
                 <br />
-                {idToken && !props.location.userId && (
+                {idToken && (!props.location.userId || sameUser) && (
                     <ProfilePictureModal idToken={idToken} />
                 )}
                 <h3>Name: </h3>
@@ -417,6 +476,20 @@ const Profile = (props) => {
                     {userData && userData.firstName}{' '}
                     {userData && userData.lastName}
                 </p>
+                <h3>Status: </h3>
+                <p>{userData && userData.status || "No Status Yet"}</p>
+                {(!props.location.userId || sameUser )&& (
+                    <button class="btn btn-primary" onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
+                )}
+                {statusToggle && (
+                    <form noValidate autocomplete="off" onSubmit={editStatus}>
+                        <br/>
+                        <div id="errorDiv"></div>
+                        <TextField id="statusUpdate" label="Set your status..." onChange={handleStatusChange} variant="outlined" onChange={handleStatusChange}/>
+                        <br/>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                )}
                 <h3>Email: </h3>
                 <p>{userData && userData.email}</p>
                 <h3>Username: </h3>
@@ -425,7 +498,7 @@ const Profile = (props) => {
                 {createFavoriteGames()}
                 <h3>Reviews</h3>
                 {createReviews()}
-                {!props.location.userId && <SignOutButton />}
+                {(!props.location.userId || sameUser) && <SignOutButton />}
             </div>
         );
     }
