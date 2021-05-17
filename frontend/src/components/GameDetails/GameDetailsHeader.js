@@ -90,7 +90,7 @@ const styles = makeStyles({
         minWidth: '50%',
     },
 
-    button: {
+    buttons: {
         color: 'white',
         backgroundColor: '#0061c9',
     },
@@ -312,9 +312,7 @@ const GameDetailsHeader = (props) => {
                 ></img>
                 <div>
                     <button
-                        class="btn "
-                        //className={classes.button}
-                        style= {{color: 'white', backgroundColor: '#0061c9'}}
+                        class={`btn ${classes.buttons}`}
                         onClick={async () => addRemoveFavorites(props.userData)}
                     >
                         {favText}

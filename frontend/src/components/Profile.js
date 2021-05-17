@@ -70,6 +70,11 @@ const styles = makeStyles({
             backgroundColor: 'rgba(255,255,255,.8)',
         },
     },
+
+    buttons: {
+        color: 'white',
+        backgroundColor: '#0061c9',
+    },
 });
 
 const Profile = (props) => {
@@ -482,7 +487,7 @@ const Profile = (props) => {
                 <h3>Status: </h3>
                 <p>{userData && userData.status || "No Status Yet"}</p>
                 {(!props.location.userId || sameUser )&& (
-                    <button class="btn" style= {{color: 'white', backgroundColor: '#0061c9'}} onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
+                    <button class={`btn ${classes.buttons}`} onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
                 )}
                 {statusToggle && (
                     <form noValidate autocomplete="off" onSubmit={editStatus}>
@@ -490,7 +495,7 @@ const Profile = (props) => {
                         <div id="errorDiv"></div>
                         <TextField id="statusUpdate" label="Set your status..." onChange={handleStatusChange} variant="outlined" onChange={handleStatusChange}/>
                         <br/>
-                        <button type="submit" class="btn" style= {{color: 'white', backgroundColor: '#0061c9'}}>Submit</button>
+                        <button type="submit" class={`btn ${classes.buttons}`}>Submit</button>
                     </form>
                 )}
                 <h3>Email: </h3>

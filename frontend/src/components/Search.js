@@ -21,7 +21,12 @@ const styles = makeStyles({
     card: {
         marginBottom:20,
         display:'inline'
-    }
+    },
+
+    buttons: {
+        color: 'white',
+        backgroundColor: '#0061c9',
+    },
 });
 
 
@@ -209,7 +214,7 @@ const Search = (props) => {
                             </div>
                             <button
                                 type="submit"
-                                class="btn col-sm-2"
+                                class={`btn col-sm-2 ${classes.buttons}`}
                                 style= {{color: 'white', backgroundColor: '#0061c9'}}
                             >
                                 Search
@@ -222,8 +227,7 @@ const Search = (props) => {
                             <h4></h4>
                             <h5 class="mb-0">
                                 <button
-                                    class="btn"
-                                    style= {{color: 'white', backgroundColor: '#0061c9'}}
+                                    class={`btn ${classes.buttons}`}
                                     type="button"
                                     data-toggle="collapse"
                                     data-target="#collapseOne"
@@ -242,10 +246,10 @@ const Search = (props) => {
                 {!loading && pageData && createGameCards()}
                 <br />
                 <div class='text-center'>
-                    {showPrev && <button className={`btn col-sm-2 ${classes.prevBtn}`} style= {{color: 'white', backgroundColor: '#0061c9'}}  onClick={() => {
+                    {showPrev && <button className={`btn col-sm-2 ${classes.prevBtn} ${classes.buttons}`} onClick={() => {
                         history.push(`/games/search/${parseInt(props.match.params.pageNum) - 1}`, { searchTerm: props.location.state.searchTerm })
                     }}>Previous</button>}
-                    {showNext && <button className={`btn btn-primary col-sm-2 ${classes.nextBtn}`} style= {{color: 'white', backgroundColor: '#0061c9'}} onClick={() => {
+                    {showNext && <button className={`btn btn-primary col-sm-2 ${classes.nextBtn} ${classes.buttons}`} onClick={() => {
                         history.push(`/games/search/${parseInt(props.match.params.pageNum) + 1}`, { searchTerm: props.location.state.searchTerm })
                     }}>Next</button>}
                 </div>

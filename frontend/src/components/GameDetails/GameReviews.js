@@ -27,7 +27,11 @@ const styles = makeStyles({
     reviewButton: {
         marginBottom: 20,
         textAlign: 'center'
-    }
+    },
+
+    text: {
+        color: '#0061c9',
+    },
 });
 
 const GameReviews = (props) => {
@@ -60,7 +64,7 @@ const GameReviews = (props) => {
                                     sameUser: false
                                 }
                                 }>
-                                    <Card.Title style={{color: '#0061c9'}}>{r.displayName}</Card.Title>
+                                    <Card.Title className={classes.text}>{r.displayName}</Card.Title>
                                 </Link>
                                 <Rating
                                     name="read-only"

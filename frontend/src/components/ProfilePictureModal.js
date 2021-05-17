@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { makeStyles } from '@material-ui/core';
+
+const styles = makeStyles({
+    buttons: {
+        color: 'white',
+        backgroundColor: '#0061c9',
+    },
+});
 
 const ProfilePictureModal = (props) => {
+    const classes = styles();
     const [show, setShow] = useState(false);
     const [file, setFile] = useState(false);
     const url = `http://localhost:5000/users/picture?idToken=${props.idToken}`;
@@ -71,7 +80,7 @@ const ProfilePictureModal = (props) => {
 
     return (
         <div>
-            <Button style= {{color: 'white', backgroundColor: '#0061c9'}} onClick={handleShow}>
+            <Button className={classes.buttons} onClick={handleShow}>
                 Change Profile Picture
             </Button>
             <Modal
@@ -96,13 +105,13 @@ const ProfilePictureModal = (props) => {
                                 onChange={handleFileChange}
                             />
                         </Form.Group>
-                        <Button style= {{color: 'white', backgroundColor: '#0061c9'}} type="submit">
+                        <Button className={classes.buttons} type="submit">
                             Submit
                         </Button>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button style= {{color: 'white', backgroundColor: '#0061c9'}} onClick={handleClose}>Close</Button>
+                    <Button className={classes.buttons} onClick={handleClose}>Close</Button>
                 </Modal.Footer>
             </Modal>
         </div>
