@@ -44,6 +44,8 @@ const GameReviews = (props) => {
                     <div className={classes.reviewButton}>
                         <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} setReloadAverageRating={props.setReloadAverageRating} />
                     </div>
+                    <h3></h3>
+                    <h4></h4>
                     <h5 class="text-center">No reviews</h5>
                 </div>);
         } else {
@@ -58,7 +60,7 @@ const GameReviews = (props) => {
                                     sameUser: false
                                 }
                                 }>
-                                    <Card.Title>{r.displayName}</Card.Title>
+                                    <Card.Title style={{color: '#0061c9'}}>{r.displayName}</Card.Title>
                                 </Link>
                                 <Rating
                                     name="read-only"

@@ -119,14 +119,14 @@ const GameReviewModal = (props) => {
 
     if (loading) {
         return (
-            <Button variant="primary" disabled>
+            <Button style= {{color: 'white', backgroundColor: '#0061c9'}} disabled>
                 Add a review
             </Button>
         );
     } else {
         return (
             <div>
-                <Button variant="primary" className = "mx-3" onClick={handleShow}>
+                <Button style= {{color: 'white', backgroundColor: '#0061c9'}} variant="dark" className = "mx-3" onClick={handleShow}>
                     {reviewed ? 'Edit Review' : 'Add Review'}
                 </Button>
                 <Modal
@@ -168,7 +168,7 @@ const GameReviewModal = (props) => {
                             </Form.Group>
                             <Button
                                 className="mx-3"
-                                variant="primary"
+                                style= {{color: 'white', backgroundColor: '#0061c9'}}
                                 type="submit"
                             >
                                 {reviewed ? 'Update Review' : 'Submit Review'}
@@ -185,7 +185,7 @@ const GameReviewModal = (props) => {
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={handleClose}>Close</Button>
+                        <Button style= {{color: 'white', backgroundColor: '#0061c9'}} onClick={handleClose}>Close</Button>
                     </Modal.Footer>
                 </Modal>
             </div>

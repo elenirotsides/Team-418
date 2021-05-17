@@ -3,7 +3,7 @@ import { doLogOut } from '../firebase/FirebaseFunctions';
 
 const LogOutButton = () => {
     return (
-        <button className="btn btn-primary" type="button" onClick={doLogOut}>
+        <button className="btn" style= {{color: 'white', backgroundColor: '#0061c9'}} type="button" onClick={doLogOut}>
             Log out
         </button>
     );

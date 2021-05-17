@@ -305,8 +305,9 @@ const Profile = (props) => {
                             </h2>
                         )}
                     </div>
+                    <label for='left'></label>
                     {showLeftArrow && (
-                        <button
+                        <button id='left'
                             className={`${classes.leftArrow} ${classes.navArrow}`}
                             onClick={(e) => {
                                 const scrollView = document.getElementById(
@@ -321,8 +322,9 @@ const Profile = (props) => {
                         ></button>
                     )}
 
+                    <label for='right'></label>
                     {showRightArrow && (
-                        <button
+                        <button id='right'
                             className={`${classes.rightArrow} ${classes.navArrow}`}
                             onClick={(e) => {
                                 const scrollView = document.getElementById(
@@ -449,6 +451,7 @@ const Profile = (props) => {
     else {
         return (
             <div className="text-center">
+                <h1></h1>
                 <h2>Profile Page</h2>
                 {!idToken && <img src="/imgs/profile.png" alt="profile" />}
                 {idToken && !props.location.userId && (
@@ -479,7 +482,7 @@ const Profile = (props) => {
                 <h3>Status: </h3>
                 <p>{userData && userData.status || "No Status Yet"}</p>
                 {(!props.location.userId || sameUser )&& (
-                    <button class="btn btn-primary" onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
+                    <button class="btn" style= {{color: 'white', backgroundColor: '#0061c9'}} onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
                 )}
                 {statusToggle && (
                     <form noValidate autocomplete="off" onSubmit={editStatus}>
@@ -487,7 +490,7 @@ const Profile = (props) => {
                         <div id="errorDiv"></div>
                         <TextField id="statusUpdate" label="Set your status..." onChange={handleStatusChange} variant="outlined" onChange={handleStatusChange}/>
                         <br/>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn" style= {{color: 'white', backgroundColor: '#0061c9'}}>Submit</button>
                     </form>
                 )}
                 <h3>Email: </h3>
