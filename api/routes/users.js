@@ -229,7 +229,10 @@ router.get('/picture', async function (req, res) {
             path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
         );
     } catch (error) {
-        res.sendStatus(404);
+        // send default for race condition with DB
+        res.sendFile(
+            path.resolve(`${profilePictureDirectory}/profile.png`)
+        );
     }
 });
 
@@ -276,7 +279,10 @@ router.get('/picture/:userId', async function (req, res) {
             path.resolve(`${profilePictureDirectory}/${user.profilePic}`)
         );
     } catch (error) {
-        res.sendStatus(404);
+        // send default for race condition with DB
+        res.sendFile(
+            path.resolve(`${profilePictureDirectory}/profile.png`)
+        );
     }
 });
 
@@ -295,7 +301,6 @@ router.post('/create', async function (req, res) {
             await usersData.addUser(
                 firstName,
                 lastName,
-                req.googleInfo.email,
                 req.googleInfo.email
             );
             console.log('User successfully created');
