@@ -162,12 +162,42 @@ const Search = (props) => {
             );
     }
 
+    async function fetchNewGames() {
+        if (!idToken) idToken = await getUserIdToken();
+
+        setLoading(true);
+        // get popular games
+        fetch(`http://localhost:5000/games/new?idToken=${idToken}&type=all&page=${props.match.params.pageNum}`, {
+            credentials: 'include',
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setLoading(false);
+                    setPageData(result);
+                    setShowPrev(props.match.params.pageNum > 0)
+                    setShowNext(result.length === 12);
+                },
+                (error) => {
+                    setLoading(false);
+                    setError(true);
+                }
+            );
+    }
+
     useEffect(() => {
         if (props.location.pathname.includes('/games/allpopular')) {
             // reuse search page for popular games
             setLocationPathName('/games/allpopular/')
             setCustomTitle('Games by popularity');
             fetchPopularGames();
+            return;
+        } if (props.location.pathname.includes('/games/allnew')) {
+            // reuse search page for new games
+            setLocationPathName('/games/allnew/')
+            setCustomTitle('New Games');
+            fetchNewGames();
+            return;
         } else {
             // BAU Search page
             setLocationPathName('/games/search/')

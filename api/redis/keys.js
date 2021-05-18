@@ -1,7 +1,11 @@
 const dataKeys = {
     games: 'games/',
-    gamesPopular: 'games/popular',
-    gamesNew: 'games/new',
+    gamesPopular: (type, offset)  => {
+        return `games/popular/${type}/${offset}`;
+    },
+    gamesNew: (type, offset)  => {
+        return `games/new/${type}/${offset}`;
+    },
     gamesId: (id) => {
         return `games/${id}`;
     },
