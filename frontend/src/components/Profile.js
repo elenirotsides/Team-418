@@ -216,7 +216,6 @@ const Profile = (props) => {
                 props && props.location.userId
                     ? `${reviewsUrl}/?idToken=${token}&userId=${props.location.userId}`
                     : `${reviewsUrl}?idToken=${token}`;
-            console.log(queryUrl);
             const response = await fetch(queryUrl, {
                 method: 'GET',
             });
