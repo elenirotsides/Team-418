@@ -5,7 +5,8 @@ const styles = makeStyles({
     item: {
         display:'inline',
         marginBottom:20,
-        textAlign:'center'
+        textAlign:'center',
+        minWidth:100
     },
     img: {
         width:60,
