@@ -133,18 +133,42 @@ const Search = (props) => {
         }
     }
 
+    async function fetchPopularGames() {
+        if (!idToken) idToken = await getUserIdToken();
+
+        // get popular games
+        fetch(`http://localhost:5000/games/popular?idToken=${idToken}&page=all&offset=0`, {
+            credentials: 'include',
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setPageData(result);
+                },
+                (error) => {
+                    setError(true);
+                }
+            );
+    }
+
     useEffect(() => {
-        if (
-            props &&
-            props.location &&
-            props.location.state &&
-            props.location.state.searchTerm
-        ) {
-            document.getElementById('searchTerm').value =
-                props.location.state.searchTerm;
-            search(null, props.location.state.searchTerm, props.match.params.pageNum);
+        if (props.location.pathname === '/games/allpopular') {
+            // reuse search page for popular games
+            fetchPopularGames();
+        } else {
+            // BAU Search page
+            if (
+                props &&
+                props.location &&
+                props.location.state &&
+                props.location.state.searchTerm
+            ) {
+                document.getElementById('searchTerm').value =
+                    props.location.state.searchTerm;
+                search(null, props.location.state.searchTerm, props.match.params.pageNum);
+            }
+            getSearchInfo();
         }
-        getSearchInfo();
     }, [props, props.location.pathname]);
 
     function getAdvancedOptions() {

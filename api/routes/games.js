@@ -41,6 +41,8 @@ router.get(
     async function (req, res) {
         try {
             const cacheData = await getCachedData(dataKeys.gamesPopular);
+            const offset = req.query && req.query.offset ? req.query.offset : 0;
+            const limit = req.query && req.query.page === 'all' ? 12 : 10;
             if (cacheData) {
                 res.json(cacheData);
             } else {
