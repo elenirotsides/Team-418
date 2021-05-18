@@ -26,7 +26,8 @@ const GameDetailsPlatforms = (props) => {
     platforms = props.data.platforms && props.data.platforms.map((p) => {
         return (
                 <Grid className={classes.item} item spacing={10} xs={12} s={2} md={4}>
-                    <img className={classes.img} src={p.platform_logo.url} alt='icon'/>
+                    {p && p.platform_logo && p.platform_logo.url &&
+                    <img className={classes.img} src={p.platform_logo.url} alt='icon'/> }
                     <div>{p.name}</div>
                 </Grid>
         )
