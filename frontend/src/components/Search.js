@@ -115,18 +115,19 @@ const Search = (props) => {
     function createGameCards() {
         if (pageData && pageData.length === 0) {
             return (
-                <div class="text-center">
+                <div className="text-center">
                     <h2>No Games Found.</h2>
                 </div>
             );
         } 
         else {
             return (
-                <div class="ml-3 mr-2">
+                <div key='cards' className="ml-3 mr-2">
                     {pageData &&
                         pageData.map((game) => {
                             return (
                                 <GameSizableCard
+                                    key={game.id}
                                     data={game}
                                     cardWidth={'24%'}
                                     cardPaddingTop={'24%'}
@@ -227,25 +228,25 @@ const Search = (props) => {
         return (
             <div
                 id="collapseOne"
-                class="collapse"
+                className="collapse"
                 aria-labelledby="headingOne"
                 data-parent="#accordionExample"
             >
-                <div class="card-body text-center">
-                    <label class="m-1">Genre</label>
+                <div className="card-body text-center">
+                    <label className="m-1">Genre</label>
                     <select onChange={(e) => setGenre(e.target.value)}>
                         <option value="-1">All</option>
                         {searchInfo.genres &&
                             searchInfo.genres.map((g) => {
-                                return <option value={g.id}>{g.name}</option>;
+                                return <option key={g.id} value={g.id}>{g.name}</option>;
                             })}
                     </select>
-                    <label class="m-1">Platform</label>
+                    <label className="m-1">Platform</label>
                     <select onChange={(e) => setPlatform(e.target.value)}>
                         <option value="-1">All</option>
                         {searchInfo.platforms &&
                             searchInfo.platforms.map((p) => {
-                                return <option value={p.id}>{p.name}</option>;
+                                return <option key={p.id} value={p.id}>{p.name}</option>;
                             })}
                     </select>
                 </div>
@@ -255,7 +256,7 @@ const Search = (props) => {
 
     if (error) {
         return (
-            <div class="text-center">
+            <div className="text-center">
                 <h2>Error</h2>
                 <p>
                     500 Error: An error occurred while communicating with the
@@ -266,7 +267,7 @@ const Search = (props) => {
     } else {
         return (
             <div className={classes.page}>
-                <div class="container">
+                <div className="container">
                     <form onSubmit={(e) => {
                         const errorDiv = document.getElementById('errorDiv');
                         errorDiv.innerHTML = '';
@@ -282,39 +283,39 @@ const Search = (props) => {
                             errorP.textContent = 'Search term cannot be empty.';
                             errorDiv.append(errorP);
                         }
-                    }} class="my-3">
+                    }} className="my-3">
                         <div id="errorDiv" class="text-center"></div>
-                        <div class="form-group row">
+                        <div className="form-group row">
                             <label
-                                for="searchTerm"
-                                class="col-sm-2 col-form-label text-right"
+                                forhtml="searchTerm"
+                                className="col-sm-2 col-form-label text-right"
                             >
                                 Search
                             </label>
-                            <div class="col-sm-8">
+                            <div className="col-sm-8">
                                 <input
                                     type="text"
-                                    class="form-control"
+                                    className="form-control"
                                     id="searchTerm"
                                     placeholder="Search Term"
                                 />
                             </div>
                             <button
                                 type="submit"
-                                class={`btn col-sm-2 ${classes.buttons}`}
+                                className={`btn col-sm-2 ${classes.buttons}`}
                                 style= {{color: 'white', backgroundColor: '#0061c9'}}
                             >
                                 Search
                             </button>
                         </div>
-                        <div class="accordion text-center">
+                        <div className="accordion text-center">
                             <h1></h1>
                             <h2></h2>
                             <h3></h3>
                             <h4></h4>
-                            <h5 class="mb-0">
+                            <h5 className="mb-0">
                                 <button
-                                    class={`btn ${classes.buttons}`}
+                                    className={`btn ${classes.buttons}`}
                                     type="button"
                                     data-toggle="collapse"
                                     data-target="#collapseOne"
@@ -329,10 +330,10 @@ const Search = (props) => {
                     </form>
                 </div>
                 {customTitle && <p className={classes.customTitle}>{customTitle}</p>}
-                {loading && <div class="text-center"><h2>Loading...</h2></div>}
+                {loading && <div className="text-center"><h2>Loading...</h2></div>}
                 {!loading && pageData && createGameCards()}
                 <br />
-                <div class='text-center'>
+                <div className='text-center'>
                     {showPrev && <button className={`btn col-sm-2 ${classes.prevBtn} ${classes.buttons}`} onClick={() => {
                         history.push(`${locationPathName}${parseInt(props.match.params.pageNum) - 1}`, { 
                             searchTerm: props && props.location && props.location.state && props.location.state.searchTerm ? props.location.state.searchTerm  : null  })

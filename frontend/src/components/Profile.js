@@ -320,7 +320,7 @@ const Profile = (props) => {
                             </h2>
                         )}
                     </div>
-                    <label for="left"></label>
+                    <label forhtml="left"></label>
                     {showLeftArrow && (
                         <button
                             id="left"
@@ -338,7 +338,7 @@ const Profile = (props) => {
                         ></button>
                     )}
 
-                    <label for="right"></label>
+                    <label forhtml="right"></label>
                     {showRightArrow && (
                         <button
                             id="right"
@@ -370,15 +370,16 @@ const Profile = (props) => {
         } else if (!reviews || reviews.length === 0) {
             return (
                 <div className={classes.noReviews}>
-                    <h5 class="text-center">No reviews</h5>
+                    <h5 className="text-center">No reviews</h5>
                 </div>
             );
         } else {
             let cards = reviews.map((r) => {
                 return (
                     <Grid
+                    key={r.title}
                         item
-                        class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 m-4"
+                        className="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 m-4"
                     >
                         <Card style={{ width: '100%' }}>
                             <Card.Body>
@@ -412,7 +413,6 @@ const Profile = (props) => {
                         container
                         justify="center"
                         alignItems="center"
-                        spacing="0"
                         className={`noScrollbar ${classes.container}`}
                     >
                         {cards}
@@ -450,7 +450,7 @@ const Profile = (props) => {
 
     if (error) {
         return (
-            <div class="text-center">
+            <div className="text-center">
                 <h3>Error</h3>
                 <p>
                     There was an error loading your profile. Please try
@@ -460,7 +460,7 @@ const Profile = (props) => {
         );
     } else if (loading) {
         return (
-            <div class="text-center">
+            <div className="text-center">
                 <h2>Loading...</h2>
             </div>
         );
@@ -473,7 +473,7 @@ const Profile = (props) => {
                 {idToken && !props.location.userId && (
                     <img
                         crossOrigin="anonymous"
-                        class="my-3 bg-dark"
+                        className="my-3 bg-dark"
                         src={`http://localhost:5000/users/picture?idToken=${idToken}`}
                         alt="profile"
                     />
@@ -481,7 +481,7 @@ const Profile = (props) => {
                 {idToken && props && props.location.userId && (
                     <img
                         crossOrigin="anonymous"
-                        class="my-3 bg-dark"
+                        className="my-3 bg-dark"
                         src={`http://localhost:5000/users/picture/${props.location.userId}?idToken=${idToken}`}
                         alt="profileeee"
                     />
@@ -499,7 +499,7 @@ const Profile = (props) => {
                 <p>{(userData && userData.status) || 'No Status Yet'}</p>
                 {(!props.location.userId || sameUser) && (
                     <button
-                        class={`btn ${classes.buttons}`}
+                    className={`btn ${classes.buttons}`}
                         onClick={() => setStatusToggle(!statusToggle)}
                     >
                         Change Status
@@ -517,7 +517,7 @@ const Profile = (props) => {
                             onChange={handleStatusChange}
                         />
                         <br />
-                        <button type="submit" class={`btn ${classes.buttons}`}>
+                        <button type="submit" className={`btn ${classes.buttons}`}>
                             Submit
                         </button>
                     </form>

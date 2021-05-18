@@ -89,7 +89,7 @@ const Game = (props) => {
     }, []);
 
     if (loading) {
-        return <h3 class="text-center">Loading.....</h3>;
+        return <h3 className="text-center">Loading.....</h3>;
     } else {
         return (
             <div className={classes.page}>
@@ -106,12 +106,12 @@ const Game = (props) => {
                         </div>
                         <div className={classes.defaultSpacing}>
                             <Grid container justify='center' alignItems='center'>
-                                <Grid item s={12} m={6} className={`${classes.details} ${classes.detailCard}`}>
+                                <Grid key='details' item s={12} m={6} className={`${classes.details} ${classes.detailCard}`}>
                                     <div>
                                         <GameMoreDetails data={pageData} />
                                     </div>
                                 </Grid>
-                                <Grid item s={12} m={6} className={classes.detailCard}>
+                                <Grid key='platforms' item s={12} m={6} className={classes.detailCard}>
                                     <div className={classes.platforms}>
                                         <GameDetailsPlatforms data={pageData} />
                                     </div>
