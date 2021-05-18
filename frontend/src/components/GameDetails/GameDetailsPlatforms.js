@@ -12,6 +12,9 @@ const styles = makeStyles({
         width:60,
         height:60,
         objectFit:'contain'
+    },
+    title: {
+        fontSize:20
     }
 });
 
@@ -32,7 +35,7 @@ const GameDetailsPlatforms = (props) => {
 
     return (
         <div>
-            <h5>Platforms</h5>
+            <h1 className={classes.title}>Platforms</h1>
             <Grid container justify='center' alignItems='center'>
                 {platforms}
             </Grid>

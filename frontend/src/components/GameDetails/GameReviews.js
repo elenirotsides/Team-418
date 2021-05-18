@@ -27,6 +27,14 @@ const styles = makeStyles({
     reviewButton: {
         marginBottom: 20,
         textAlign: 'center'
+    },
+    
+    h1: {
+        fontSize:20
+    },
+
+    title: {
+        color:"#0072ee"
     }
 });
 
@@ -44,7 +52,7 @@ const GameReviews = (props) => {
                     <div className={classes.reviewButton}>
                         <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} setReloadAverageRating={props.setReloadAverageRating} />
                     </div>
-                    <h5 class="text-center">No reviews</h5>
+                    <h1 className={`${classes.h1} text-center`}>No reviews</h1>
                 </div>);
         } else {
             let cards = reviews.map((r) => {
@@ -58,7 +66,7 @@ const GameReviews = (props) => {
                                     sameUser: false
                                 }
                                 }>
-                                    <Card.Title>{r.username}</Card.Title>
+                                    <Card.Title className={classes.title}>{r.username}</Card.Title>
                                 </Link>
                                 <Rating
                                     name="read-only"
@@ -129,12 +137,12 @@ const GameReviews = (props) => {
             </div>
             <div className={classes.heading}>
                 {loading && !error && (
-                    <h5 class="text-center">Loading reviews...</h5>
+                    <h1 className={`${classes.h1} text-center`}>Loading reviews...</h1>
                 )}
                 {!loading && error && (
-                    <h5 class="text-center text-danger">
+                    <h1 className={`${classes.h1} text-center text-danger`}>
                         Failed to load reviews...
-                    </h5>
+                    </h1>
                 )}
             </div>
             {!loading && !error && createReviewsList()}
