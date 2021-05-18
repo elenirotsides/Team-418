@@ -141,7 +141,6 @@ router.get(
                         `fields name, cover.url, age_ratings.rating, screenshots.url, summary, genres.name, platforms.name, platforms.platform_logo.url, game_modes.name, player_perspectives.name, themes.name, websites.category, websites.url, category, first_release_date, involved_companies.company.name, involved_companies.publisher, involved_companies.developer; where id = ${req.params.id};`
                     )
                 );
-
                 res.json(response.data[0]);
                 setCachedData(dataKeys.gamesId(id), response.data[0], 3600);
             }
@@ -212,7 +211,7 @@ router.post(
                 if (req.body.hasOwnProperty(key))
                     advancedFields +=
                         (advancedFields ? ' &' : ' ') +
-                        `${key}=${req.body[key]}`;
+                        `${key}=(${req.body[key]})`;
             }
             if (advancedFields) fieldString += `where ${advancedFields};`;
             const cacheData = await getCachedData(
