@@ -46,6 +46,7 @@ const GameReviews = (props) => {
                     <div className={classes.reviewButton}>
                         <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} setReloadAverageRating={props.setReloadAverageRating} />
                     </div>
+                    <h2></h2>
                     <h3></h3>
                     <h4></h4>
                     <h5 class="text-center">No reviews</h5>

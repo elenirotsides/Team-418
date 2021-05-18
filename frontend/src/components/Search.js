@@ -4,7 +4,6 @@ import GameSizableCard from './Home/GameSizableCard';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
-
 const styles = makeStyles({
     page: {
         margin:60
@@ -28,7 +27,6 @@ const styles = makeStyles({
         backgroundColor: '#0061c9',
     },
 });
-
 
 const Search = (props) => {
     const classes = styles();

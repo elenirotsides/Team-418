@@ -6,6 +6,7 @@ import GameReviews from './GameReviews';
 import {Grid, makeStyles } from '@material-ui/core';
 import GameMoreDetails from './GameMoreDetails';
 import GameDetailsPlatforms from './GameDetailsPlatforms';
+import NotFound from '../NotFound';
 
 const styles = makeStyles({
     defaultSpacing: {
@@ -44,22 +45,20 @@ const Game = (props) => {
     async function fetchData() {
         if (!idToken) idToken = await getUserIdToken();
 
-        fetch(
+        const response = await fetch(
             `http://localhost:5000/games/game/${props.match.params.id}?idToken=${idToken}`,
             {
                 credentials: 'include',
             }
-        )
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setPageData(result);
-                    setLoading(false);
-                },
-                (error) => {
-                    setPageData(null);
-                }
-            );
+        );
+        if (response.status === 200) {
+            const data = await response.json();
+            setPageData(data);
+            setLoading(false);
+        } else {
+            setLoading(false);
+            setPageData(null);
+        }
     }
 
     async function fetchUserData() {
@@ -139,6 +138,8 @@ const Game = (props) => {
                         <div className={classes.defaultSpacing}></div>
                     </div>
                 )}
+
+                {!pageData && <NotFound />}
             </div>
         );
     }

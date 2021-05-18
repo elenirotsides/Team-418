@@ -65,7 +65,6 @@ const NavigationAuth = () => {
     async function setUserIdToken() {
         const token = await getUserIdToken();
         setIdToken(token);
-        console.log(idToken);
     }
     setUserIdToken();
 
