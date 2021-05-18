@@ -34,6 +34,7 @@ router.get('/profile', async function (req, res) {
 router.get('/profile/other/:userId', async function (req, res) {
     let email = req.googleInfo.email;
     let userId = req.params.userId;
+    if (!ObjectId.isValid(userId)) return res.status(400).json({error:'Invalid user id'});
     try {
         const user = await usersData.getUserById(userId);
         const currentUser = await usersData.getUserByEmail(email);
@@ -100,14 +101,12 @@ router.get(
     IGDBSessionHandler.instance.validateSession(),
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
-        // email comes validated from Google
-        let email = req.googleInfo.email;
         let userId = req.params.userId;
+        if (!ObjectId.isValid(userId)) return res.status(400).json({error:'Invalid user id'});
         let str = '(';
         {
             try {
                 const user = await usersData.getUserById(userId);
-                const currentUser = await usersData.getUserByEmail(email);
                 const favoriteGames = [];
                 try {
                     for (const gameId of user.favoriteGames) 
@@ -277,6 +276,7 @@ router.post('/modifyfavorites/:operation', async function(req, res){
 router.get('/picture/:userId', async function (req, res) {
     // email field is appended by the google auth middleware, it will be previously validated
     let userId = req.params.userId;
+    if (!ObjectId.isValid(userId)) return res.status(400).json({error:'Invalid user id'});
     try {
         try {
             const user = await usersData.getUserById(userId);
