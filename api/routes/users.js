@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const validation = require('../data/').validation;
 const usersData = require('../data').users;
 const reviewsData = require('../data').reviews;
 const gamesData = require('../data').games;
@@ -14,7 +13,6 @@ const maxFileSize = 2 * 1024 * 1024;
 const maxFileSizeString = '2MB';
 const gm = require('gm').subClass({ imageMagick: true });
 const IGDBSessionHandler = require('../IGDB/IGDBSessionHandler');
-const { getCachedData, setCachedData, dataKeys } = require('../redis');
 const axios = require('axios');
 const { ObjectId } = require('mongodb');
 

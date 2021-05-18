@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
 import GameSizableCard from './Home/GameSizableCard';
-import { NavLink, Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
 

@@ -1,4 +1,4 @@
-import { makeStyles, useScrollTrigger } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 import { Rating } from '@material-ui/lab';

@@ -7,7 +7,6 @@ import { makeStyles, Grid } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import { Card, Button } from 'react-bootstrap';
 import TextField from '@material-ui/core/TextField';
-import { Redirect } from 'react-router';
 
 const styles = makeStyles({
     title: {
@@ -433,7 +432,6 @@ const Profile = (props) => {
         fetchProfile();
         fetchFavoriteGames();
         fetchReviews();
-        // fetchStatus();
     }, []);
 
     if (error) {
