@@ -26,6 +26,10 @@ const styles = makeStyles({
         color: 'white',
         backgroundColor: '#0061c9',
     },
+
+    customTitle:{
+        fontSize:24
+    }
 });
 
 const Search = (props) => {
@@ -38,6 +42,8 @@ const Search = (props) => {
     const [platform, setPlatform] = useState(undefined);
     const [showPrev, setShowPrev] = useState(false);
     const [showNext, setShowNext] = useState(false);
+    const [locationPathName, setLocationPathName] = useState('');
+    const [customTitle, setCustomTitle] = useState('');
 
     let idToken;
     const searchInfoUrl = 'http://localhost:5000/games/search/info';
@@ -136,27 +142,36 @@ const Search = (props) => {
     async function fetchPopularGames() {
         if (!idToken) idToken = await getUserIdToken();
 
+        setLoading(true);
         // get popular games
-        fetch(`http://localhost:5000/games/popular?idToken=${idToken}&page=all&offset=0`, {
+        fetch(`http://localhost:5000/games/popular?idToken=${idToken}&type=all&page=${props.match.params.pageNum}`, {
             credentials: 'include',
         })
             .then((res) => res.json())
             .then(
                 (result) => {
+                    setLoading(false);
                     setPageData(result);
+                    setShowPrev(props.match.params.pageNum > 0)
+                    setShowNext(result.length === 12);
                 },
                 (error) => {
+                    setLoading(false);
                     setError(true);
                 }
             );
     }
 
     useEffect(() => {
-        if (props.location.pathname === '/games/allpopular') {
+        if (props.location.pathname.includes('/games/allpopular')) {
             // reuse search page for popular games
+            setLocationPathName('/games/allpopular/')
+            setCustomTitle('Games by popularity');
             fetchPopularGames();
         } else {
             // BAU Search page
+            setLocationPathName('/games/search/')
+            setCustomTitle(null);
             if (
                 props &&
                 props.location &&
@@ -263,16 +278,20 @@ const Search = (props) => {
                         {searchInfo && getAdvancedOptions()}
                     </form>
                 </div>
+                {customTitle && <p className={classes.customTitle}>{customTitle}</p>}
                 <div id="errorDiv" class="text-center">{error && <p>{error}</p>}</div>
                 {loading && <div class="text-center"><h2>Loading...</h2></div>}
                 {!loading && pageData && createGameCards()}
                 <br />
                 <div class='text-center'>
                     {showPrev && <button className={`btn col-sm-2 ${classes.prevBtn} ${classes.buttons}`} onClick={() => {
-                        history.push(`/games/search/${parseInt(props.match.params.pageNum) - 1}`, { searchTerm: props.location.state.searchTerm })
+                        history.push(`${locationPathName}${parseInt(props.match.params.pageNum) - 1}`, { 
+                            searchTerm: props && props.location && props.location.state && props.location.state.searchTerm ? props.location.state.searchTerm  : null  })
                     }}>Previous</button>}
                     {showNext && <button className={`btn btn-primary col-sm-2 ${classes.nextBtn} ${classes.buttons}`} onClick={() => {
-                        history.push(`/games/search/${parseInt(props.match.params.pageNum) + 1}`, { searchTerm: props.location.state.searchTerm })
+                        setPageData(null);
+                        history.push(`${locationPathName}${parseInt(props.match.params.pageNum) + 1}`, {
+                            searchTerm: props && props.location && props.location.state && props.location.state.searchTerm ? props.location.state.searchTerm  : null  })
                     }}>Next</button>}
                 </div>
             </div>

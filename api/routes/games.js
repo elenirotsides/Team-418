@@ -41,16 +41,16 @@ router.get(
     async function (req, res) {
         try {
             const cacheData = await getCachedData(dataKeys.gamesPopular);
-            const offset = req.query && req.query.offset ? req.query.offset : 0;
-            const limit = req.query && req.query.page === 'all' ? 12 : 10;
-            if (cacheData) {
+            const offset = req.query && req.query.page ? req.query.page*12 : 0;
+            const limit = req.query && req.query.type === 'all' ? 12 : 10;
+            if (cacheData && false) {
                 res.json(cacheData);
             } else {
                 const response = await axios(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields cover.url, name, screenshots, age_ratings; sort aggregated_rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);'
+                        `limit ${limit}; offset ${offset}; fields cover.url, name, screenshots, age_ratings; sort aggregated_rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);`
                     )
                 );
 
