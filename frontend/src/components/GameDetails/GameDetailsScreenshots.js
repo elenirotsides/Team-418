@@ -154,11 +154,9 @@ const GameDetailsScreenshots = (props) => {
                 <div id='screenshotScrollView' className={`${classes.container} noScrollbar`} onScroll={OnScroll}>
                     {screenshotCards}
                 </div>
-                <label for="leftArrow">
-                    Left Arrow
-                </label>
+                
                 {showLeftArrow &&
-                    <button id='leftArrow' className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {
+                    <button className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('screenshotScrollView');
                         scrollView.scrollTo({
                             top: 0,
@@ -168,11 +166,8 @@ const GameDetailsScreenshots = (props) => {
                     }}></button>
                 }
 
-                <label for="rightArrow">
-                    Right Arrow
-                </label>
                 {showRightArrow &&
-                    <button id='rightArrow' className={`${classes.rightArrow} ${classes.navArrow}`} onClick={(e) => {
+                    <button className={`${classes.rightArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('screenshotScrollView');
                         scrollView.scrollTo({
                             top: 0,

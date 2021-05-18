@@ -27,10 +27,6 @@ const styles = makeStyles({
         width: '90%',
     },
 
-    gameName: {
-        fontSize:40
-    },
-
     coverImage: {
         display: 'inline-block',
         verticalAlign: 'top',
@@ -168,7 +164,7 @@ const GameDetailsHeader = (props) => {
         if (props.data.age_ratings && props.data.age_ratings.length > 0) {
             setAgeRatingUrl(urlForAgeRating(props.data.age_ratings[0].rating));
         }
-        
+
         if (props.data.involved_companies) {
             let developmentCompanies = props.data.involved_companies.filter((e) => e.developer == true);
             if (developmentCompanies.length > 0) {
@@ -233,7 +229,7 @@ const GameDetailsHeader = (props) => {
             fetch(url + '/add', requestOptions)
                 .then((res) => res.json())
                 .then(
-                    (result) => {},
+                    (result) => { },
                     (error) => {
                         console.log('Error: ' + error);
                     }
@@ -243,7 +239,7 @@ const GameDetailsHeader = (props) => {
             fetch(url + '/remove', requestOptions)
                 .then((res) => res.json())
                 .then(
-                    (result) => {},
+                    (result) => { },
                     (error) => {
                         console.log('Error: ' + error);
                     }
@@ -291,14 +287,14 @@ const GameDetailsHeader = (props) => {
             <div className={classes.leftContainer}>
                 <img className={classes.coverImage} src={props.data.cover.url} alt='cover image'></img>
                 <div>
-                    <button class='btn btn-primary mx-3' onClick={async () => addRemoveFavorites(props.userData)}>
+                    <button class='btn btn-primary' onClick={async () => addRemoveFavorites(props.userData)}>
                         {favText}
                     </button>
                 </div>
             </div>
             <div className={classes.rightContainer}>
                 <div className={classes.titleDescriptionContainer}>
-                    <h1 className={classes.gameName}>{props.data.name}</h1>
+                    <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         {getRatingInfo()}
@@ -307,7 +303,7 @@ const GameDetailsHeader = (props) => {
                 </div>
                 {ageRatingUrl && (
                     <div className={classes.ageRating}>
-                        <img className={classes.ageRatingImage} src={ageRatingUrl} alt='age rating'></img>
+                        <img className={classes.ageRatingImage} src={ageRatingUrl}></img>
                     </div>
                 )}
             </div>
