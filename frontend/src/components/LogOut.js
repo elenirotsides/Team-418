@@ -12,7 +12,7 @@ const styles = makeStyles({
 const LogOutButton = () => {
     const classes = styles();
     return (
-        <button class={`btn ${classes.buttons}`} type="button" onClick={doLogOut}>
+        <button className={`btn ${classes.buttons}`} type="button" onClick={doLogOut}>
             Log out
         </button>
     );

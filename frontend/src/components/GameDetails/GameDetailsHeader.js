@@ -297,7 +297,7 @@ const GameDetailsHeader = (props) => {
                 ></img>
                 <div>
                     <button
-                        class={`btn ${classes.buttons}`}
+                        className={`btn ${classes.buttons}`}
                         onClick={async () => addRemoveFavorites(props.userData)}
                     >
                         {favText}
