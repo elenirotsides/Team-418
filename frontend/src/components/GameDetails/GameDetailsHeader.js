@@ -93,6 +93,11 @@ const styles = makeStyles({
     center: {
         textAlign: 'center',
     },
+
+    buttons: {
+        color: 'white',
+        backgroundColor: '#0061c9',
+    },
 });
 
 const GameDetailsHeader = (props) => {
@@ -112,7 +117,7 @@ const GameDetailsHeader = (props) => {
             const response = await fetch(`http://localhost:5000/reviews/average/${props.data.id}?idToken=${idToken}`);
             if (response.status === 200) {
                 const data = await response.json();
-                setAverageRating(data.average);
+                setAverageRating(data.average.toFixed(2));
                 setRatingCount(data.count);
                 setRatingLoading(false);
             } else if (response.status === 404) {
@@ -285,15 +290,23 @@ const GameDetailsHeader = (props) => {
     return (
         <div>
             <div className={classes.leftContainer}>
-                <img className={classes.coverImage} src={props.data.cover.url} alt='cover image'></img>
+                <img
+                    className={classes.coverImage}
+                    src={props.data.cover.url}
+                    alt= "Cover Image"
+                ></img>
                 <div>
-                    <button class='btn btn-primary' onClick={async () => addRemoveFavorites(props.userData)}>
+                    <button
+                        class={`btn ${classes.buttons}`}
+                        onClick={async () => addRemoveFavorites(props.userData)}
+                    >
                         {favText}
                     </button>
                 </div>
             </div>
             <div className={classes.rightContainer}>
                 <div className={classes.titleDescriptionContainer}>
+                    <h1></h1>
                     <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
                         <p className={classes.publisherLabel}>{gameDeveloper}</p>
@@ -303,7 +316,11 @@ const GameDetailsHeader = (props) => {
                 </div>
                 {ageRatingUrl && (
                     <div className={classes.ageRating}>
-                        <img className={classes.ageRatingImage} src={ageRatingUrl}></img>
+                        <img
+                            alt = "Age Rating"
+                            className={classes.ageRatingImage}
+                            src={ageRatingUrl}
+                        ></img>
                     </div>
                 )}
             </div>

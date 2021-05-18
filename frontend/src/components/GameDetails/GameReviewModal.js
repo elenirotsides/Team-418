@@ -2,8 +2,17 @@ import { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { Rating } from '@material-ui/lab';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
+import { makeStyles } from '@material-ui/core';
+
+const styles = makeStyles({
+    buttons: {
+        color: 'white',
+        backgroundColor: '#0061c9',
+    },
+});
 
 const GameReviewModal = (props) => {
+    const classes = styles();
     const [show, setShow] = useState(false);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
@@ -119,14 +128,14 @@ const GameReviewModal = (props) => {
 
     if (loading) {
         return (
-            <Button variant="primary" disabled>
+            <Button className={classes.buttons} disabled>
                 Add a review
             </Button>
         );
     } else {
         return (
             <div>
-                <Button variant="primary" className = "mx-3" onClick={handleShow}>
+                <Button className = {`mx-3 ${classes.buttons}`} onClick={handleShow}>
                     {reviewed ? 'Edit Review' : 'Add Review'}
                 </Button>
                 <Modal
@@ -167,8 +176,7 @@ const GameReviewModal = (props) => {
                                 />
                             </Form.Group>
                             <Button
-                                className="mx-3"
-                                variant="primary"
+                                className = {`mx-3 ${classes.buttons}`}
                                 type="submit"
                             >
                                 {reviewed ? 'Update Review' : 'Submit Review'}
@@ -185,7 +193,7 @@ const GameReviewModal = (props) => {
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={handleClose}>Close</Button>
+                        <Button className={classes.buttons} onClick={handleClose}>Close</Button>
                     </Modal.Footer>
                 </Modal>
             </div>

@@ -110,8 +110,9 @@ const PopularGames = (props) => {
                     {loading &&
                         <h2 className={classes.loading}>Loading...</h2>}
                 </div>
+                <label for='left'></label>
                 {showLeftArrow &&
-                    <button className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {
+                    <button id='left' className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('popularGamesScrollView');
                         scrollView.scrollTo({
                             top: 0,
@@ -121,8 +122,9 @@ const PopularGames = (props) => {
                     }}></button>
                 }
 
+                <label for='right'></label>
                 {showRightArrow &&
-                    <button className={`${classes.rightArrow} ${classes.navArrow}`} onClick={(e) => {
+                    <button id='right' className={`${classes.rightArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('popularGamesScrollView');
                         scrollView.scrollTo({
                             top: 0,
