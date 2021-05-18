@@ -50,14 +50,12 @@ router.post('/', async function (req, res) {
                 oldReview._id,
                 rating,
                 comment,
-                Date.now().toLocaleString()
             );
         } else {
             await reviewsData.addReview(
                 req.googleInfo.email,
                 gameId,
                 rating,
-                Date.now().toLocaleString,
                 comment
             );
         }

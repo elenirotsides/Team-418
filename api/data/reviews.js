@@ -7,7 +7,7 @@ const games = mongoCollections.games;
 const userMethods = require('../data/users');
 const gameMethods = require('../data/games');
 const validate = require('./validation');
-const { validateGameEid, validateString } = require('./validation');
+const { validateGameEid, validateString, validateDate, validateRating, isGoodEmail } = require('./validation');
 
 module.exports = {
     // returns an array of all reviews
@@ -33,7 +33,7 @@ module.exports = {
     async getAllReviewsByUserId(id) {
         if (arguments.length !== 1) throw 'Usage: User Id';
         if (!ObjectId.isValid(id))
-            throw 'Review Id needs to be a valid ObjectId';
+            throw 'User Id needs to be a valid ObjectId';
 
         const reviewCollection = await reviews();
         const userReviews = await reviewCollection.find({ userId: id }).toArray();
@@ -43,7 +43,7 @@ module.exports = {
     //gets all reviews based on email
     async getAllReviewsByEmail(email) {
         if (arguments.length !== 1) throw 'Usage: User Email';
-        validateString(email)
+        if (!isGoodEmail(email)) throw 'Invalid Email';
         const user = await userMethods.getUserByEmail(email);
         const userReviews = await this.getAllReviewsByUserId(user._id);
         return userReviews;
@@ -65,7 +65,7 @@ module.exports = {
     async getReviewByEndpointIdAndEmail(gameEid, email) {
         if (arguments.length !== 2) throw 'Usage: Game Endpoint Id, User Email';
         validateGameEid(gameEid);
-        // email is validated through google
+        if (!isGoodEmail(email)) throw 'Invalid email';
         const user = await userMethods.getUserByEmail(email);
         let game = await gameMethods.getGameByEndpointId(gameEid);
         // game not found, so no review
@@ -80,19 +80,18 @@ module.exports = {
 
     // it adds a review obviously
     // comment is an optional parameter
-    async addReview(email, gameEid, rating, date, comment) {
+    async addReview(email, gameEid, rating, comment) {
         if (arguments.length !== 4 && arguments.length !== 5)
-            throw 'Usage: User Id, Game Endpoint Id, Rating, Date, (Optional) Comment';
-        if (!Number.isInteger(rating) || rating < 1 || rating > 10)
+            throw 'Usage: User Email, Game Endpoint Id, Rating, Date, (Optional) Comment';
+        if (!validateRating(rating))
             throw 'Rating needs to be a positive integer from 1-10';
         if (comment && !validate.validateString(comment))
             throw 'If you supply a comment, its gotta be a non empty string';
         validateGameEid(gameEid);
+        if(!isGoodEmail(email)) throw 'Invalid email';
 
         let word = '';
         if (comment) word = comment;
-
-        // TODO: validate date
 
         let user;
         let game;
@@ -110,7 +109,7 @@ module.exports = {
             gameId: game._id,
             rating: rating,
             comment: word,
-            datePosted: date,
+            datePosted: Date.now(),
         };
 
         const reviewCollection = await reviews();
@@ -161,10 +160,13 @@ module.exports = {
     },
 
     // updates the rating of the review only
-    // date is an optional parameter
-    async updateRating(reviewId, newRating, date = undefined) {
+    async updateRating(reviewId, newRating) {
         if (arguments.length != 2 && arguments.length != 3)
             throw 'Usage: Review Id, New Rating, OPTIONAL PARAMTER: Date';
+        let objId = new ObjectId(reviewId);
+        if (!ObjectId.isValid(objId)) throw 'Invalid review id';
+        if (!validateRating(newRating))
+            throw 'Rating needs to be a positive integer from 1-10';
 
         // retrive review object
         let review;
@@ -174,12 +176,6 @@ module.exports = {
             throw e;
         }
 
-        if (!Number.isInteger(newRating) || newRating < 1 || newRating > 10)
-            throw 'Rating needs to be a positive integer from 1-10';
-
-        let newDate = review.datePosted;
-        if (date) newDate = date;
-
         const changedReview = {
             _id: review._id,
             userId: review.userId,
@@ -187,7 +183,7 @@ module.exports = {
             rating: newRating,
             comment: review.comment,
             username: review.username,
-            datePosted: newDate,
+            datePosted: Date.now(),
         };
 
         const reviewCollection = await reviews();
@@ -201,10 +197,13 @@ module.exports = {
     },
 
     // updates the commment of the review only
-    // date is an optional parameter
-    async updateComment(reviewId, newComment, date = undefined) {
+    async updateComment(reviewId, newComment) {
         if (arguments.length != 2 && arguments.length != 3)
             throw 'Usage: Review Id, New Comment, OPTIONAL PARAMTER: Date';
+        let objId = new ObjectId(reviewId);
+        if (!ObjectId.isValid(objId)) throw 'Invalid review id';
+        if (!validate.validateString(newComment))
+            throw 'New Comment needs to be a non-empty string';
 
         // retrive review object
         let review;
@@ -214,12 +213,6 @@ module.exports = {
             throw e;
         }
 
-        if (!validate.validateString(newComment))
-            throw 'New Comment needs to be a non-empty string';
-
-        let newDate = review.datePosted;
-        if (date) newDate = date;
-
         const changedReview = {
             _id: review._id,
             userId: review.userId,
@@ -227,7 +220,7 @@ module.exports = {
             rating: review.rating,
             comment: newComment,
             username: review.username,
-            datePosted: newDate,
+            datePosted: Date.now(),
         };
 
         const reviewCollection = await reviews();
@@ -241,15 +234,20 @@ module.exports = {
     },
 
     // updates review with new rating and comment
-    // date is an optional parameter
-    async updateReview(reviewId, rating, comment, date = undefined) {
+    async updateReview(reviewId, rating, comment) {
         if (arguments.length != 3 && arguments.length != 4)
             throw 'Usage: Review Id, New Comment, OPTIONAL PARAMTER: Date';
+        let objId = new ObjectId(reviewId);
+        if (!ObjectId.isValid(objId)) throw 'Invalid review id';
+        if (!validateRating(rating))
+            throw 'Invalid rating, must be an integer from 1-10.';
+        if (comment && !validate.validateString(comment))
+            throw 'New Comment needs to be a non-empty string';
 
         let finalReview;
         try {
-            await this.updateRating(reviewId, rating, date);
-            finalReview = await this.updateComment(reviewId, comment, date);
+            await this.updateRating(reviewId, rating);
+            finalReview = await this.updateComment(reviewId, comment);
             return finalReview;
         } catch (e) {
             throw e;
