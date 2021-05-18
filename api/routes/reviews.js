@@ -3,7 +3,7 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const reviewsData = require('../data').reviews;
 const usersData = require('../data').users;
-const { validateString, validateGameEid } = require('../data/validation');
+const { validateString, validateGameEid, validateRating } = require('../data/validation');
 
 router.post('/retrieve', async function (req, res) {
     let userId = req.body.userId;
@@ -31,7 +31,7 @@ router.post('/', async function (req, res) {
     } catch (e) {
         return res.status(400).json({ error: e });
     }
-    if (!Number.isInteger(rating) || rating < 0 || rating > 10)
+    if (!validateRating(rating))
         return res
             .status(400)
             .json({ error: 'Rating must be an integer between 0 and 10.' });
@@ -50,14 +50,12 @@ router.post('/', async function (req, res) {
                 oldReview._id,
                 rating,
                 comment,
-                Date.now().toLocaleString()
             );
         } else {
             await reviewsData.addReview(
                 req.googleInfo.email,
                 gameId,
                 rating,
-                Date.now().toLocaleString,
                 comment
             );
         }
@@ -108,8 +106,11 @@ router.get('/average/:gameId', async function (req, res) {
 router.get('/:gameId/user', async function (req, res) {
     try {
         const gameId = Number.parseInt(req.params.gameId);
-        if (!Number.isInteger(gameId) || gameId < 0)
-            return res.status(400).json({ error: 'Invalid game id.' });
+        try {
+            validateGameEid(gameId);
+        } catch (e) {
+            return res.status(400).json({ error: e });
+        }
         const review = await reviewsData.getReviewByEndpointIdAndEmail(
             gameId,
             req.googleInfo.email

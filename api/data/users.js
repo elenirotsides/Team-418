@@ -1,6 +1,7 @@
 // TODO: db methods for users
 const { ObjectId } = require("mongodb");
 const mongoCollections = require('../config/mongoCollections');
+const { validateString, validateGameEid } = require("./validation");
 const users = mongoCollections.users;
 const validate = require('./validation');
 
@@ -77,10 +78,11 @@ module.exports = {
         return user;
     },
     
-    // updates a given users profile pic assuming the image link is valid?
-    // how/where is the image being stored??
     async updateProfilePic(email, link) {
-        if (arguments.length !== 2) throw "Usage: User Id, Image link";
+        if (arguments.length !== 2) throw 'Usage: Email, Image link';
+        if (!validate.isGoodEmail(email))
+            throw 'Email must be a non empty string and valid';
+        if (!validateString(link)) throw 'Invalid image link';
 
         let user;
         try {
@@ -88,8 +90,6 @@ module.exports = {
         } catch (e) {
             throw e;
         }
-
-        if (!validate.validateString(link)) throw "Well the link should be a non empty string";
 
         // prevents error if you try to upload a file with the same name
         if(user.profilePic === link) return true;
@@ -117,15 +117,12 @@ module.exports = {
     // allows duplicates in the input, but the code will ensure fav games are all unique
     // returns the favorite games array
     async addFavorites(userId, gameList) {
-        if (arguments.length != 2) throw "Usage: User Id, Game List";
-        if (!Array.isArray(gameList)) throw "Game List needs to be a non-empty array";
-        if (gameList.length === 0) 
-            throw "Why...why would you pass in an empty array, you're just wasting everyone's time here";
-        // check that every element in the array is at least a non empty string
-        for (let i=0; i<gameList.length; i++) {
-            if (!validate.validateString(gameList[i]))
-                throw "All elements should be non-empty strings";
-        }
+        if (arguments.length != 2) throw 'Usage: User Id, Game List';
+        if (!ObjectId.isValid(userId))
+            throw 'User Id needs to be a valid ObjectId';
+        if (!Array.isArray(gameList) || gameList.length === 0)
+            throw 'Game List needs to be a non-empty array';
+        for (const eid of gameList) validateGameEid(eid);
 
         let user;
         try {
@@ -162,10 +159,12 @@ module.exports = {
     // can supply any valid endpoint id, code will remove those that exist in fav games
     // returns the updated favorite games array
     async removeFavorites(userId, gameList) {
-        if (arguments.length != 2) throw "Usage: User Id, Game List";
-        if (!Array.isArray(gameList)) throw "Game List needs to be a non-empty array";
-        if (gameList.length === 0) 
-            throw "Why...why would you pass in an empty array, you're just wasting everyone's time here";
+        if (arguments.length != 2) throw 'Usage: User Id, Game List';
+        if (!ObjectId.isValid(userId))
+            throw 'User Id needs to be a valid ObjectId';
+        if (!Array.isArray(gameList) || gameList.length === 0)
+            throw 'Game List needs to be a non-empty array';
+        for (const eid of gameList) validateGameEid(eid);
         
         // check that every element in the array is at least a non empty string
         for (let i=0; i<gameList.length; i++) {

@@ -220,63 +220,69 @@ const main = async () => {
     // Adding statuses to each user
 
     try {
-        console.log(await userData.editStatus(name1.email, "Having a good time"))
+        await userData.editStatus(name1.email, 'Having a good time');
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name2.email, "Playing Fortnite"))
+        await userData.editStatus(name2.email, 'Playing Fortnite');
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name3.email, "Chillin like a villian"))
+        await userData.editStatus(name3.email, 'Chillin like a villian');
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name4.email, "Need a partner for some epic APEX duos"))
+        await userData.editStatus(
+            name4.email,
+            'Need a partner for some epic APEX duos'
+        );
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name5.email, "Meh"))
+        await userData.editStatus(name5.email, 'Meh');
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name6.email, "I'm tired"))
+        await userData.editStatus(name6.email, "I'm tired");
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name7.email, "Working on Web dev hw don't bother me"))
+        await userData.editStatus(
+            name7.email,
+            "Working on Web dev hw don't bother me"
+        );
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name8.email, "Busy"))
+        await userData.editStatus(name8.email, 'Busy');
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name9.email, "Listening to music"))
+        await userData.editStatus(name9.email, 'Listening to music');
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     try {
-        console.log(await userData.editStatus(name10.email, "Living life like Larry"))
+        await userData.editStatus(name10.email, 'Living life like Larry');
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 
     // the part where i now add in a crap ton of reviews
@@ -286,70 +292,60 @@ const main = async () => {
             name1.email,
             featured.endpointId,
             1,
-            '01/01/2000',
             'I died so the game sucks'
         );
         await reviewData.addReview(
             name2.email,
             featured.endpointId,
             2,
-            '12/10/2012',
             "I don't even have this game"
         );
         await reviewData.addReview(
             name3.email,
             featured.endpointId,
             3,
-            '02/20/2001',
             'This game is like the dark souls of dark souls'
         );
         await reviewData.addReview(
             name4.email,
             featured.endpointId,
             4,
-            '03/05/2009',
             'Definitely not worth the full price for this game'
         );
         await reviewData.addReview(
             name5.email,
             featured.endpointId,
             5,
-            '04/12/1999',
             'Lots of wasted potential here'
         );
         await reviewData.addReview(
             name6.email,
             featured.endpointId,
             6,
-            '05/04/2005',
             'If you want some dumb fun and nothing else this game works'
         );
         await reviewData.addReview(
             name7.email,
             featured.endpointId,
             7,
-            '06/24/2002',
             "It's a nice game, doesn't blow away my expectations but it's good"
         );
         await reviewData.addReview(
             name8.email,
             featured.endpointId,
             8,
-            '07/18/2003',
             'Had a lot of fun with this game, definitely would reccommend'
         );
         await reviewData.addReview(
             name9.email,
             featured.endpointId,
             9,
-            '09/25/2021',
             'Oh man this game is amazing'
         );
         await reviewData.addReview(
             name10.email,
             featured.endpointId,
             10,
-            '10/02/1984',
             'Is a MASTAPIECE'
         );
     } catch (e) {

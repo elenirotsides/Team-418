@@ -5,6 +5,7 @@ const router = express.Router();
 const gamesData = require('../data').games;
 const IGDBSessionHandler = require('../IGDB/IGDBSessionHandler');
 const { getCachedData, setCachedData, dataKeys } = require('../redis');
+const { validateGameEid, validateString, validatePosInt, validateNonNegInt } = require('../data/validation');
 
 router.get(
     '/',
@@ -144,6 +145,11 @@ router.get(
     async function (req, res) {
         const id = req.params.id;
         try {
+            validateGameEid(id);
+        } catch (e) {
+            return res.status(400).json({ error: e });
+        }
+        try {
             const cacheData = await getCachedData(dataKeys.gamesId(id));
             if (cacheData) {
                 res.json(cacheData);
@@ -173,7 +179,6 @@ router.get(
     IGDBSessionHandler.instance.validateSession(),
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
-        const id = req.params.id;
         try {
             const cacheData = await getCachedData(dataKeys.featuredGame);
             if (cacheData) {
@@ -208,8 +213,20 @@ router.post(
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         const searchTerm = req.body.searchTerm;
-        if (!searchTerm)
+        if (!searchTerm || !validateString(searchTerm))
             return res.status(400).json({ error: 'No search term provided' });
+        if (!validateNonNegInt(req.params.pageNum))
+            return res
+                .status(400)
+                .json({ error: 'Page num must be non-negative.' });
+        if (req.body && req.body.genres && !validatePosInt(req.body.genres))
+            return res
+                .status(400)
+                .json({ error: 'Genre must be a positive integer.' });
+        if (req.body && req.body.platforms && !validatePosInt(req.body.platforms))
+            return res
+                .status(400)
+                .json({ error: 'Platform must be a positive integer.' });
         try {
             let fieldString = `limit 12; offset ${req.params.pageNum * 12}; fields name, cover.url, genres; search "${searchTerm}";`;
             let advancedFields = '';
