@@ -94,7 +94,7 @@ const Profile = (props) => {
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
     const [statusToggle, setStatusToggle] = useState(false);
-    const [statusUpdate, setStatusUpdate] = useState(null)
+    const [statusUpdate, setStatusUpdate] = useState(null);
     const [sameUser, setSameUser] = useState(false);
 
     function OnScroll() {
@@ -133,9 +133,12 @@ const Profile = (props) => {
                 if (data.hasOwnProperty('edge')) {
                     setSameUser(true);
                     setLoading(false);
-                    const response = await fetch(`${infoUrl}?idToken=${token}`, {
-                        method: 'GET',
-                    });
+                    const response = await fetch(
+                        `${infoUrl}?idToken=${token}`,
+                        {
+                            method: 'GET',
+                        }
+                    );
                     const data = await response.json();
                     setUserData(data);
                     return;
@@ -209,7 +212,10 @@ const Profile = (props) => {
             setIdToken(token);
         }
         try {
-            let queryUrl = (props && props.location.userId) ? `${reviewsUrl}/?idToken=${token}&userId=${props.location.userId}`: `${reviewsUrl}?idToken=${token}`;
+            let queryUrl =
+                props && props.location.userId
+                    ? `${reviewsUrl}/?idToken=${token}&userId=${props.location.userId}`
+                    : `${reviewsUrl}?idToken=${token}`;
             console.log(queryUrl);
             const response = await fetch(queryUrl, {
                 method: 'GET',
@@ -217,7 +223,7 @@ const Profile = (props) => {
             if (response.status === 200) {
                 const data = await response.json();
                 setReviews(data);
-            } else if(response.status === 404){
+            } else if (response.status === 404) {
                 setReviews(false);
             } else {
                 setError(true);
@@ -241,15 +247,19 @@ const Profile = (props) => {
         errorP.className = 'text-danger';
         let body = {};
 
-        if (statusUpdate) {
-            body['status'] = statusUpdate
+        if (!statusUpdate) {
+            errorP.textContent = 'Status cannot be empty';
+            errorDiv.appendChild(errorP);
+            return;
         }
+
+        body['status'] = statusUpdate;
 
         let idToken = await getUserIdToken();
         try {
             const response = await fetch(`${statusUrl}/?idToken=${idToken}`, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
             });
             if (response.status === 200) {
@@ -258,15 +268,17 @@ const Profile = (props) => {
                 setUserData(userDataCopy);
                 setStatusToggle(false);
             } else {
-                errorP.innerHTML = await response.json() ||'Failed to submit status update. Please try again.';
-                errorDiv.appendChild(errorP)
+                errorP.innerHTML =
+                    (await response.json()) ||
+                    'Failed to submit status update. Please try again.';
+                errorDiv.appendChild(errorP);
             }
         } catch (e) {
-            console.log('Error updating status', e)
-            errorP.innerHTML = 'Failed to submit status update. Please try again.';
-            errorDiv.appendChild(errorP)
+            console.log('Error updating status', e);
+            errorP.innerHTML =
+                'Failed to submit status update. Please try again.';
+            errorDiv.appendChild(errorP);
         }
-        
     }
 
     function createFavoriteGames() {
@@ -309,9 +321,10 @@ const Profile = (props) => {
                             </h2>
                         )}
                     </div>
-                    <label for='left'></label>
+                    <label for="left"></label>
                     {showLeftArrow && (
-                        <button id='left'
+                        <button
+                            id="left"
                             className={`${classes.leftArrow} ${classes.navArrow}`}
                             onClick={(e) => {
                                 const scrollView = document.getElementById(
@@ -326,9 +339,10 @@ const Profile = (props) => {
                         ></button>
                     )}
 
-                    <label for='right'></label>
+                    <label for="right"></label>
                     {showRightArrow && (
-                        <button id='right'
+                        <button
+                            id="right"
                             className={`${classes.rightArrow} ${classes.navArrow}`}
                             onClick={(e) => {
                                 const scrollView = document.getElementById(
@@ -378,15 +392,16 @@ const Profile = (props) => {
                                     max={10}
                                 />
                                 <Card.Text>{r.comment}</Card.Text>
-                                {idToken && (!props.location.userId || sameUser) && (
-                                    <Button
-                                        id={r._id}
-                                        variant="danger"
-                                        onClick={deleteReview}
-                                    >
-                                        Delete
-                                    </Button>
-                                )}
+                                {idToken &&
+                                    (!props.location.userId || sameUser) && (
+                                        <Button
+                                            id={r._id}
+                                            variant="danger"
+                                            onClick={deleteReview}
+                                        >
+                                            Delete
+                                        </Button>
+                                    )}
                             </Card.Body>
                         </Card>
                     </Grid>
@@ -408,7 +423,7 @@ const Profile = (props) => {
         }
     }
 
-    async function deleteReview(e){
+    async function deleteReview(e) {
         try {
             let token = idToken;
             if (!idToken) {
@@ -450,8 +465,7 @@ const Profile = (props) => {
                 <h2>Loading...</h2>
             </div>
         );
-    } 
-    else {
+    } else {
         return (
             <div className="text-center">
                 <h1></h1>
@@ -483,17 +497,30 @@ const Profile = (props) => {
                     {userData && userData.lastName}
                 </p>
                 <h3>Status: </h3>
-                <p>{userData && userData.status || "No Status Yet"}</p>
-                {(!props.location.userId || sameUser )&& (
-                    <button class={`btn ${classes.buttons}`} onClick={() => setStatusToggle(!statusToggle)}>Change Status</button>
+                <p>{(userData && userData.status) || 'No Status Yet'}</p>
+                {(!props.location.userId || sameUser) && (
+                    <button
+                        class={`btn ${classes.buttons}`}
+                        onClick={() => setStatusToggle(!statusToggle)}
+                    >
+                        Change Status
+                    </button>
                 )}
                 {statusToggle && (
                     <form noValidate autocomplete="off" onSubmit={editStatus}>
-                        <br/>
+                        <br />
                         <div id="errorDiv"></div>
-                        <TextField id="statusUpdate" label="Set your status..." onChange={handleStatusChange} variant="outlined" onChange={handleStatusChange}/>
-                        <br/>
-                        <button type="submit" class={`btn ${classes.buttons}`}>Submit</button>
+                        <TextField
+                            id="statusUpdate"
+                            label="Set your status..."
+                            onChange={handleStatusChange}
+                            variant="outlined"
+                            onChange={handleStatusChange}
+                        />
+                        <br />
+                        <button type="submit" class={`btn ${classes.buttons}`}>
+                            Submit
+                        </button>
                     </form>
                 )}
                 <h3>Email: </h3>
