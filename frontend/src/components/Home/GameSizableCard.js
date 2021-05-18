@@ -1,7 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 
 const styles = makeStyles(props => ({
     inline: {

@@ -4,7 +4,6 @@ import Home from './components/Home/Home';
 import Navigation from './components/Navigation';
 import Login from './components/Login';
 import Game from './components/GameDetails/Game';
-import Results from './components/Results';
 import Profile from './components/Profile';
 import NotFound from './components/NotFound';
 import { AuthProvider } from './firebase/Auth';

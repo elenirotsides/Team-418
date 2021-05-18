@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { json } = require('express');
 const settings = require('../config/settings.json');
 
 // API session token

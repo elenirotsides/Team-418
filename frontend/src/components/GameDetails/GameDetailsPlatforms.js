@@ -1,5 +1,4 @@
 import {Grid, makeStyles } from '@material-ui/core';
-import { useEffect, useState } from 'react';
 
 const styles = makeStyles({
     item: {

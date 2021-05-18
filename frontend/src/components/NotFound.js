@@ -1,7 +1,6 @@
 import React from 'react';
 import logo from '../notFound404.gif';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
 
 const styles = makeStyles({
     notFound: {
@@ -15,7 +14,7 @@ const styles = makeStyles({
     }
 });
 
-const NotFound = (props) => {
+const NotFound = () => {
     const classes = styles();
     return (
         <div >

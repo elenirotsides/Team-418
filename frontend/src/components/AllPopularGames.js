@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/core';
 import GameSizableCard from './Home/GameSizableCard';
 import { useState, useEffect } from 'react';
 import { getUserIdToken } from '../firebase/FirebaseFunctions';
-import SectionTitle from './Home/SectionTitle';
 
 const styles = makeStyles({
     title: {
@@ -17,7 +16,7 @@ const styles = makeStyles({
     }
 });
 
-const AllPopularGames = (props) => {
+const AllPopularGames = () => {
     const [popularData, setPopularData] = useState(undefined);
     let idToken;
     let cardList = null;

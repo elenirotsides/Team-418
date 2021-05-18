@@ -5,7 +5,6 @@ import { Card } from 'react-bootstrap';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 import { Rating } from '@material-ui/lab';
 import { Link } from 'react-router-dom';
-import Profile from '../Profile';
 import GameReviewModal from './GameReviewModal';
 
 
@@ -39,7 +38,6 @@ const GameReviews = (props) => {
     const [reviews, setReviews] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const reviewsUrl = `http://localhost:5000/reviews/${props.gameId}`;
 
     function createReviewsList() {
         if (!reviews) {

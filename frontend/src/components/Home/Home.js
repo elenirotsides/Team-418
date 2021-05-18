@@ -16,7 +16,7 @@ const styles = makeStyles({
     },
 });
 
-const Home = (props) => {
+const Home = () => {
     const classes = styles();
 
     const [featuredData, setFeaturedData] = useState(undefined);

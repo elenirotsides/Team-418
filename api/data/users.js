@@ -3,7 +3,6 @@ const { ObjectId } = require("mongodb");
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const validate = require('./validation');
-const fs = require('fs');
 
 module.exports = {
     // returns an array of all the users

@@ -1,8 +1,8 @@
-import {makeStyles, useScrollTrigger } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import SectionTitle from './SectionTitle';
 import ViewAllLink from './ViewAllLink';
 import GameSizableCard from './GameSizableCard';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 
