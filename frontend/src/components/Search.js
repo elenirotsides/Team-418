@@ -87,7 +87,6 @@ const Search = (props) => {
             setShowPrev(props.match.params.pageNum > 0)
             setShowNext(data.length === 12);
         } catch (err) {
-            console.log('search error', err);
             setError(true);
         }
         setLoading(false);
@@ -107,7 +106,6 @@ const Search = (props) => {
             );
             setSearchInfo(await response.json());
         } catch (err) {
-            console.log('setting error', err);
             setError(true);
         }
         setLoading(false);
@@ -277,7 +275,6 @@ const Search = (props) => {
                                 searchTerm: e.target[0].value,
                             });
                         } else {
-                            console.log('invalid search');
                             const errorP = document.createElement('p');
                             errorP.className = 'text-danger';
                             errorP.textContent = 'Search term cannot be empty.';
