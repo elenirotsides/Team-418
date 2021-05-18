@@ -11,7 +11,7 @@ const ViewAllLink = (props) => {
     const classes = styles();
     return (
         <div>
-            <button class={`btn ${classes.buttons}`}>{`${props.text} >`}</button>
+            <button className={`btn ${classes.buttons}`}>{`${props.text} >`}</button>
         </div>
     );
 }

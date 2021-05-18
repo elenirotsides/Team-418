@@ -110,7 +110,7 @@ const PopularGames = (props) => {
                     {loading &&
                         <h2 className={classes.loading}>Loading...</h2>}
                 </div>
-                <label for='left'></label>
+                <label htmlFor='left'></label>
                 {showLeftArrow &&
                     <button id='left' className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('popularGamesScrollView');
@@ -122,7 +122,7 @@ const PopularGames = (props) => {
                     }}></button>
                 }
 
-                <label for='right'></label>
+                <label htmlFor='right'></label>
                 {showRightArrow &&
                     <button id='right' className={`${classes.rightArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('popularGamesScrollView');

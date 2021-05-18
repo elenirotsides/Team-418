@@ -111,7 +111,7 @@ const NavigationAuth = () => {
                     <div className={classes.dropdown}>
                         <button className={`${classes.navIconButton} profileBtn`}>
                         {!idToken && <img className={classes.navIconSize} src='/imgs/profile.png' alt='profile' />}
-                        {idToken && <img className={classes.navIconSize} crossorigin="anonymous" src={`http://localhost:5000/users/picture?idToken=${idToken}`} alt='profile' />}
+                        {idToken && <img className={classes.navIconSize} crossOrigin="anonymous" src={`http://localhost:5000/users/picture?idToken=${idToken}`} alt='profile' />}
                         </button>
                         <div className='dropdownContent'>
                             <div className={classes.dropdownLink}><a className={classes.link} onMouseEnter={changeColorMouseEnter} onMouseLeave={changeColorMouseLeave} href='/profile'>Profile</a></div>
