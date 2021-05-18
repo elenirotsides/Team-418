@@ -191,12 +191,14 @@ const Search = (props) => {
             setLocationPathName('/games/allpopular/')
             setCustomTitle('Games by popularity');
             fetchPopularGames();
+            getSearchInfo();
             return;
         } if (props.location.pathname.includes('/games/allnew')) {
             // reuse search page for new games
             setLocationPathName('/games/allnew/')
             setCustomTitle('New Games');
             fetchNewGames();
+            getSearchInfo();
             return;
         } else {
             // BAU Search page
