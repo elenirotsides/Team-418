@@ -185,6 +185,11 @@ const Search = (props) => {
             );
     }
 
+    function validFormInput(e) {
+        const searchTerm = e && e.target && e.target[0] && e.target[0].value;
+        return searchTerm && searchTerm.trim();
+    }
+
     useEffect(() => {
         if (props.location.pathname.includes('/games/allpopular')) {
             // reuse search page for popular games
@@ -263,9 +268,22 @@ const Search = (props) => {
             <div className={classes.page}>
                 <div class="container">
                     <form onSubmit={(e) => {
+                        const errorDiv = document.getElementById('errorDiv');
+                        errorDiv.innerHTML = '';
                         e.preventDefault();
-                        history.push('/games/search/0', { searchTerm: e.target[0].value })
+                        if (validFormInput(e)) {
+                            history.push('/games/search/0', {
+                                searchTerm: e.target[0].value,
+                            });
+                        } else {
+                            console.log('invalid search');
+                            const errorP = document.createElement('p');
+                            errorP.className = 'text-danger';
+                            errorP.textContent = 'Search term cannot be empty.';
+                            errorDiv.append(errorP);
+                        }
                     }} class="my-3">
+                        <div id="errorDiv" class="text-center"></div>
                         <div class="form-group row">
                             <label
                                 for="searchTerm"
@@ -311,7 +329,6 @@ const Search = (props) => {
                     </form>
                 </div>
                 {customTitle && <p className={classes.customTitle}>{customTitle}</p>}
-                <div id="errorDiv" class="text-center">{error && <p>{error}</p>}</div>
                 {loading && <div class="text-center"><h2>Loading...</h2></div>}
                 {!loading && pageData && createGameCards()}
                 <br />
