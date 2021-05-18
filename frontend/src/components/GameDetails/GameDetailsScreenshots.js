@@ -83,7 +83,7 @@ const GameDetailsScreenshots = (props) => {
 
     useEffect(() => {
         CheckScrollChildren();
-    },[])
+    }, [])
 
     function CheckScrollChildren() {
         const scrollView = document.getElementById('screenshotScrollView');
@@ -105,7 +105,7 @@ const GameDetailsScreenshots = (props) => {
         } else {
             setTimeout(() => {
                 CheckScrollChildren()
-            },100);
+            }, 100);
         }
     }
 
@@ -154,6 +154,7 @@ const GameDetailsScreenshots = (props) => {
                 <div id='screenshotScrollView' className={`${classes.container} noScrollbar`} onScroll={OnScroll}>
                     {screenshotCards}
                 </div>
+                
                 <label for='left'></label>
                 {showLeftArrow &&
                     <button id='left' className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {

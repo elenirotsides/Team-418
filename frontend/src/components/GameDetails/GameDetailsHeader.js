@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, useScrollTrigger } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 import { Rating } from '@material-ui/lab';
@@ -87,7 +87,7 @@ const styles = makeStyles({
 
     ageRatingImage: {
         maxWidth: '100%',
-        minWidth: '50%'
+        minWidth: '50%',
     },
 
     center: {
@@ -114,9 +114,7 @@ const GameDetailsHeader = (props) => {
     async function fetchAverageRating() {
         let idToken = await getUserIdToken();
         try {
-            const response = await fetch(
-                `http://localhost:5000/reviews/average/${props.data.id}?idToken=${idToken}`
-            );
+            const response = await fetch(`http://localhost:5000/reviews/average/${props.data.id}?idToken=${idToken}`);
             if (response.status === 200) {
                 const data = await response.json();
                 setAverageRating(data.average.toFixed(2));
@@ -157,19 +155,9 @@ const GameDetailsHeader = (props) => {
         } else {
             return (
                 <div className={classes.ratingBox}>
-                    <p
-                        className={`${classes.inlineBlock} ${classes.ratingAverage} `}
-                    >{`${averageRating} / 10`}</p>
-                    <div
-                        className={`${classes.inlineBlock} ${classes.ratingStar}`}
-                    >
-                        <Rating
-                            name="read-only"
-                            value={1}
-                            readOnly
-                            min={1}
-                            max={1}
-                        />
+                    <p className={`${classes.inlineBlock} ${classes.ratingAverage} `}>{`${averageRating} / 10`}</p>
+                    <div className={`${classes.inlineBlock} ${classes.ratingStar}`}>
+                        <Rating name='read-only' value={1} readOnly min={1} max={1} />
                     </div>
                     <p>{`Total Ratings: ${ratingCount}`}</p>
                 </div>
@@ -181,17 +169,14 @@ const GameDetailsHeader = (props) => {
         if (props.data.age_ratings && props.data.age_ratings.length > 0) {
             setAgeRatingUrl(urlForAgeRating(props.data.age_ratings[0].rating));
         }
+
         if (props.data.involved_companies) {
-            let developmentCompanies = props.data.involved_companies.filter(
-                (e) => e.developer == true
-            );
+            let developmentCompanies = props.data.involved_companies.filter((e) => e.developer == true);
             if (developmentCompanies.length > 0) {
                 setGameDeveloper(developmentCompanies[0].company.name);
             } else {
                 if (props.data.involved_companies.length > 0) {
-                    setGameDeveloper(
-                        props.data.involved_companies[0].company.name
-                    );
+                    setGameDeveloper(props.data.involved_companies[0].company.name);
                 } else {
                     setGameDeveloper('');
                 }
@@ -217,8 +202,7 @@ const GameDetailsHeader = (props) => {
 
     async function getFavorites() {
         let idToken = await getUserIdToken();
-        const url =
-            'http://localhost:5000/users/profile/favorites/?idToken=' + idToken;
+        const url = 'http://localhost:5000/users/profile/favorites/?idToken=' + idToken;
         fetch(url, {
             credentials: 'include',
         })
@@ -250,7 +234,7 @@ const GameDetailsHeader = (props) => {
             fetch(url + '/add', requestOptions)
                 .then((res) => res.json())
                 .then(
-                    (result) => {},
+                    (result) => { },
                     (error) => {
                         console.log('Error: ' + error);
                     }
@@ -260,7 +244,7 @@ const GameDetailsHeader = (props) => {
             fetch(url + '/remove', requestOptions)
                 .then((res) => res.json())
                 .then(
-                    (result) => {},
+                    (result) => { },
                     (error) => {
                         console.log('Error: ' + error);
                     }
@@ -297,55 +281,8 @@ const GameDetailsHeader = (props) => {
         }
     }
 
-    function gameCategory(num) {
-        switch(num) {
-            case 0: {
-                return 'Main game';
-            }
-            case 1: {
-                return 'Add on';
-            }
-            case 2: {
-                return 'Expansion';
-            }
-            case 3: {
-                return 'Bundle';
-            }
-            case 4: {
-                return 'Stand-alone expansion';
-            }
-            case 5: {
-                return 'Mod';
-            }
-            case 6: {
-                return 'Episode';
-            }
-            case 7: {
-                return 'Season';
-            }
-            case 8: {
-                return 'Remake';
-            }
-            case 9: {
-                return 'Remaster';
-            }
-            case 10: {
-                return 'Expanded game';
-            }
-            case 11: {
-                return 'Port';
-            }
-            case 12: {
-                return 'Fork';
-            }
-        }
-    }
-
     if (props.data.cover && props.data.cover.url) {
-        props.data.cover.url = props.data.cover.url.replace(
-            't_thumb',
-            't_720p'
-        );
+        props.data.cover.url = props.data.cover.url.replace('t_thumb', 't_720p');
     } else {
         props.data.cover = { url: '/imgs/imageNotFound.png' };
     }
@@ -372,9 +309,7 @@ const GameDetailsHeader = (props) => {
                     <h1></h1>
                     <h2>{props.data.name}</h2>
                     <div className={classes.relative}>
-                        <p className={classes.publisherLabel}>
-                            {gameDeveloper}
-                        </p>
+                        <p className={classes.publisherLabel}>{gameDeveloper}</p>
                         {getRatingInfo()}
                     </div>
                     <p className={classes.summary}>{props.data.summary} </p>
@@ -388,12 +323,6 @@ const GameDetailsHeader = (props) => {
                         ></img>
                     </div>
                 )}
-            </div>
-            <div className={classes.center}>
-                <p>Game Category: {gameCategory(props.data.category)}</p>
-                <p>Created: {(new Date(props.data.created_at * 1000).toLocaleString()) || "A created date wasn't specified"}</p>
-                <p>First Release Date: {(new Date(props.data.first_release_date * 1000).toLocaleString()) || "A first release date wasn't specified"}</p>
-                <p>Updated: {(new Date(props.data.updated_at * 1000).toLocaleString()) || "An updated date was not specified"}</p>
             </div>
         </div>
     );

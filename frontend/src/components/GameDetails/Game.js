@@ -3,7 +3,9 @@ import { getUserIdToken } from '../../firebase/FirebaseFunctions';
 import GameDetailsHeader from './GameDetailsHeader';
 import GameDetailsScreenshots from './GameDetailsScreenshots';
 import GameReviews from './GameReviews';
-import { makeStyles } from '@material-ui/core';
+import {Grid, makeStyles } from '@material-ui/core';
+import GameMoreDetails from './GameMoreDetails';
+import GameDetailsPlatforms from './GameDetailsPlatforms';
 
 const styles = makeStyles({
     defaultSpacing: {
@@ -12,6 +14,22 @@ const styles = makeStyles({
     page: {
         marginBottom: 60,
     },
+
+    details:{
+        marginRight:'15%'
+    },
+
+    detailCard: {
+        border:'solid',
+        borderWidth:1,
+        borderColor:'lightgray',
+        padding:20,
+        paddingRight:80,
+        paddingLeft:80,
+        marginBottom:20,
+        marginTop:20,
+        maxWidth:'40%'
+    }
 });
 
 const Game = (props) => {
@@ -86,6 +104,20 @@ const Game = (props) => {
                                 gameId={props.match.params.id}
                                 data={pageData}
                             />
+                        </div>
+                        <div className={classes.defaultSpacing}>
+                            <Grid container justify='center' alignItems='center'>
+                                <Grid item s={12} m={6} className={`${classes.details} ${classes.detailCard}`}>
+                                    <div>
+                                        <GameMoreDetails data={pageData} />
+                                    </div>
+                                </Grid>
+                                <Grid item s={12} m={6} className={classes.detailCard}>
+                                    <div className={classes.platforms}>
+                                        <GameDetailsPlatforms data={pageData} />
+                                    </div>
+                                </Grid>
+                            </Grid>
                         </div>
                         {pageData.screenshots && (
                             <div className={classes.defaultSpacing}>
