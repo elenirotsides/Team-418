@@ -24,6 +24,10 @@ const GameDetailsPlatforms = (props) => {
 
 
     platforms = props.data.platforms && props.data.platforms.map((p) => {
+        // replace jpeg with png for url
+        p.platform_logo.url = p.platform_logo.url.substr(0, p.platform_logo.url.lastIndexOf(".")) + ".png";
+        //replace thumb with icon
+        p.platform_logo.url = p.platform_logo.url.replace('t_thumb', 't_logo_med');
         return (
                 <Grid className={classes.item} item spacing={10} xs={12} s={2} md={4}>
                     {p && p.platform_logo && p.platform_logo.url &&

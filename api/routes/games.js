@@ -40,7 +40,15 @@ router.get(
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
-            const cacheData = await getCachedData(dataKeys.gamesPopular);
+            const offset = req.query && req.query.page ? req.query.page*12 : 0;
+            const limit = req.query && req.query.type === 'all' ? 12 : 10;
+
+            const cacheKey = dataKeys.gamesPopular(
+                req.query && req.query.type === 'all' ? 'all' : 'homepage',
+                offset);
+
+            const cacheData = await getCachedData(cacheKey);
+
             if (cacheData) {
                 res.json(cacheData);
             } else {
@@ -48,12 +56,12 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields cover.url, name, screenshots, age_ratings; sort aggregated_rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);'
+                        `limit ${limit}; offset ${offset}; fields cover.url, name, screenshots, age_ratings; sort aggregated_rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);`
                     )
                 );
 
                 res.json(response.data);
-                setCachedData(dataKeys.gamesPopular, response.data, 3600);
+                setCachedData(cacheKey, response.data, 3600);
             }
         } catch (e) {
             console.log(`Error occured in /games/popular route`, e);
@@ -68,7 +76,15 @@ router.get(
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
-            const cacheData = await getCachedData(dataKeys.gamesNew);
+            const offset = req.query && req.query.page ? req.query.page*12 : 0;
+            const limit = req.query && req.query.type === 'all' ? 12 : 10;
+
+            const cacheKey = dataKeys.gamesNew(
+                req.query && req.query.type === 'all' ? 'all' : 'homepage',
+                offset);
+
+            const cacheData = await getCachedData(cacheKey);
+
             if (cacheData) {
                 res.json(cacheData);
             } else {
@@ -76,12 +92,12 @@ router.get(
                     IGDBSessionHandler.instance.igdbAxiosConfig(
                         'games',
                         null,
-                        'limit 10; offset 0; fields cover.url, name; sort first_release_date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);'
+                        `limit ${limit}; offset ${offset}; fields cover.url, name; sort first_release_date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);`
                     )
                 );
 
                 res.json(response.data);
-                setCachedData(dataKeys.gamesNew, response.data, 3600);
+                setCachedData(cacheKey, response.data, 3600);
             }
         } catch (e) {
             console.log(`Error occured in /games/new route`, e);
@@ -89,54 +105,6 @@ router.get(
         }
     }
 );
-
-router.get(
-    '/allpopular',
-    IGDBSessionHandler.instance.validateSession(),
-    IGDBSessionHandler.instance.addToRateLimit,
-    async function (req, res) {
-        try {
-
-            const response = await axios(
-                IGDBSessionHandler.instance.igdbAxiosConfig(
-                    'games',
-                    null,
-                    'limit 12; offset 0; fields cover.url, name, screenshots, age_ratings; sort aggregated_rating desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);'
-                    )
-            );
-
-            res.json(response.data);
-            //setCachedData(dataKeys.gamesPopular, response.data, 3600);
-
-        } catch (e) {
-            console.log(`Error occured in /games/allpopular route`, e);
-            res.sendStatus(500);
-        }
-    }
-);
-
-router.get(
-    '/allnew',
-    IGDBSessionHandler.instance.validateSession(),
-    IGDBSessionHandler.instance.addToRateLimit,
-    async function (req, res) {
-        try {
-
-            const response = await axios(
-                IGDBSessionHandler.instance.igdbAxiosConfig(
-                    'games',
-                    null,
-                    'limit 12; offset 0; fields cover.url, name; sort first_release_date desc; w cover != null & summary != null & screenshots != null & age_ratings != null & first_release_date > 1577856121 & total_rating_count > 20 & platforms.category = (1,6);'
-                    )
-            );
-
-            res.json(response.data);
-        } catch (e) {
-            console.log(`Error occured in /games/new route`, e);
-            res.sendStatus(500);
-        }
-    }
-); 
 
 router.get(
     '/game/:id',
