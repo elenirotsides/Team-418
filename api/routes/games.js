@@ -40,6 +40,11 @@ router.get(
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
+            if (req.query && req.query.page) {
+                if (!validateNonNegInt(req.query.page)) throw 'Page must be a positive number'
+                if (req.query.page.includes('.')) throw 'Page must be a round number'
+            }
+
             const offset = req.query && req.query.page ? req.query.page*12 : 0;
             const limit = req.query && req.query.type === 'all' ? 12 : 10;
 
@@ -76,6 +81,11 @@ router.get(
     IGDBSessionHandler.instance.addToRateLimit,
     async function (req, res) {
         try {
+            if (req.query && req.query.page) {
+                if (!validateNonNegInt(req.query.page)) throw 'Page must be a positive number'
+                if (req.query.page.includes('.')) throw 'Page must be a round number'
+            }
+            
             const offset = req.query && req.query.page ? req.query.page*12 : 0;
             const limit = req.query && req.query.type === 'all' ? 12 : 10;
 
