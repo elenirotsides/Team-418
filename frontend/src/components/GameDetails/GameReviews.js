@@ -49,12 +49,12 @@ const GameReviews = (props) => {
                     <h2></h2>
                     <h3></h3>
                     <h4></h4>
-                    <h5 class="text-center">No reviews</h5>
+                    <h5 className="text-center">No reviews</h5>
                 </div>);
         } else {
             let cards = reviews.map((r) => {
                 return (
-                    <Grid item class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 m-4">
+                    <Grid key={r.userId} item className="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 m-4">
                         <Card style={{ width: '100%' }}>
                             <Card.Body>
                                 <Link to={{
@@ -83,7 +83,7 @@ const GameReviews = (props) => {
                     <div className={classes.reviewButton}>
                         <GameReviewModal gameId={props.gameId} setReloadReviews={props.setReloadReviews} setReloadAverageRating={props.setReloadAverageRating} />
                     </div>
-                    <Grid container justify='center' alignItems='center' spacing='0' className={`noScrollbar ${classes.container}`}>
+                    <Grid container justify='center' alignItems='center' className={`noScrollbar ${classes.container}`}>
                         {cards}
                     </Grid>
                 </div>
@@ -134,10 +134,10 @@ const GameReviews = (props) => {
             </div>
             <div className={classes.heading}>
                 {loading && !error && (
-                    <h5 class="text-center">Loading reviews...</h5>
+                    <h5 className="text-center">Loading reviews...</h5>
                 )}
                 {!loading && error && (
-                    <h5 class="text-center text-danger">
+                    <h5 className="text-center text-danger">
                         Failed to load reviews...
                     </h5>
                 )}
