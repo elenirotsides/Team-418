@@ -27,9 +27,12 @@
     > cd api/
 2. Install the required npm packages
     > npm i
-3. Seed the database
+3. Start MongoDB
+4. Start Redis Server on default port
+    > redis-server
+5. Seed the database
     > npm run seed
-4. Start the API
+6. Start the API
     > npm start
 ### Running the Frontend
 1. Go to the root of the frontend folder
