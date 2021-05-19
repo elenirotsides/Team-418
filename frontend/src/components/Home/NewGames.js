@@ -68,10 +68,8 @@ const NewGames = (props) => {
 
                 </div>
                 <div className={classes.viewAllLink}>
-                <Link to={'/games/allnew/0'}>
-                        <ViewAllLink text='View all new games' />
-                </Link>
-            </div>
+                    <ViewAllLink text='View all new games' link='/games/allnew/0' />
+                </div>
 
             </div>
         </div>

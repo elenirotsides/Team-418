@@ -49,7 +49,7 @@
   /* Hide scrollbar for IE, Edge and Firefox */
   .popularGamesScroll {
     -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    /*scrollbar-width: none;  /* Doesn't exist on my Firefox? */
   }
 
   .google {

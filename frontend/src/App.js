@@ -17,9 +17,7 @@ function App() {
             <Router>
                 <AppBar position='sticky'>
                     <div className="App">
-                        <header className="App-header">
-                            <Navigation/>
-                        </header>
+                        <Navigation/>
                     </div>
                 </AppBar>
                 <Switch>
