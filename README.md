@@ -44,6 +44,7 @@ The frontend runs on port 3000.
 3. Start the React app
     > npm start
 ## Running With Docker
+The Docker system expects ports 3000 and 5000 to be free on the host machine.
 1. Install Docker  
     >https://www.docker.com/get-started
 2. Install Docker Compose
