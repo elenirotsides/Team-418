@@ -28,7 +28,9 @@ const styles = makeStyles({
 
     button: {
         textAlign:'center',
-        marginTop:10
+        marginTop:10,
+        color: 'white',
+        backgroundColor: '#0061c9',
     }
 });
 
@@ -51,7 +53,7 @@ const ScreenshotModal = (props) => {
                 style={customStyles}>
                 <div className={classes.container}>
                     <img className={classes.image} src={props.url} alt='Screenshot'/>
-                    <button className={classes.button}  onClick={handleCloseAddModal}>Close</button>
+                    <button className={`btn ${classes.button}`}  onClick={handleCloseAddModal}>Close</button>
                 </div>
             </ReactModal>
         </div>
