@@ -8,8 +8,7 @@ const styles = makeStyles({
 
 const ViewAllLink = (props) => {
     const classes = styles();
-    console.log(props)
-    return <a className={classes.buttons} href={props.link} role="button">{props.text}</a>
+    return <a className={`btn ${classes.buttons}`} href={props.link} role="button">{props.text}</a>
 }
 
 export default ViewAllLink;
