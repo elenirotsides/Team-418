@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core';
-
 const styles = makeStyles({
     buttons: {
         color: 'white',
@@ -9,11 +8,7 @@ const styles = makeStyles({
 
 const ViewAllLink = (props) => {
     const classes = styles();
-    return (
-        <div>
-            <button className={`btn ${classes.buttons}`}>{`${props.text} >`}</button>
-        </div>
-    );
+    return <a className={`btn ${classes.buttons}`} href={props.link} role="button">{props.text}</a>
 }
 
 export default ViewAllLink;

@@ -159,7 +159,6 @@ const GameReviewModal = (props) => {
                                     name="size-large"
                                     onChange={handleRatingChange}
                                     defaultValue={rating || 5}
-                                    min={1}
                                     max={10}
                                     size="large"
                                 />

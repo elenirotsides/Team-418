@@ -227,7 +227,6 @@ const Search = (props) => {
             <div
                 id="collapseOne"
                 className="collapse"
-                aria-labelledby="headingOne"
                 data-parent="#accordionExample"
             >
                 <div className="card-body text-center">
@@ -284,7 +283,7 @@ const Search = (props) => {
                         <div id="errorDiv" class="text-center"></div>
                         <div className="form-group row">
                             <label
-                                forhtml="searchTerm"
+                                htmlFor="searchTerm"
                                 for="searchTerm"
                                 className="col-sm-2 col-form-label text-right"
                             >

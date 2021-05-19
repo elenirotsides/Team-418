@@ -29,7 +29,7 @@ const GameDetailsPlatforms = (props) => {
         //replace thumb with icon
         p.platform_logo.url = p.platform_logo.url.replace('t_thumb', 't_logo_med');
         return (
-                <Grid key={p.name} className={classes.item} item xs={12} s={2} md={4}>
+                <Grid key={p.name} className={classes.item} item xs={12} sm={2} md={4}>
                     {p && p.platform_logo && p.platform_logo.url &&
                     <img className={classes.img} src={p.platform_logo.url} alt='icon'/> }
                     <div>{p.name}</div>

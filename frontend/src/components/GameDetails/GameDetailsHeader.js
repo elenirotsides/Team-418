@@ -157,7 +157,7 @@ const GameDetailsHeader = (props) => {
                 <div className={classes.ratingBox}>
                     <p className={`${classes.inlineBlock} ${classes.ratingAverage} `}>{`${averageRating} / 10`}</p>
                     <div className={`${classes.inlineBlock} ${classes.ratingStar}`}>
-                        <Rating name='read-only' value={1} readOnly min={1} max={1} />
+                        <Rating name='read-only' value={1} readOnly max={1} />
                     </div>
                     <p>{`Total Ratings: ${ratingCount}`}</p>
                 </div>

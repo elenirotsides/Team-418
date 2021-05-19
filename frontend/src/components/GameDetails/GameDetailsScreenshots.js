@@ -155,8 +155,8 @@ const GameDetailsScreenshots = (props) => {
                     {screenshotCards}
                 </div>
                 
-                <label forhtml='left' for='left'></label>
                 {showLeftArrow &&
+                <label htmlFor='left' for='left'>
                     <button id='left' className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('screenshotScrollView');
                         scrollView.scrollTo({
@@ -164,11 +164,11 @@ const GameDetailsScreenshots = (props) => {
                             left: scrollView.scrollLeft - 400,
                             behavior: 'smooth'
                         });
-                    }}></button>
+                    }}></button></label>
                 }
 
-                <label forhtml='right' for='right'></label>
                 {showRightArrow &&
+                <label htmlFor='right' for='right'>
                     <button id='right' className={`${classes.rightArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('screenshotScrollView');
                         scrollView.scrollTo({
@@ -176,7 +176,7 @@ const GameDetailsScreenshots = (props) => {
                             left: scrollView.scrollLeft + 400,
                             behavior: 'smooth'
                         });
-                    }}></button>
+                    }}></button></label>
                 }
             </div>
 
