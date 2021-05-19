@@ -155,7 +155,7 @@ const GameDetailsScreenshots = (props) => {
                     {screenshotCards}
                 </div>
                 
-                <label forhtml='left'></label>
+                <label forhtml='left' for='left'></label>
                 {showLeftArrow &&
                     <button id='left' className={`${classes.leftArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('screenshotScrollView');
@@ -167,7 +167,7 @@ const GameDetailsScreenshots = (props) => {
                     }}></button>
                 }
 
-                <label forhtml='right'></label>
+                <label forhtml='right' for='right'></label>
                 {showRightArrow &&
                     <button id='right' className={`${classes.rightArrow} ${classes.navArrow}`} onClick={(e) => {
                         const scrollView = document.getElementById('screenshotScrollView');
