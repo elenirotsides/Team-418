@@ -320,8 +320,8 @@ const Profile = (props) => {
                             </h2>
                         )}
                     </div>
-                    <label forhtml="left"></label>
                     {showLeftArrow && (
+                    <label htmlFor="left">
                         <button
                             id="left"
                             className={`${classes.leftArrow} ${classes.navArrow}`}
@@ -335,11 +335,11 @@ const Profile = (props) => {
                                     behavior: 'smooth',
                                 });
                             }}
-                        ></button>
+                        ></button></label>
                     )}
 
-                    <label forhtml="right"></label>
                     {showRightArrow && (
+                    <label htmlFor="right">
                         <button
                             id="right"
                             className={`${classes.rightArrow} ${classes.navArrow}`}
@@ -353,7 +353,7 @@ const Profile = (props) => {
                                     behavior: 'smooth',
                                 });
                             }}
-                        ></button>
+                        ></button></label>
                     )}
                 </div>
             );
@@ -389,7 +389,6 @@ const Profile = (props) => {
                                     name="read-only"
                                     value={r.rating}
                                     readOnly
-                                    min={1}
                                     max={10}
                                 />
                                 <Card.Text>{r.comment}</Card.Text>
