@@ -106,12 +106,12 @@ const Game = (props) => {
                         </div>
                         <div className={classes.defaultSpacing}>
                             <Grid container justify='center' alignItems='center'>
-                                <Grid key='details' item s={12} m={6} className={`${classes.details} ${classes.detailCard}`}>
+                                <Grid key='details' item sm={12} md={6} className={`${classes.details} ${classes.detailCard}`}>
                                     <div>
                                         <GameMoreDetails data={pageData} />
                                     </div>
                                 </Grid>
-                                <Grid key='platforms' item s={12} m={6} className={classes.detailCard}>
+                                <Grid key='platforms' item sm={12} md={6} className={classes.detailCard}>
                                     <div className={classes.platforms}>
                                         <GameDetailsPlatforms data={pageData} />
                                     </div>
