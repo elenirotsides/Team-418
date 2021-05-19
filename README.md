@@ -23,6 +23,7 @@
 
 ## Running the Application Manually
 ### Running the API
+The API runs on port 5000, and expects Redis Server to be on port 6379 and MongoDB to be on port 27017.
 1. Go to the root of the API folder
     > cd api/
 2. Install the required npm packages
@@ -35,6 +36,7 @@
 6. Start the API
     > npm start
 ### Running the Frontend
+The frontend runs on port 3000.
 1. Go to the root of the frontend folder
     > cd frontend/
 2. Install the required npm packages
