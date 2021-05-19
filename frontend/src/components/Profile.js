@@ -370,6 +370,7 @@ const Profile = (props) => {
         } else if (!reviews || reviews.length === 0) {
             return (
                 <div className={classes.noReviews}>
+                    <h4></h4>
                     <h5 className="text-center">No reviews</h5>
                 </div>
             );

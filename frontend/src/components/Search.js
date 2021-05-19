@@ -285,6 +285,7 @@ const Search = (props) => {
                         <div className="form-group row">
                             <label
                                 forhtml="searchTerm"
+                                for="searchTerm"
                                 className="col-sm-2 col-form-label text-right"
                             >
                                 Search
