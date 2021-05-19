@@ -87,7 +87,6 @@ const Search = (props) => {
             setShowPrev(props.match.params.pageNum > 0)
             setShowNext(data.length === 12);
         } catch (err) {
-            console.log('search error', err);
             setError(true);
         }
         setLoading(false);
@@ -107,7 +106,6 @@ const Search = (props) => {
             );
             setSearchInfo(await response.json());
         } catch (err) {
-            console.log('setting error', err);
             setError(true);
         }
         setLoading(false);
@@ -184,6 +182,11 @@ const Search = (props) => {
                     setError(true);
                 }
             );
+    }
+
+    function validFormInput(e) {
+        const searchTerm = e && e.target && e.target[0] && e.target[0].value;
+        return searchTerm && searchTerm.trim();
     }
 
     useEffect(() => {
@@ -264,9 +267,21 @@ const Search = (props) => {
             <div className={classes.page}>
                 <div className="container">
                     <form onSubmit={(e) => {
+                        const errorDiv = document.getElementById('errorDiv');
+                        errorDiv.innerHTML = '';
                         e.preventDefault();
-                        history.push('/games/search/0', { searchTerm: e.target[0].value })
+                        if (validFormInput(e)) {
+                            history.push('/games/search/0', {
+                                searchTerm: e.target[0].value,
+                            });
+                        } else {
+                            const errorP = document.createElement('p');
+                            errorP.className = 'text-danger';
+                            errorP.textContent = 'Search term cannot be empty.';
+                            errorDiv.append(errorP);
+                        }
                     }} className="my-3">
+                        <div id="errorDiv" class="text-center"></div>
                         <div className="form-group row">
                             <label
                                 forhtml="searchTerm"
@@ -312,7 +327,6 @@ const Search = (props) => {
                     </form>
                 </div>
                 {customTitle && <p className={classes.customTitle}>{customTitle}</p>}
-                <div id="errorDiv" className="text-center">{error && <p>{error}</p>}</div>
                 {loading && <div className="text-center"><h2>Loading...</h2></div>}
                 {!loading && pageData && createGameCards()}
                 <br />
